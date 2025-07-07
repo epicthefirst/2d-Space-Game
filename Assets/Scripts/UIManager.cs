@@ -316,6 +316,7 @@ public class UIManager : MonoBehaviour
         Debug.Log("Last clicked star: " + lastClickedStar);
         Debug.Log("Current star: " + currentStar);
         Debug.Log("Panel: " + (panel != null ? "Panel is not null" : "Panel is null"));
+        CarrierInfo.SetActive(false);
         if (lastClickedStar != null)
         {
             InitUI(lastClickedStar);
