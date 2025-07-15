@@ -7609,7 +7609,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 86.254}
+  m_AnchoredPosition: {x: 0, y: 86.25391}
   m_SizeDelta: {x: 600, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2121478635
@@ -7998,6 +7998,10 @@ PrefabInstance:
       propertyPath: shipInputButton
       value: 
       objectReference: {fileID: 1570201713}
+    - target: {fileID: 4730316883296604164, guid: 8a0bfdb6604752e4da31dd94273b3ffa, type: 3}
+      propertyPath: specImageFolder
+      value: 
+      objectReference: {fileID: 102900000, guid: a5e371469efd5fc4c945562a85aaf49a, type: 3}
     - target: {fileID: 4730316883296604164, guid: 8a0bfdb6604752e4da31dd94273b3ffa, type: 3}
       propertyPath: backgroundButton
       value: 

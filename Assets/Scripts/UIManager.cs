@@ -53,12 +53,23 @@ public class UIManager : MonoBehaviour
     [SerializeField] TMP_Text scienceIndicator;
 
     [SerializeField] GameObject carrierButtonParent;
+    [SerializeField] UnityEngine.Object specImageFolder;
+
     public GameObject StarInfo;
     public GameObject CarrierInfo;
 
 
     private Vector2 pos;
     private List<int> orbitList = new List<int>();
+
+
+
+    //Permanent, spec stuff
+    private Dictionary<string, Texture2D> specImageDictionary;
+    private Dictionary<string, int> specCostDictionary = new Dictionary<string, int>();
+
+
+
     private int owner;
     private int econPrice;
     private int industryPrice;
@@ -101,9 +112,18 @@ public class UIManager : MonoBehaviour
     public event EventHandler NewTick;
 
 
+    //Change this to add new specialists
+    private void setDictionaries()
+    {
+        specImageDictionary = new Dictionary<string, Texture2D>()
+        {
+            {"TestingCarrier", Resources.Load<Texture2D>("Spec_PFPs/Carrier_Spec/TestingCarrier")}
+        };
+    }
 
     void Start()
     {
+        setDictionaries();
         shipInputButton.onClick.AddListener(WhenInputConfirmed);
         nextTickButton.onClick.AddListener(OnTickButtonPress);
         createShipButton.onClick.AddListener(OnCreateShipPress);
@@ -117,6 +137,14 @@ public class UIManager : MonoBehaviour
         moneyText.text = "Credits: " + playerMoney;
         tickText.text = "Tick: "+ tickCounter;
         ClearUI();
+    }
+
+    public Texture2D getSpecImage(String specialistName)
+    {
+        Texture2D specImage;
+        Debug.Log("CHECK FILENAME TO MATCH:" + specialistName);
+        specImageDictionary.TryGetValue(specialistName, out specImage);
+        return specImage;
     }
     void RefreshUI()
     {
@@ -295,7 +323,10 @@ public class UIManager : MonoBehaviour
         {
             GameObject carrierButton = Instantiate(carrierButtonPrefab, new Vector3(0, 0, 0), Quaternion.identity, carrierButtonParent.transform);
             carrierButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -y);
-            carrierButton.GetComponent<CarrierButtonScript>().init(i, ownerColourScript.GetMainColour(owner), this);
+            CarrierButtonScript cBScript = carrierButton.GetComponent<CarrierButtonScript>();
+            cBScript.init(i, ownerColourScript.GetMainColour(owner), this, "TestingCarrier");
+            carrierButton.transform.GetChild(3).gameObject.GetComponent<RawImage>().texture = getSpecImage(cBScript.carrierSpecialist);
+
             y += 50;
             if (carrierButtonParent.GetComponent<RectTransform>().sizeDelta.y < y)
             {
