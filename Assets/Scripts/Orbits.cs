@@ -5,28 +5,32 @@ using UnityEngine;
 public class Orbits : MonoBehaviour {
     //Numbers to mess with
     private static float distanceIncrease = 1.5f;
-    private static float qualityMultiplier = 3;
+    private static int qualityMultiplier = 3;
 
     //No touchy
     public System.Random random;
     public LineRenderer orbitMaker;
-    List<int> planetList;
+    public List<int> planetList;
+    public List<int> planetTimings;
     
 
-    public void OrbitStart(List<int> planetList)
+    public void init(List<int> planetList, List<int> planetTimings)
     {
+
         this.planetList = planetList;
-        init();
-    }
-    private void init()
-    {
-        int quality = (int)(qualityMultiplier * 20);
-
-        for (int i = 0; i < planetList.Count; i++)
+        this.planetTimings = planetTimings;
+        if (planetList.Count == planetTimings.Count)
         {
+            for (int i = 0; i < planetList.Count; i++)
+            {
 
-            drawOrbit(quality, distanceIncrease * (i + 1), planetList[i]);
-
+                drawOrbit(qualityMultiplier * 20, distanceIncrease * (i + 1), planetList[i]);
+                drawPlanets(qualityMultiplier * 5, i, planetList[i]);
+            }
+        }
+        else
+        {
+            Debug.LogError("YO THERE'S AN ERROR HERE");
         }
     }
 
@@ -99,5 +103,64 @@ public class Orbits : MonoBehaviour {
         //// Useless now
         //orbitMaker.SetPosition(steps, orbitMaker.GetPosition(0));
         orbitMaker.material = new Material(Shader.Find("Sprites/Default"));
+    }
+    private void drawPlanets(int steps, int i, int planetType)
+    {
+        float orbitalRadius = distanceIncrease * (i + 1);
+        GameObject planetObject = new GameObject("Planet");
+        planetObject.transform.SetParent(gameObject.transform);
+        LineRenderer planetMaker = planetObject.AddComponent<LineRenderer>();
+        planetMaker.material = new Material(Shader.Find("Sprites/Default"));
+        float radius = 99;
+        //List<int> planetList, List< int > planetTimings
+
+        switch (planetType)
+        {
+            case 0:
+                //Planetary
+                planetMaker.startColor = Color.gray;
+                planetMaker.endColor = Color.gray;
+                planetMaker.startWidth = 0.3f;
+                planetMaker.endWidth = 0.3f;
+                radius = 0.5f;
+                break;
+            case 1:
+                //Gas
+                planetMaker.startColor = Color.red;
+                planetMaker.endColor = Color.red;
+                planetMaker.startWidth = 0.5f;
+                planetMaker.endWidth = 0.5f;
+                radius = 0.7f;
+                break;
+            case 2:
+                //Habitable
+                planetMaker.startColor = Color.green;
+                planetMaker.endColor = Color.green;
+                planetMaker.startWidth = 0.3f;
+                planetMaker.endWidth = 0.3f;
+                radius = 0.5f;
+                break;
+        }
+
+        planetMaker.positionCount = steps + 2;
+        for (int j = 0; j < steps + 2; j++)
+        {
+            float circumferenceProgress = (float)j / steps;
+
+            float currentRadian = (circumferenceProgress * 2 * Mathf.PI);
+
+            float xScaled = Mathf.Cos(currentRadian);
+            float yScaled = Mathf.Sin(currentRadian);
+
+            float x = xScaled * radius;
+            float y = yScaled * radius;
+
+            Vector2 position = new Vector2(x, y) + gameObject.transform.position.ConvertTo<Vector2>() + new Vector2(0, orbitalRadius);
+
+            planetMaker.SetPosition(j, position);
+        }
+
+            
+
     }
 }

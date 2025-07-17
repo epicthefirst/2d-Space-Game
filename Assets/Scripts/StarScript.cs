@@ -10,6 +10,7 @@ public class StarScript : MonoBehaviour
     public int selfId;
     public string Name;
     public List<int> OrbitList;
+    public List<int> planetTimings;
     public GameObject canvas;
     private TextMeshPro ships;
     private GameObject go;
@@ -89,7 +90,7 @@ public class StarScript : MonoBehaviour
         {
             uIManager.NewTick += thisNewTick;
         }
-        gameObject.GetComponent<Orbits>().OrbitStart(OrbitList);
+        gameObject.GetComponent<Orbits>().init(OrbitList, planetTimings);
         //Create the 3 infrastructure indicators
 
         GameObject econInfrastructure = new GameObject("econInfrastructure");

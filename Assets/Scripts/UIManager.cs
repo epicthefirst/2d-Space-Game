@@ -121,6 +121,7 @@ public class UIManager : MonoBehaviour
         };
     }
 
+
     void Start()
     {
         setDictionaries();

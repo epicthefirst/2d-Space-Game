@@ -54,6 +54,14 @@ public class MapGeneration : MonoBehaviour
         "Veritate", "Vindemiatrix", "Wasat", "Wazn", "Wezen", "Wurren", "Xamidimura", "Xihe", "Xuange", "Yed Posterior", "Yed Prior", "Yildun", "Zaniah", "Zaurak", "Zavijava", "Zhang", 
         "Zibal", "Zosma", "Zubenelgenubi", "Zubenelhakrabi", "Zubeneschamali" };
 
+    public Dictionary<int, int> orbitalPeriodsDictionary = new Dictionary<int, int>
+    {
+        {0, 5}, {1, 8}, {2, 13}, {3, 21}, {4, 34}, {5, 55}, {6, 89}
+        // 1,      1,      2,       3,       5,      ,8       ,13
+        // 36,348,312/N, 22,717,695/N, 27,960,240/N, 25,963,080/N, 21,381,360/N, 26,435,136/N, 26,546,520/N 
+        //Where N is = to 181741560 (The LCM of 5,8,13,21,34,55,89)
+    }; 
+
 
     //Stuff to not mess with
     IDictionary<Tuple<int, int>, RingData> ringDictionary = new Dictionary<Tuple<int, int>, RingData>();
@@ -65,6 +73,7 @@ public class MapGeneration : MonoBehaviour
     Vector2 vectorAdjust;
     private GameObject starSpawn;
     public GameObject star;
+    //0 = unowned, 1 = player owned, 2 = enemy owned
     private Dictionary<GameObject, int> dictionary = new Dictionary<GameObject, int> { };
     [SerializeField] GameObject canvasObject;
     private int starSeperation = 100;
@@ -142,6 +151,28 @@ public class MapGeneration : MonoBehaviour
         VoronoiDiagram voronoiDiagram = this.GetComponent<VoronoiDiagram>();
         voronoiDiagram.Init(dictionary);
     }
+
+    private List<int> slingshotPeriodCalculator(int planetCount)
+    {
+        /*        foreach (GameObject star in dictionary.Keys)
+                {
+                    List<int> orbitList = star.GetComponent<StarScript>().OrbitList;
+        *//*            orbitList.Count;*//*
+
+                };*/
+        List<int> timingsList = new List<int>();
+        //Gives the timings for each planet, in a tick delay
+        for (int i = 0; i < planetCount; i++)
+        {
+            timingsList.Add(random.Next(0, orbitalPeriodsDictionary[i]));
+        }
+
+        //Add stuff here for later
+
+        return timingsList;
+
+    }
+
     private void DistanceCheck(RingData[] array)
     {
         float array1x = array[1].position.x;
@@ -202,6 +233,7 @@ public class MapGeneration : MonoBehaviour
             //Debug.Log(starsPerCircle);
             addPoint(starsPerCircle, distance, i, k);
             totalStarCount = totalStarCount + 1;
+            
 
         }
 
@@ -251,6 +283,11 @@ public class MapGeneration : MonoBehaviour
 
         Orbits orbits = starSpawn.AddComponent<Orbits>();
         StarScript starScript = starSpawn.AddComponent<StarScript>();
+
+        starScript.planetTimings = slingshotPeriodCalculator(planetAmount);
+
+
+
 
         if (enemyCapital.Contains(totalStarCount))
         {
