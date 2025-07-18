@@ -68,7 +68,7 @@ public class StarScript : MonoBehaviour
 
     public Vector3[] array = new Vector3[10];
 
-    public void Initialize(int Id, string Name, List<int> planetList, List<Tuple<int,int>> PlanetTimings, int Range, int Owner, GameObject canvas, int GarrisonCount, GameObject[] planetArray)
+    public void Initialize(int Id, string Name, List<int> planetList, List<Tuple<int,int>> PlanetTimings, int Range, int Owner, GameObject canvas, int GarrisonCount, GameObject[] planetArray, int qualityMultiplier)
     {
 
         this.Owner = Owner;
@@ -81,6 +81,7 @@ public class StarScript : MonoBehaviour
         Debug.Log(Owner);
         this.GarrisonCount = GarrisonCount;
         this.planetArray = planetArray;
+        this.qualityMultiplier = qualityMultiplier;
         
     }
 
