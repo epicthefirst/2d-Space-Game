@@ -6,7 +6,12 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-
+public class CycleEvent : EventArgs
+{
+    public int CurrentCycle { get; set; }
+    public int CurrentTick { get; set; }
+    public int TickPerCycle { get; set; }
+}
 
 public class UIManager : MonoBehaviour
 {
@@ -109,7 +114,8 @@ public class UIManager : MonoBehaviour
 
 
     //Events
-    public event EventHandler NewTick;
+    public event EventHandler<CycleEvent> NewTick;
+    CycleEvent cycleEvent = new();
 
 
     //Change this to add new specialists
@@ -124,6 +130,7 @@ public class UIManager : MonoBehaviour
 
     void Start()
     {
+        cycleEvent.TickPerCycle = cycleLength;
         setDictionaries();
         shipInputButton.onClick.AddListener(WhenInputConfirmed);
         nextTickButton.onClick.AddListener(OnTickButtonPress);
@@ -190,13 +197,15 @@ public class UIManager : MonoBehaviour
             industryIndicator.text = CStarScript.IndustryCount.ToString();
             scienceIndicator.text = CStarScript.ScienceCount.ToString();
 
+
+            postitionText.text = "Position: " + currentStar.transform.position;
         }
 
         seedText.text = "Seed: " + mapGeneration.seed;
         moneyText.text = "Credits: " + playerMoney;
         tickText.text = "Tick: " + tickCounter;
         
-        postitionText.text = "Position: " + currentStar.transform.position;
+        
 
         econPriceText.text = "Economy: " + econPrice + "$";
         industryPriceText.text = "Industry: " + industryPrice + "$";
@@ -218,7 +227,7 @@ public class UIManager : MonoBehaviour
         starSelected = true;
         currentStar = star;
         CStarScript = star.GetComponent<StarScript>();
-        this.orbitList = CStarScript.OrbitList;
+        this.orbitList = CStarScript.planetList;
         this.owner = CStarScript.Owner;
         Debug.Log(CStarScript.EconCount);
         switch (owner)
@@ -300,7 +309,7 @@ public class UIManager : MonoBehaviour
     }
     void OnTickButtonPress()
     {
-        NewTick.Invoke(this, EventArgs.Empty);
+
         tickCounter++;
         Debug.Log("New tick");
         if (tickCounter % 20 == 0)
@@ -309,6 +318,9 @@ public class UIManager : MonoBehaviour
             playerMoney += baseIncomePerCycle + (playerScript.NewCycle(cycleCount) * 10);
 
         };
+        cycleEvent.CurrentCycle = cycleCount;
+        cycleEvent.CurrentTick = tickCounter;
+        NewTick.Invoke(this, cycleEvent);
         RefreshUI();
         ClearUI();
     }

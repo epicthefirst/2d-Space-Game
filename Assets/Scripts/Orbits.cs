@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -11,10 +12,10 @@ public class Orbits : MonoBehaviour {
     public System.Random random;
     public LineRenderer orbitMaker;
     public List<int> planetList;
-    public List<int> planetTimings;
+    public List<Tuple<int, int>> planetTimings;
     
 
-    public void init(List<int> planetList, List<int> planetTimings)
+    public void init(List<int> planetList, List<Tuple<int, int>> planetTimings, int tick)
     {
 
         this.planetList = planetList;
@@ -23,9 +24,9 @@ public class Orbits : MonoBehaviour {
         {
             for (int i = 0; i < planetList.Count; i++)
             {
-
+                 
                 drawOrbit(qualityMultiplier * 20, distanceIncrease * (i + 1), planetList[i]);
-                drawPlanets(qualityMultiplier * 5, i, planetList[i]);
+                drawPlanets(qualityMultiplier * 5, i, planetList[i], tick);
             }
         }
         else
@@ -104,7 +105,7 @@ public class Orbits : MonoBehaviour {
         //orbitMaker.SetPosition(steps, orbitMaker.GetPosition(0));
         orbitMaker.material = new Material(Shader.Find("Sprites/Default"));
     }
-    private void drawPlanets(int steps, int i, int planetType)
+    private void drawPlanets(int steps, int i, int planetType, int tick)
     {
         float orbitalRadius = distanceIncrease * (i + 1);
         GameObject planetObject = new GameObject("Planet");
@@ -120,30 +121,34 @@ public class Orbits : MonoBehaviour {
                 //Planetary
                 planetMaker.startColor = Color.gray;
                 planetMaker.endColor = Color.gray;
-                planetMaker.startWidth = 0.3f;
-                planetMaker.endWidth = 0.3f;
-                radius = 0.5f;
+                planetMaker.startWidth = 0.6f;
+                planetMaker.endWidth = 0.6f;
+                radius = 0.2f;
                 break;
             case 1:
                 //Gas
                 planetMaker.startColor = Color.red;
                 planetMaker.endColor = Color.red;
-                planetMaker.startWidth = 0.5f;
-                planetMaker.endWidth = 0.5f;
-                radius = 0.7f;
+                planetMaker.startWidth = 0.8f;
+                planetMaker.endWidth = 0.8f;
+                radius = 0.3f;
                 break;
             case 2:
                 //Habitable
                 planetMaker.startColor = Color.green;
                 planetMaker.endColor = Color.green;
-                planetMaker.startWidth = 0.3f;
-                planetMaker.endWidth = 0.3f;
-                radius = 0.5f;
+                planetMaker.startWidth = 0.6f;
+                planetMaker.endWidth = 0.6f;
+                radius = 0.2f;
                 break;
         }
 
-        planetMaker.positionCount = steps + 2;
-        for (int j = 0; j < steps + 2; j++)
+        planetMaker.positionCount = steps + 3;
+        float orbitRadians = (1 / planetTimings[i].Item2) * ((tick + planetTimings[i].Item1) % planetTimings[i].Item2) * 2 * Mathf.PI;
+
+        float xTimingAdjust = Mathf.Cos(orbitRadians);
+        float yTimingAdjust = Mathf.Sin(orbitRadians);
+        for (int j = 0; j < steps + 3; j++)
         {
             float circumferenceProgress = (float)j / steps;
 
@@ -155,7 +160,7 @@ public class Orbits : MonoBehaviour {
             float x = xScaled * radius;
             float y = yScaled * radius;
 
-            Vector2 position = new Vector2(x, y) + gameObject.transform.position.ConvertTo<Vector2>() + new Vector2(0, orbitalRadius);
+            Vector2 position = new Vector2(x, y) + gameObject.transform.position.ConvertTo<Vector2>() + new Vector2(xTimingAdjust, yTimingAdjust);
 
             planetMaker.SetPosition(j, position);
         }

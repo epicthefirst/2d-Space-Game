@@ -3,14 +3,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-
+using Unity.VisualScripting;
 
 public class StarScript : MonoBehaviour
 {
+    //ORBITS + PLANETS QUALITY
+    //Numbers to mess with
+    public static float distanceIncrease = 1.5f;
+    public int qualityMultiplier;
+
+
+
+
     public int selfId;
     public string Name;
-    public List<int> OrbitList;
-    public List<int> planetTimings;
+    public List<int> planetList;
+    public List<Tuple<int, int>> planetTimings;
     public GameObject canvas;
     private TextMeshPro ships;
     private GameObject go;
@@ -31,6 +39,8 @@ public class StarScript : MonoBehaviour
     public int CarrierCount;
     public bool isAwake = false;
     public StarData star;
+    private int tick;
+    private int cycle;
 
     public LineRenderer orbitMaker;
     public GameObject insidePolygon;
@@ -47,17 +57,30 @@ public class StarScript : MonoBehaviour
 
     private UIManager uIManager;
 
-    public void Initialize(int Id, string Name, List<int> OrbitList, int Range, int Owner, GameObject canvas, int GarrisonCount)
+    private List<GameObject> planetObjectList = new List<GameObject>();
+    private List<GameObject> orbitObjectList;
+    public GameObject[] planetArray;
+
+
+
+
+
+
+    public Vector3[] array = new Vector3[10];
+
+    public void Initialize(int Id, string Name, List<int> planetList, List<Tuple<int,int>> PlanetTimings, int Range, int Owner, GameObject canvas, int GarrisonCount, GameObject[] planetArray)
     {
 
         this.Owner = Owner;
         this.selfId = Id;
+        this.planetTimings = PlanetTimings;
         this.Name = Name;
-        this.OrbitList = OrbitList;
+        this.planetList = planetList;
         this.Range = Range;
         this.canvas = canvas;
         Debug.Log(Owner);
         this.GarrisonCount = GarrisonCount;
+        this.planetArray = planetArray;
         
     }
 
@@ -86,11 +109,19 @@ public class StarScript : MonoBehaviour
     {
 
         uIManager = canvas.GetComponent<UIManager>();
-        if (isAwake)
+
+        uIManager.NewTick += thisNewTick;
+
+        if (planetList.Count == planetTimings.Count)
         {
-            uIManager.NewTick += thisNewTick;
+            drawOrbit(qualityMultiplier);
+            drawPlanets(qualityMultiplier);
         }
-        gameObject.GetComponent<Orbits>().init(OrbitList, planetTimings);
+        else
+        {
+            Debug.LogError("YO THERE'S AN ERROR HERE");
+        }
+        /*gameObject.GetComponent<Orbits>().init(planetList, planetTimings, tick);*/
         //Create the 3 infrastructure indicators
 
         GameObject econInfrastructure = new GameObject("econInfrastructure");
@@ -153,14 +184,15 @@ public class StarScript : MonoBehaviour
         starNameDisplay.fontSize = 12;
         Refresh();
     }
-    private void thisNewTick(object sender, EventArgs e)
+    private void thisNewTick(object sender, CycleEvent e)
     {
         if (IndustryCount != 0)
         {
             GarrisonCount += IndustryCount;
             Refresh();
         }
-        
+        tick = e.CurrentTick;
+        drawPlanets(qualityMultiplier);
         Debug.Log("NewTick responded");
     }
 
@@ -257,9 +289,9 @@ public class StarScript : MonoBehaviour
         PlanetaryCount = 0;
         GasCount = 0;
         HabitableCount = 0;
-        for (int i = 0; i < OrbitList.Count; i++)
+        for (int i = 0; i < planetList.Count; i++)
         {
-            switch (OrbitList[i])
+            switch (planetList[i])
             {
                 case 0:
                     //Planetary
@@ -299,8 +331,176 @@ public class StarScript : MonoBehaviour
             
             
             uIManager.InitUI(gameObject);
+            string text = "Start, " + planetTimings.Count + ":";
+            foreach (Tuple<int, int> tu in planetTimings)
+            {
+                text = text + tu.Item1 + ", " + tu.Item2 + ";";
+            }
+            Debug.Log(text);
         }
     }
-    
+
+
+
+
+
+
+    //
+    //
+    //ORBITS AND STUFF
+    //
+    //
+
+
+    void drawOrbit(int steps)
+    {
+        steps = steps * 15;
+        for (int j = 0; j < planetList.Count; j++)
+        {
+            float radius = distanceIncrease * (j + 1);
+            GameObject orbitObject = new GameObject("Orbit");
+            orbitObject.transform.SetParent(gameObject.transform);
+            LineRenderer orbitMaker = orbitObject.AddComponent<LineRenderer>();
+            orbitMaker.material = new Material(Shader.Find("Sprites/Default"));
+
+            //bool isPlanetary = orbitType == 1;
+
+            //orbitMaker.startColor = isPlanetary ? Color.red : Color.gray;
+            //orbitMaker.endColor = isPlanetary ? Color.red : Color.gray;
+            //orbitMaker.startWidth = isPlanetary ? 0.5f : 0.3f;
+            //orbitMaker.endWidth = isPlanetary ? 0.5f : 0.3f;
+
+
+            switch (planetList[j])
+            {
+                case 0:
+                    //Planetary
+                    orbitMaker.startColor = Color.gray;
+                    orbitMaker.endColor = Color.gray;
+                    orbitMaker.startWidth = 0.3f;
+                    orbitMaker.endWidth = 0.3f;
+                    break;
+                case 1:
+                    //Gas
+                    orbitMaker.startColor = Color.red;
+                    orbitMaker.endColor = Color.red;
+                    orbitMaker.startWidth = 0.5f;
+                    orbitMaker.endWidth = 0.5f;
+                    break;
+                case 2:
+                    //Habitable
+                    orbitMaker.startColor = Color.green;
+                    orbitMaker.endColor = Color.green;
+                    orbitMaker.startWidth = 0.3f;
+                    orbitMaker.endWidth = 0.3f;
+                    break;
+            }
+
+
+            
+            orbitMaker.positionCount = (steps * 6 / 10) + 1;
+
+            float cutStartAngle = 5 * Mathf.PI / 10;
+            for (int i = 0; i < (steps * 6 / 10) + 1; i++)
+            {
+                float circumferenceProgress = (float)i / steps;
+
+                float currentRadian = (circumferenceProgress * 2 * Mathf.PI) + cutStartAngle;
+
+                float xScaled = Mathf.Cos(currentRadian);
+                float yScaled = Mathf.Sin(currentRadian);
+
+                float x = xScaled * radius;
+                float y = yScaled * radius;
+
+                Vector2 position = new Vector2(x, y) + gameObject.transform.position.ConvertTo<Vector2>();
+
+                orbitMaker.SetPosition(i, position);
+            }
+
+
+            //// Useless now
+            //orbitMaker.SetPosition(steps, orbitMaker.GetPosition(0));
+            orbitMaker.material = new Material(Shader.Find("Sprites/Default"));
+        }
+    }
+    private void drawPlanets(int steps)
+    {
+        steps = steps * 10;
+        foreach (GameObject pl in planetObjectList)
+        {
+            Destroy(pl);
+        }
+        for (int i = 0; i < planetList.Count; i++)
+        {
+            
+            float orbitalRadius = distanceIncrease * (i + 1);
+            GameObject planetObject = new GameObject("Planet");
+            planetObject.transform.SetParent(gameObject.transform);
+            LineRenderer planetMaker = planetObject.AddComponent<LineRenderer>();
+            planetMaker.material = new Material(Shader.Find("Sprites/Default"));
+            planetObjectList.Add(planetObject);
+
+            float radius = 99;
+            //List<int> planetList, List< int > planetTimings
+
+            switch (planetList[i])
+            {
+                case 0:
+                    //Planetary
+                    planetMaker.startColor = Color.gray;
+                    planetMaker.endColor = Color.gray;
+                    planetMaker.startWidth = 0.6f;
+                    planetMaker.endWidth = 0.6f;
+                    radius = 0.2f;
+                    break;
+                case 1:
+                    //Gas
+                    planetMaker.startColor = Color.red;
+                    planetMaker.endColor = Color.red;
+                    planetMaker.startWidth = 0.8f;
+                    planetMaker.endWidth = 0.8f;
+                    radius = 0.3f;
+                    break;
+                case 2:
+                    //Habitable
+                    planetMaker.startColor = Color.green;
+                    planetMaker.endColor = Color.green;
+                    planetMaker.startWidth = 0.6f;
+                    planetMaker.endWidth = 0.6f;
+                    radius = 0.2f;
+                    break;
+            }
+
+            planetMaker.positionCount = steps+4;
+            float orbitProgress = 0.25f - (1 / (float)planetTimings[i].Item2) * ((tick + planetTimings[i].Item1) % planetTimings[i].Item2);
+            /*        float orbitProgress = 0.25f;*/
+            float orbitRadians = orbitProgress * 2 * Mathf.PI;
+            float xTimingAdjust = Mathf.Cos(orbitRadians) * orbitalRadius;
+            float yTimingAdjust = Mathf.Sin(orbitRadians) * orbitalRadius;
+            for (int j = 0; j < steps+4; j++)
+            {
+                float circumferenceProgress = (float)j / steps;
+
+                float currentRadian = (circumferenceProgress * 2 * Mathf.PI);
+
+                float xScaled = Mathf.Cos(currentRadian);
+                float yScaled = Mathf.Sin(currentRadian);
+
+                float x = xScaled * radius;
+                float y = yScaled * radius;
+
+                Vector2 position = new Vector2(x, y) + gameObject.transform.position.ConvertTo<Vector2>() + new Vector2(xTimingAdjust, yTimingAdjust);
+
+                planetMaker.SetPosition(j, position);
+                
+            }
+/*            planetMaker.SetPosition(steps + 1, planetMaker.GetPosition(1));*/
+/*            planetMaker.SetPosition(steps-1, planetMaker.GetPosition(0));
+            planetMaker.SetPosition(steps, planetMaker.GetPosition(1));
+            planetMaker.SetPosition(steps+1, planetMaker.GetPosition(2));
+            planetMaker.SetPosition(steps+2, planetMaker.GetPosition(3));*/
+        }
+    }
 
 }

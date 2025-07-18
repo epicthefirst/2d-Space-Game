@@ -10,12 +10,9 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using static UnityEditor.PlayerSettings;
 
-
-
-
-
 public class MapGeneration : MonoBehaviour
 {  //Stuff to mess with (yay!)
+    public int qualityMultiplier = 5;
     public int numberOfCircles = 5;
     public double offset = 20d;
     [SerializeField] int minRandOffset = 1;
@@ -73,10 +70,10 @@ public class MapGeneration : MonoBehaviour
     Vector2 vectorAdjust;
     private GameObject starSpawn;
     public GameObject star;
+
     //0 = unowned, 1 = player owned, 2 = enemy owned
     private Dictionary<GameObject, int> dictionary = new Dictionary<GameObject, int> { };
     [SerializeField] GameObject canvasObject;
-    private int starSeperation = 100;
     public GameObject capital;
     private List<int> positiveOrNegative = new List<int>() { -1, 1 };
     public UIManager uiManager;
@@ -84,16 +81,78 @@ public class MapGeneration : MonoBehaviour
     public RingData[][] arrayOfRings;
     private RingData[] tempArray = new RingData[3];
 
+    //Terrestrial, gas, habitable; add more if need be
+    public GameObject[] planetArray = new GameObject[3];
+
 
 
     // Start is called before the first frame update
     void Start()
     {
+/*      
+        switch (planetList[i])
+        {
+            case 0:
+                //Terrestrial
+                planetMaker.startColor = Color.gray;
+                planetMaker.endColor = Color.gray;
+                planetMaker.startWidth = 0.6f;
+                planetMaker.endWidth = 0.6f;
+                radius = 0.2f;
+                break;
+            case 1:
+                //Gas
+                planetMaker.startColor = Color.red;
+                planetMaker.endColor = Color.red;
+                planetMaker.startWidth = 0.8f;
+                planetMaker.endWidth = 0.8f;
+                radius = 0.3f;
+                break;
+            case 2:
+                //Habitable
+                planetMaker.startColor = Color.green;
+                planetMaker.endColor = Color.green;
+                planetMaker.startWidth = 0.6f;
+                planetMaker.endWidth = 0.6f;
+                radius = 0.2f;
+                break;
+        }*/
+
+
+/*        GameObject terrestrial = new GameObject("Terrestrial");
+*//*        MeshRenderer terrestrialMR = terrestrial.AddComponent<MeshRenderer>();
+        terrestrialMR.material.color = Color.gray;*/
+/*        MeshFilter terrestrialMF = terrestrial.AddComponent<MeshFilter>();
+        terrestrialMF.mesh = polyMesh(0.3f, qualityMultiplier * 8);*//*
+        planetArray[0] = terrestrial;*/
+
+/*        GameObject gas = new GameObject("Gas_giant");
+        MeshRenderer gasMR = gas.AddComponent<MeshRenderer>();
+        gasMR.material.color = Color.red;
+        MeshFilter gasMF = gas.AddComponent<MeshFilter>();
+        gasMF.mesh = polyMesh(0.5f, qualityMultiplier * 10);
+        planetArray[1] = gas;
+
+        GameObject habitable = new GameObject("Habitable");
+        MeshRenderer habitableMR = habitable.AddComponent<MeshRenderer>();
+        habitableMR.material.color = Color.green;
+        MeshFilter habitableMF = habitable.AddComponent<MeshFilter>();
+        habitableMF.mesh = polyMesh(0.3f, qualityMultiplier * 12);
+        planetArray[2] = habitable;*/
+
+
+
+
+
+
+
+
         arrayOfRings = new RingData[numberOfCircles - 1][];
 
-        capitalStar();
+        
         random = new System.Random(seed);
         starNames = starNames.OrderBy(x => random.Next()).ToArray();
+        capitalStar();
         for (int i = 0; i < numberOfCircles; i++)
         {
             
@@ -150,9 +209,31 @@ public class MapGeneration : MonoBehaviour
 
         VoronoiDiagram voronoiDiagram = this.GetComponent<VoronoiDiagram>();
         voronoiDiagram.Init(dictionary);
+
+
+
+
+/*        int Vertices = 6;
+        Vector3 initialPos = new Vector3(25, 25);
+
+        LineRenderer lr = gameObject.AddComponent<LineRenderer>();
+        lr.positionCount = Vertices;
+        lr.startWidth = 0.25f;
+        lr.endWidth = 0.25f;
+        //Quaternion rotate=Quaternion.Euler(0,0,360/Vertices);
+        Vector3[] positions = new Vector3[Vertices];
+        positions[0] = initialPos;
+        for (int i = 1; i < Vertices; i++)
+        {
+            positions[i] = Quaternion.Euler(0, 0, 360 * i / Vertices) * initialPos;
+        }
+        lr.SetPositions(positions);
+        lr.loop = true;
+        Debug.LogWarning("Done");*/
+
     }
 
-    private List<int> slingshotPeriodCalculator(int planetCount)
+    private List<Tuple<int, int>> slingshotPeriodCalculator(int planetCount)
     {
         /*        foreach (GameObject star in dictionary.Keys)
                 {
@@ -160,11 +241,12 @@ public class MapGeneration : MonoBehaviour
         *//*            orbitList.Count;*//*
 
                 };*/
-        List<int> timingsList = new List<int>();
+        List<Tuple<int, int>> timingsList = new List<Tuple<int, int>>();
         //Gives the timings for each planet, in a tick delay
         for (int i = 0; i < planetCount; i++)
         {
-            timingsList.Add(random.Next(0, orbitalPeriodsDictionary[i]));
+            //Timing, then total
+            timingsList.Add(new Tuple<int, int>(random.Next(0, orbitalPeriodsDictionary[i]), orbitalPeriodsDictionary[i]));
         }
 
         //Add stuff here for later
@@ -207,7 +289,7 @@ public class MapGeneration : MonoBehaviour
         dictionary.Add(capital, 1);
         
         StarScript capitalScript = capital.AddComponent<StarScript>();
-        capitalScript.Initialize(-1, "Capital", capitalList, range, 1, canvasObject, 100);
+        capitalScript.Initialize(-1, "Capital", capitalList, slingshotPeriodCalculator(capitalList.Count), range, 1, canvasObject, 100, planetArray);
         capitalScript.EconCount = 9;
         capitalScript.IndustryCount = 5;
         capitalScript.ScienceCount = 2;
@@ -284,20 +366,18 @@ public class MapGeneration : MonoBehaviour
         Orbits orbits = starSpawn.AddComponent<Orbits>();
         StarScript starScript = starSpawn.AddComponent<StarScript>();
 
-        starScript.planetTimings = slingshotPeriodCalculator(planetAmount);
-
 
 
 
         if (enemyCapital.Contains(totalStarCount))
         {
-            starScript.Initialize(totalStarCount, starNameMethod(totalStarCount), capitalList, range, 2, canvasObject, 100);
+            starScript.Initialize(totalStarCount, starNameMethod(totalStarCount), capitalList, slingshotPeriodCalculator(capitalList.Count), range, 2, canvasObject, 100, planetArray);
             starScript.isAwake = true;
             dictionary.Add(starSpawn, 2);
         }
         else
         {
-            starScript.Initialize(totalStarCount, starNameMethod(totalStarCount), planetList, range, 0, canvasObject, 0);
+            starScript.Initialize(totalStarCount, starNameMethod(totalStarCount), planetList, slingshotPeriodCalculator(planetAmount), range, 0, canvasObject, 0, planetArray);
             dictionary.Add(starSpawn, 0);
         }
         //Debug.Log(k + "/" + i);
@@ -358,5 +438,61 @@ public class MapGeneration : MonoBehaviour
         }
         circleMaker.material = new Material(Shader.Find("Sprites/Default"));
         return circleObject;
+    }
+
+
+    public Mesh polyMesh(float radius, int n)
+    {
+        Mesh mesh = new Mesh();
+
+        //verticies
+        List<Vector3> verticiesList = new List<Vector3> { };
+        float x;
+        float y;
+        for (int i = 0; i < n; i++)
+        {
+            x = radius * Mathf.Sin((2 * Mathf.PI * i) / n);
+            y = radius * Mathf.Cos((2 * Mathf.PI * i) / n);
+            verticiesList.Add(new Vector3(x, y, 0f));
+        }
+        Vector3[] verticies = verticiesList.ToArray();
+
+        //triangles
+        List<int> trianglesList = new List<int> { };
+        for (int i = 0; i < (n - 2); i++)
+        {
+            trianglesList.Add(0);
+            trianglesList.Add(i + 1);
+            trianglesList.Add(i + 2);
+        }
+        int[] triangles = trianglesList.ToArray();
+
+        //normals
+        List<Vector3> normalsList = new List<Vector3> { };
+        for (int i = 0; i < verticies.Length; i++)
+        {
+            normalsList.Add(-Vector3.forward);
+        }
+        Vector3[] normals = normalsList.ToArray();
+
+        //initialise
+        mesh.vertices = verticies;
+        mesh.triangles = triangles;
+        mesh.normals = normals;
+
+        return mesh;
+
+        //Dont need
+/*        //polyCollider
+        polyCollider.pathCount = 1;
+
+        List<Vector2> pathList = new List<Vector2> { };
+        for (int i = 0; i < n; i++)
+        {
+            pathList.Add(new Vector2(verticies[i].x, verticies[i].y));
+        }
+        Vector2[] path = pathList.ToArray();
+
+        polyCollider.SetPath(0, path);*/
     }
 }
