@@ -61,7 +61,7 @@ public class StarScript : MonoBehaviour
     private List<GameObject> orbitObjectList;
     public GameObject[] planetArray;
 
-
+    public GameObject planet;
 
 
 
@@ -426,7 +426,6 @@ public class StarScript : MonoBehaviour
     }
     private void drawPlanets(int steps)
     {
-        steps = steps * 10;
         foreach (GameObject pl in planetObjectList)
         {
             Destroy(pl);
@@ -435,11 +434,11 @@ public class StarScript : MonoBehaviour
         {
             
             float orbitalRadius = distanceIncrease * (i + 1);
-/*            GameObject planetObject = new GameObject("Planet");
-            planetObject.transform.SetParent(gameObject.transform);
-            LineRenderer planetMaker = planetObject.AddComponent<LineRenderer>();
-            planetMaker.material = new Material(Shader.Find("Sprites/Default"));
-            planetObjectList.Add(planetObject);*/
+            /*            GameObject planetObject = new GameObject("Planet");
+                        planetObject.transform.SetParent(gameObject.transform);
+                        LineRenderer planetMaker = planetObject.AddComponent<LineRenderer>();
+                        planetMaker.material = new Material(Shader.Find("Sprites/Default"));
+                        planetObjectList.Add(planetObject);*/
 
             //List<int> planetList, List< int > planetTimings
 
@@ -451,77 +450,79 @@ public class StarScript : MonoBehaviour
             float yTimingAdjust = Mathf.Sin(orbitRadians) * orbitalRadius;
 
 
+
             switch (planetList[i])
             {
                 case 0:
                     //Terrestrial
-                    GameObject terrestrial = Instantiate(planetArray[0], gameObject.transform, false);
-                    terrestrial.transform.localPosition = new Vector3(xTimingAdjust, yTimingAdjust);
-                    terrestrial.SetActive(true);
-                    planetObjectList.Add(terrestrial);
+                    planet = Instantiate(planetArray[0], gameObject.transform, false);
                     break;
                 case 1:
                     //Gas
-                    GameObject gas = Instantiate(planetArray[1], gameObject.transform, false);
-                    gas.transform.localPosition = new Vector3(xTimingAdjust, yTimingAdjust);
-                    gas.SetActive(true);
-                    planetObjectList.Add(gas);
+                    planet = Instantiate(planetArray[1], gameObject.transform, false);
                     break;
                 case 2:
                     //Habitable
-                    GameObject habitable = Instantiate(planetArray[2], gameObject.transform, false);
-                    habitable.transform.localPosition = new Vector3(xTimingAdjust, yTimingAdjust);
-                    habitable.SetActive(true);
-                    planetObjectList.Add(habitable);
+                    planet = Instantiate(planetArray[2], gameObject.transform, false);
                     break;
             }
 
-/*            planetMaker.positionCount = steps+4;
+            planet.transform.localPosition = new Vector3(xTimingAdjust, yTimingAdjust);
+            planet.SetActive(true);
+            planetObjectList.Add(planet);
+            planetTransparency(orbitProgress, planet.GetComponent<MeshRenderer>());
 
-            for (int j = 0; j < steps+4; j++)
-            {
-                float circumferenceProgress = (float)j / steps;
+            /*            planetMaker.positionCount = steps+4;
 
-                float currentRadian = (circumferenceProgress * 2 * Mathf.PI);
+                        for (int j = 0; j < steps+4; j++)
+                        {
+                            float circumferenceProgress = (float)j / steps;
 
-                float xScaled = Mathf.Cos(currentRadian);
-                float yScaled = Mathf.Sin(currentRadian);
+                            float currentRadian = (circumferenceProgress * 2 * Mathf.PI);
 
-                float x = xScaled * radius;
-                float y = yScaled * radius;
+                            float xScaled = Mathf.Cos(currentRadian);
+                            float yScaled = Mathf.Sin(currentRadian);
 
-                Vector2 position = new Vector2(x, y) + gameObject.transform.position.ConvertTo<Vector2>() + new Vector2(xTimingAdjust, yTimingAdjust);
+                            float x = xScaled * radius;
+                            float y = yScaled * radius;
 
-                planetMaker.SetPosition(j, position);
-                
-            }*/
-/*            planetMaker.SetPosition(steps + 1, planetMaker.GetPosition(1));*/
-/*            planetMaker.SetPosition(steps-1, planetMaker.GetPosition(0));
-            planetMaker.SetPosition(steps, planetMaker.GetPosition(1));
-            planetMaker.SetPosition(steps+1, planetMaker.GetPosition(2));
-            planetMaker.SetPosition(steps+2, planetMaker.GetPosition(3));*/
+                            Vector2 position = new Vector2(x, y) + gameObject.transform.position.ConvertTo<Vector2>() + new Vector2(xTimingAdjust, yTimingAdjust);
+
+                            planetMaker.SetPosition(j, position);
+
+                        }*/
+            /*            planetMaker.SetPosition(steps + 1, planetMaker.GetPosition(1));*/
+            /*            planetMaker.SetPosition(steps-1, planetMaker.GetPosition(0));
+                        planetMaker.SetPosition(steps, planetMaker.GetPosition(1));
+                        planetMaker.SetPosition(steps+1, planetMaker.GetPosition(2));
+                        planetMaker.SetPosition(steps+2, planetMaker.GetPosition(3));*/
         }
     }
 
-   public void updatePlanets()
+    public void planetTransparency(float orbitProgress, MeshRenderer MR)
+    {
+        var color = MR.material.color;
+        if (orbitProgress < 0.25f & orbitProgress > -0.15f)
+        {
+            color.a = 0.4f;
+            MR.material.color = color;
+        }
+        else
+        {
+            color.a = 1f;
+            MR.material.color = color;
+        }
+    }
+
+    public void updatePlanets()
     {
         for (int i = 0; i < planetObjectList.Count; i++)
         {
             float orbitalRadius = distanceIncrease * (i + 1);
             float orbitProgress = 0.25f - (1 / (float)planetTimings[i].Item2) * ((tick + planetTimings[i].Item1) % planetTimings[i].Item2);
 
-            MeshRenderer MR = planetObjectList[i].GetComponent<MeshRenderer>();
-            var color = MR.material.color;
-            if (orbitProgress < 0.25f & orbitProgress > -0.15f)
-            {
-                color.a = 0.4f;
-                MR.material.color = color;
-            }
-            else
-            {
-                color.a = 1f;
-                MR.material.color = color;
-            }
+            planetTransparency(orbitProgress, planetObjectList[i].GetComponent<MeshRenderer>());
+
             /*        float orbitProgress = 0.25f;*/
             float orbitRadians = orbitProgress * 2 * Mathf.PI;
             float xTimingAdjust = Mathf.Cos(orbitRadians) * orbitalRadius;
