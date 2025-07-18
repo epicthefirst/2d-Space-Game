@@ -509,10 +509,19 @@ public class StarScript : MonoBehaviour
         {
             float orbitalRadius = distanceIncrease * (i + 1);
             float orbitProgress = 0.25f - (1 / (float)planetTimings[i].Item2) * ((tick + planetTimings[i].Item1) % planetTimings[i].Item2);
-/*            if (orbitProgress < 0.25f & orbitProgress > -0.5f)
+
+            MeshRenderer MR = planetObjectList[i].GetComponent<MeshRenderer>();
+            var color = MR.material.color;
+            if (orbitProgress < 0.25f & orbitProgress > -0.15f)
             {
-                Debug.LogWarning("Yurr");
-            }*/
+                color.a = 0.4f;
+                MR.material.color = color;
+            }
+            else
+            {
+                color.a = 1f;
+                MR.material.color = color;
+            }
             /*        float orbitProgress = 0.25f;*/
             float orbitRadians = orbitProgress * 2 * Mathf.PI;
             float xTimingAdjust = Mathf.Cos(orbitRadians) * orbitalRadius;
