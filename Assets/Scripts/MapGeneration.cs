@@ -150,27 +150,30 @@ public class MapGeneration : MonoBehaviour
         voronoiDiagram.Init(dictionary);
 
 
-
+        Material defaultMaterial = new Material(Shader.Find("Sprites/Default"));
 
         GameObject terrestrial = new GameObject("Terrestrial");
         MeshRenderer terrestrialMR = terrestrial.AddComponent<MeshRenderer>();
+        terrestrialMR.material = defaultMaterial;
         terrestrialMR.material.color = Color.gray;
         MeshFilter terrestrialMF = terrestrial.AddComponent<MeshFilter>();
-        terrestrialMF.mesh = polyMesh(0.3f, qualityMultiplier * 8);
+        terrestrialMF.mesh = polyMesh(0.4f, qualityMultiplier * 8);
         planetArray[0] = terrestrial;
 
         GameObject gas = new GameObject("Gas_giant");
         MeshRenderer gasMR = gas.AddComponent<MeshRenderer>();
+        gasMR.material = defaultMaterial;
         gasMR.material.color = Color.red;
         MeshFilter gasMF = gas.AddComponent<MeshFilter>();
-        gasMF.mesh = polyMesh(0.5f, qualityMultiplier * 10);
+        gasMF.mesh = polyMesh(0.6f, qualityMultiplier * 10);
         planetArray[1] = gas;
 
         GameObject habitable = new GameObject("Habitable");
         MeshRenderer habitableMR = habitable.AddComponent<MeshRenderer>();
+        habitableMR.material = defaultMaterial;
         habitableMR.material.color = Color.green;
         MeshFilter habitableMF = habitable.AddComponent<MeshFilter>();
-        habitableMF.mesh = polyMesh(0.3f, qualityMultiplier * 12);
+        habitableMF.mesh = polyMesh(0.4f, qualityMultiplier * 12);
         planetArray[2] = habitable;
 
 
@@ -405,6 +408,7 @@ public class MapGeneration : MonoBehaviour
     public Mesh polyMesh(float radius, int n)
     {
         Mesh mesh = new Mesh();
+        mesh.name = "PlanetMesh";
 
         //verticies
         List<Vector3> verticiesList = new List<Vector3> { };

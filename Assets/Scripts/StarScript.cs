@@ -442,43 +442,37 @@ public class StarScript : MonoBehaviour
             planetMaker.material = new Material(Shader.Find("Sprites/Default"));
             planetObjectList.Add(planetObject);
 
-            float radius = 99;
             //List<int> planetList, List< int > planetTimings
 
-            switch (planetList[i])
-            {
-                case 0:
-                    //Planetary
-                    planetMaker.startColor = Color.gray;
-                    planetMaker.endColor = Color.gray;
-                    planetMaker.startWidth = 0.6f;
-                    planetMaker.endWidth = 0.6f;
-                    radius = 0.2f;
-                    break;
-                case 1:
-                    //Gas
-                    planetMaker.startColor = Color.red;
-                    planetMaker.endColor = Color.red;
-                    planetMaker.startWidth = 0.8f;
-                    planetMaker.endWidth = 0.8f;
-                    radius = 0.3f;
-                    break;
-                case 2:
-                    //Habitable
-                    planetMaker.startColor = Color.green;
-                    planetMaker.endColor = Color.green;
-                    planetMaker.startWidth = 0.6f;
-                    planetMaker.endWidth = 0.6f;
-                    radius = 0.2f;
-                    break;
-            }
 
-            planetMaker.positionCount = steps+4;
             float orbitProgress = 0.25f - (1 / (float)planetTimings[i].Item2) * ((tick + planetTimings[i].Item1) % planetTimings[i].Item2);
             /*        float orbitProgress = 0.25f;*/
             float orbitRadians = orbitProgress * 2 * Mathf.PI;
             float xTimingAdjust = Mathf.Cos(orbitRadians) * orbitalRadius;
             float yTimingAdjust = Mathf.Sin(orbitRadians) * orbitalRadius;
+
+
+            switch (planetList[i])
+            {
+                case 0:
+                    //Terrestrial
+                    GameObject terrestrial = Instantiate(planetArray[0], gameObject.transform, false);
+                    terrestrial.transform.localPosition = new Vector3(xTimingAdjust, yTimingAdjust);
+                    break;
+                case 1:
+                    //Gas
+                    GameObject gas = Instantiate(planetArray[1], gameObject.transform, false);
+                    gas.transform.localPosition = new Vector3(xTimingAdjust, yTimingAdjust);
+                    break;
+                case 2:
+                    //Habitable
+                    GameObject habitable = Instantiate(planetArray[2], gameObject.transform, false);
+                    habitable.transform.localPosition = new Vector3(xTimingAdjust, yTimingAdjust);
+                    break;
+            }
+
+/*            planetMaker.positionCount = steps+4;
+
             for (int j = 0; j < steps+4; j++)
             {
                 float circumferenceProgress = (float)j / steps;
@@ -495,7 +489,7 @@ public class StarScript : MonoBehaviour
 
                 planetMaker.SetPosition(j, position);
                 
-            }
+            }*/
 /*            planetMaker.SetPosition(steps + 1, planetMaker.GetPosition(1));*/
 /*            planetMaker.SetPosition(steps-1, planetMaker.GetPosition(0));
             planetMaker.SetPosition(steps, planetMaker.GetPosition(1));
