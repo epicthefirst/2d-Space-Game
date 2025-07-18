@@ -9,6 +9,7 @@ using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using static UnityEditor.PlayerSettings;
+using UnityEditor;
 
 public class MapGeneration : MonoBehaviour
 {  //Stuff to mess with (yay!)
@@ -80,6 +81,7 @@ public class MapGeneration : MonoBehaviour
     public PlayerScript playerScript;
     public RingData[][] arrayOfRings;
     private RingData[] tempArray = new RingData[3];
+    public GameObject storage;
 
     GameObject[] planetArray = new GameObject[3];
 
@@ -152,29 +154,35 @@ public class MapGeneration : MonoBehaviour
 
         Material defaultMaterial = new Material(Shader.Find("Sprites/Default"));
 
-        GameObject terrestrial = new GameObject("Terrestrial");
+        GameObject terrestrial = new GameObject("Terrestrial_Planet");
         MeshRenderer terrestrialMR = terrestrial.AddComponent<MeshRenderer>();
         terrestrialMR.material = defaultMaterial;
         terrestrialMR.material.color = Color.gray;
         MeshFilter terrestrialMF = terrestrial.AddComponent<MeshFilter>();
         terrestrialMF.mesh = polyMesh(0.4f, qualityMultiplier * 8);
         planetArray[0] = terrestrial;
+        terrestrial.transform.parent = storage.transform;
+        terrestrial.SetActive(false);
 
-        GameObject gas = new GameObject("Gas_giant");
+        GameObject gas = new GameObject("Gas_giant_Planet");
         MeshRenderer gasMR = gas.AddComponent<MeshRenderer>();
         gasMR.material = defaultMaterial;
         gasMR.material.color = Color.red;
         MeshFilter gasMF = gas.AddComponent<MeshFilter>();
         gasMF.mesh = polyMesh(0.6f, qualityMultiplier * 10);
         planetArray[1] = gas;
+        gas.transform.parent = storage.transform;
+        gas.SetActive(false);
 
-        GameObject habitable = new GameObject("Habitable");
+        GameObject habitable = new GameObject("Habitable_Planet");
         MeshRenderer habitableMR = habitable.AddComponent<MeshRenderer>();
         habitableMR.material = defaultMaterial;
         habitableMR.material.color = Color.green;
         MeshFilter habitableMF = habitable.AddComponent<MeshFilter>();
         habitableMF.mesh = polyMesh(0.4f, qualityMultiplier * 12);
         planetArray[2] = habitable;
+        habitable.transform.parent = storage.transform;
+        habitable.SetActive(false);
 
 
 

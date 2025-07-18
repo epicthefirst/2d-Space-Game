@@ -193,7 +193,7 @@ public class StarScript : MonoBehaviour
             Refresh();
         }
         tick = e.CurrentTick;
-        drawPlanets(qualityMultiplier);
+        updatePlanets();
         Debug.Log("NewTick responded");
     }
 
@@ -267,7 +267,6 @@ public class StarScript : MonoBehaviour
 
     public void Refresh()
     {
-        Debug.Log("Refresh");
         CarrierShipTally = 0;
         foreach (GameObject carrier in CarrierList) 
         {
@@ -436,11 +435,11 @@ public class StarScript : MonoBehaviour
         {
             
             float orbitalRadius = distanceIncrease * (i + 1);
-            GameObject planetObject = new GameObject("Planet");
+/*            GameObject planetObject = new GameObject("Planet");
             planetObject.transform.SetParent(gameObject.transform);
             LineRenderer planetMaker = planetObject.AddComponent<LineRenderer>();
             planetMaker.material = new Material(Shader.Find("Sprites/Default"));
-            planetObjectList.Add(planetObject);
+            planetObjectList.Add(planetObject);*/
 
             //List<int> planetList, List< int > planetTimings
 
@@ -458,16 +457,22 @@ public class StarScript : MonoBehaviour
                     //Terrestrial
                     GameObject terrestrial = Instantiate(planetArray[0], gameObject.transform, false);
                     terrestrial.transform.localPosition = new Vector3(xTimingAdjust, yTimingAdjust);
+                    terrestrial.SetActive(true);
+                    planetObjectList.Add(terrestrial);
                     break;
                 case 1:
                     //Gas
                     GameObject gas = Instantiate(planetArray[1], gameObject.transform, false);
                     gas.transform.localPosition = new Vector3(xTimingAdjust, yTimingAdjust);
+                    gas.SetActive(true);
+                    planetObjectList.Add(gas);
                     break;
                 case 2:
                     //Habitable
                     GameObject habitable = Instantiate(planetArray[2], gameObject.transform, false);
                     habitable.transform.localPosition = new Vector3(xTimingAdjust, yTimingAdjust);
+                    habitable.SetActive(true);
+                    planetObjectList.Add(habitable);
                     break;
             }
 
@@ -495,6 +500,25 @@ public class StarScript : MonoBehaviour
             planetMaker.SetPosition(steps, planetMaker.GetPosition(1));
             planetMaker.SetPosition(steps+1, planetMaker.GetPosition(2));
             planetMaker.SetPosition(steps+2, planetMaker.GetPosition(3));*/
+        }
+    }
+
+   public void updatePlanets()
+    {
+        for (int i = 0; i < planetObjectList.Count; i++)
+        {
+            float orbitalRadius = distanceIncrease * (i + 1);
+            float orbitProgress = 0.25f - (1 / (float)planetTimings[i].Item2) * ((tick + planetTimings[i].Item1) % planetTimings[i].Item2);
+/*            if (orbitProgress < 0.25f & orbitProgress > -0.5f)
+            {
+                Debug.LogWarning("Yurr");
+            }*/
+            /*        float orbitProgress = 0.25f;*/
+            float orbitRadians = orbitProgress * 2 * Mathf.PI;
+            float xTimingAdjust = Mathf.Cos(orbitRadians) * orbitalRadius;
+            float yTimingAdjust = Mathf.Sin(orbitRadians) * orbitalRadius;
+
+            planetObjectList[i].transform.localPosition = new Vector3(xTimingAdjust, yTimingAdjust);
         }
     }
 
