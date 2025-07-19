@@ -62,13 +62,14 @@ public class StarScript : MonoBehaviour
     public GameObject[] planetArray;
 
     public GameObject planet;
+    Dictionary<int, int> slingshotWindowDurations;
 
 
 
 
     public Vector3[] array = new Vector3[10];
 
-    public void Initialize(int Id, string Name, List<int> planetList, List<Tuple<int,int>> PlanetTimings, int Range, int Owner, GameObject canvas, int GarrisonCount, GameObject[] planetArray, int qualityMultiplier)
+    public void Initialize(int Id, string Name, List<int> planetList, List<Tuple<int,int>> PlanetTimings, int Range, int Owner, GameObject canvas, int GarrisonCount, GameObject[] planetArray, int qualityMultiplier, Dictionary<int, int> slingshotWindowDurations)
     {
 
         this.Owner = Owner;
@@ -82,6 +83,7 @@ public class StarScript : MonoBehaviour
         this.GarrisonCount = GarrisonCount;
         this.planetArray = planetArray;
         this.qualityMultiplier = qualityMultiplier;
+        this.slingshotWindowDurations = slingshotWindowDurations;
         
     }
 
@@ -194,7 +196,6 @@ public class StarScript : MonoBehaviour
         }
         tick = e.CurrentTick;
         updatePlanets();
-        Debug.Log("NewTick responded");
     }
 
 
@@ -203,7 +204,6 @@ public class StarScript : MonoBehaviour
     {
         WakeUp();
         //0 = unowned, 1 = player owned, 2 = enemy owned
-        Debug.Log("I have ran");
         if (shipOwner == Owner)
         {
 
@@ -263,6 +263,25 @@ public class StarScript : MonoBehaviour
         GarrisonCount -= shipCountReduction;
         PolygonRefresh();
         Refresh();
+    }
+
+    public bool isGoingToSlingshot(int timeLeft)
+    {
+        for (int i = 0; i < planetList.Count; i++)
+        {
+/*            float orbitProgress = (1 / (float)planetTimings[i].Item2) * ((tick + planetTimings[i].Item1) % planetTimings[i].Item2);
+
+            int orbitProgressInt = ((tick + planetTimings[i].Item1) % planetTimings[i].Item2);*/
+
+            if ((timeLeft + tick + planetTimings[i].Item1 + slingshotWindowDurations[i] - 1) % planetTimings[i].Item2 <= (slingshotWindowDurations[i]-1))
+            {
+                Debug.Log("Slingshot-able, " + i + " : " + (timeLeft + tick + 1 + planetTimings[i].Item1) % planetTimings[i].Item2);
+                Debug.Log(planetTimings[i].Item1 + " : " + planetTimings[i].Item2);
+                return true;
+            }
+        }
+        Debug.Log("Not slingshot-able");
+        return false;
     }
 
     public void Refresh()
@@ -442,10 +461,10 @@ public class StarScript : MonoBehaviour
 
             //List<int> planetList, List< int > planetTimings
 
-
-            float orbitProgress = 0.25f - (1 / (float)planetTimings[i].Item2) * ((tick + planetTimings[i].Item1) % planetTimings[i].Item2);
+            //orbitProgress ranges from 0-1, dont forget to offset and reverse direction!!!!!!!
+            float orbitProgress = (1 / (float)planetTimings[i].Item2) * ((tick + planetTimings[i].Item1) % planetTimings[i].Item2);
             /*        float orbitProgress = 0.25f;*/
-            float orbitRadians = orbitProgress * 2 * Mathf.PI;
+            float orbitRadians = (0.25f - orbitProgress) * 2 * Mathf.PI;
             float xTimingAdjust = Mathf.Cos(orbitRadians) * orbitalRadius;
             float yTimingAdjust = Mathf.Sin(orbitRadians) * orbitalRadius;
 
@@ -470,7 +489,8 @@ public class StarScript : MonoBehaviour
             planet.transform.localPosition = new Vector3(xTimingAdjust, yTimingAdjust);
             planet.SetActive(true);
             planetObjectList.Add(planet);
-            planetTransparency(orbitProgress, planet.GetComponent<MeshRenderer>());
+            //0.25f is to offset it
+            planetTransparency(0.25f - orbitProgress, planet.GetComponent<MeshRenderer>());
 
             /*            planetMaker.positionCount = steps+4;
 
@@ -519,17 +539,19 @@ public class StarScript : MonoBehaviour
         for (int i = 0; i < planetObjectList.Count; i++)
         {
             float orbitalRadius = distanceIncrease * (i + 1);
-            float orbitProgress = 0.25f - (1 / (float)planetTimings[i].Item2) * ((tick + planetTimings[i].Item1) % planetTimings[i].Item2);
+            float orbitProgress = (1 / (float)planetTimings[i].Item2) * ((tick + planetTimings[i].Item1) % planetTimings[i].Item2);
 
-            planetTransparency(orbitProgress, planetObjectList[i].GetComponent<MeshRenderer>());
+            planetTransparency(0.25f - orbitProgress, planetObjectList[i].GetComponent<MeshRenderer>());
 
             /*        float orbitProgress = 0.25f;*/
-            float orbitRadians = orbitProgress * 2 * Mathf.PI;
+            float orbitRadians = (0.25f - orbitProgress) * 2 * Mathf.PI;
             float xTimingAdjust = Mathf.Cos(orbitRadians) * orbitalRadius;
             float yTimingAdjust = Mathf.Sin(orbitRadians) * orbitalRadius;
 
             planetObjectList[i].transform.localPosition = new Vector3(xTimingAdjust, yTimingAdjust);
         }
     }
+
+
 
 }

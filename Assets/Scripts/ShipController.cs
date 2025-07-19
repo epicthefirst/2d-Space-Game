@@ -24,6 +24,7 @@ public class ShipController : MonoBehaviour
     private StarScript startStarScript;
 
     private PlayerScript ownerScript;
+    private bool willSlingshotNormal;
 
     public int ShipCount;
     public string Name;
@@ -58,6 +59,8 @@ public class ShipController : MonoBehaviour
         timeLeft = time;
         nextTickButton.onClick.AddListener(NewTick);
         nextTickButton.onClick.AddListener(LeavingTick);
+        willSlingshotNormal = endStar.GetComponent<StarScript>().isGoingToSlingshot(time);
+        Debug.Log(time);
     }
     void NewTick()
     {

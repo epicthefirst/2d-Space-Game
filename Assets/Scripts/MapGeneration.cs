@@ -58,7 +58,16 @@ public class MapGeneration : MonoBehaviour
         // 1,      1,      2,       3,       5,      ,8       ,13
         // 36,348,312/N, 22,717,695/N, 27,960,240/N, 25,963,080/N, 21,381,360/N, 26,435,136/N, 26,546,520/N 
         //Where N is = to 181741560 (The LCM of 5,8,13,21,34,55,89)
-    }; 
+    };
+    public Dictionary<int, int> slingshotWindowDurations = new Dictionary<int, int>
+    {
+        {0, 1}, {1, 1}, {2, 2}, {3, 3}, {4, 5}, {5, 8}, {6, 13}
+
+
+        // 1,      1,      2,       3,       5,      ,8       ,13
+        // 36,348,312/N, 22,717,695/N, 27,960,240/N, 25,963,080/N, 21,381,360/N, 26,435,136/N, 26,546,520/N 
+        //Where N is = to 181741560 (The LCM of 5,8,13,21,34,55,89)
+    };
 
 
     //Stuff to not mess with
@@ -262,7 +271,7 @@ public class MapGeneration : MonoBehaviour
         dictionary.Add(capital, 1);
         
         StarScript capitalScript = capital.AddComponent<StarScript>();
-        capitalScript.Initialize(-1, "Capital", capitalList, slingshotPeriodCalculator(capitalList.Count), range, 1, canvasObject, 100, planetArray, qualityMultiplier);
+        capitalScript.Initialize(-1, "Capital", capitalList, slingshotPeriodCalculator(capitalList.Count), range, 1, canvasObject, 100, planetArray, qualityMultiplier, slingshotWindowDurations);
         capitalScript.EconCount = 9;
         capitalScript.IndustryCount = 5;
         capitalScript.ScienceCount = 2;
@@ -344,13 +353,13 @@ public class MapGeneration : MonoBehaviour
 
         if (enemyCapital.Contains(totalStarCount))
         {
-            starScript.Initialize(totalStarCount, starNameMethod(totalStarCount), capitalList, slingshotPeriodCalculator(capitalList.Count), range, 2, canvasObject, 100, planetArray, qualityMultiplier);
+            starScript.Initialize(totalStarCount, starNameMethod(totalStarCount), capitalList, slingshotPeriodCalculator(capitalList.Count), range, 2, canvasObject, 100, planetArray, qualityMultiplier, slingshotWindowDurations);
             starScript.isAwake = true;
             dictionary.Add(starSpawn, 2);
         }
         else
         {
-            starScript.Initialize(totalStarCount, starNameMethod(totalStarCount), planetList, slingshotPeriodCalculator(planetAmount), range, 0, canvasObject, 0, planetArray, qualityMultiplier);
+            starScript.Initialize(totalStarCount, starNameMethod(totalStarCount), planetList, slingshotPeriodCalculator(planetAmount), range, 0, canvasObject, 0, planetArray, qualityMultiplier, slingshotWindowDurations);
             dictionary.Add(starSpawn, 0);
         }
         //Debug.Log(k + "/" + i);
