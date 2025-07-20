@@ -43,7 +43,6 @@ public class VoronoiDiagram : MonoBehaviour
             //{
             //    Debug.Log(dictionary);
             //}
-            Debug.Log(materialDictionary.Count);
             starList[i].GetComponent<StarScript>().SendPolygon(insidePolygon, borderPolygon, materialDictionary);
         }
     }

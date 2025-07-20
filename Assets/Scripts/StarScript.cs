@@ -49,6 +49,7 @@ public class StarScript : MonoBehaviour
     private Dictionary<int, Material[]> materialDictionary;
     public Material[] materials;
     public List<GameObject> CarrierList = new List<GameObject>();
+    public List<GameObject> maneuverCarrierList = new List<GameObject>();
 
     private TextMeshPro shipText;
     private TextMeshPro scienceText;
@@ -79,7 +80,6 @@ public class StarScript : MonoBehaviour
         this.planetList = planetList;
         this.Range = Range;
         this.canvas = canvas;
-        Debug.Log(Owner);
         this.GarrisonCount = GarrisonCount;
         this.planetArray = planetArray;
         this.qualityMultiplier = qualityMultiplier;
@@ -283,6 +283,12 @@ public class StarScript : MonoBehaviour
         Debug.Log("Not slingshot-able");
         return false;
     }
+    public void startSlingshot(GameObject carrier)
+    {
+        maneuverCarrierList.Add(carrier);
+        PolygonRefresh();
+        Refresh();
+    }
 
     public void Refresh()
     {
@@ -294,7 +300,7 @@ public class StarScript : MonoBehaviour
         shipCountDisplay = GarrisonCount + CarrierShipTally;
         if (shipText != null)
         {
-            shipText.text = shipCountDisplay.ToString() + (CarrierCount == 0 ? null : "/" + CarrierCount);
+            shipText.text = shipCountDisplay.ToString() + (CarrierCount == 0 ? null : "/" + CarrierCount)+ (maneuverCarrierList.Count == 0 ? null : "!" + maneuverCarrierList.Count);
         }
         if (Owner != 0)
         {
@@ -339,7 +345,6 @@ public class StarScript : MonoBehaviour
         this.insidePolygon = insidePolygon;
         this.borderPolygon = borderPolygon;
         this.materialDictionary = materialDictionary;
-        Debug.Log(materialDictionary.Count);
         PolygonRefresh();
     }
 

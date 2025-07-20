@@ -18,7 +18,6 @@ public class OwnerColourScript : MonoBehaviour
     private void init()
     {
         hasRan = true;
-        Debug.Log("I have ran");
         playerMaterial = new Material(playerBorder);
         playerMaterial.color = new Color(playerBorder.color.r / 2, playerBorder.color.g / 2, playerBorder.color.b / 2);
         playerMaterial.renderQueue = playerBorder.renderQueue + 50;

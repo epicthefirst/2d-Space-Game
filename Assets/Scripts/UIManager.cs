@@ -42,6 +42,7 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] TMP_InputField shipInput;
     [SerializeField] Button shipInputButton;
+    [SerializeField] Button slingshotToggleButton;
 
     //Buy buttons
     [SerializeField] Button buyEconButton;
@@ -390,7 +391,6 @@ public class UIManager : MonoBehaviour
                 Debug.Log("SecondStarSelect coroutine stopped");
                 yield break;
             }
-            Debug.Log("Running");
             yield return null;  // Wait until the next frame
         }
         if (starSelected)
@@ -408,20 +408,23 @@ public class UIManager : MonoBehaviour
                 shipInputButton.gameObject.SetActive(true);
                 messagePrompt.text = "Input the desired amount of ships to the carrier";
                 messagePrompt.gameObject.SetActive(true);
-                CheckForEnter();
+
+                slingshotToggleButton.gameObject.SetActive(true);
+
+                StartCoroutine(CheckForEnter());
             }
             yield break;
         }
 
     }
     IEnumerator CheckForEnter()
-    {
-        if (Input.GetKeyDown(KeyCode.KeypadEnter))
+    {   
+        while (!Input.GetKeyDown(KeyCode.Return))
         {
-            WhenInputConfirmed();
-            yield break;
+            yield return null;
         }
-        yield return null;
+        WhenInputConfirmed();
+        yield break;
     }
 
     void WhenInputConfirmed()

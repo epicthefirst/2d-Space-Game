@@ -24,7 +24,10 @@ public class ShipController : MonoBehaviour
     private StarScript startStarScript;
 
     private PlayerScript ownerScript;
-    private bool willSlingshotNormal;
+    private int slingshotMultCount;
+    //Expires on x tick
+    private bool wantToSlingshot;
+    private GameObject slingStar;
 
     public int ShipCount;
     public string Name;
@@ -59,7 +62,7 @@ public class ShipController : MonoBehaviour
         timeLeft = time;
         nextTickButton.onClick.AddListener(NewTick);
         nextTickButton.onClick.AddListener(LeavingTick);
-        willSlingshotNormal = endStar.GetComponent<StarScript>().isGoingToSlingshot(time);
+
         Debug.Log(time);
     }
     void NewTick()
@@ -71,6 +74,11 @@ public class ShipController : MonoBehaviour
         if (timeLeft == 0) 
         {
             nextTickButton.onClick.RemoveListener(NewTick);
+            if (wantToSlingshot)
+            {
+                SlingshotAtStar();
+                return;
+            }
             ArrivedAtStar();
             return;
         }
@@ -91,6 +99,7 @@ public class ShipController : MonoBehaviour
     }
     void ArrivedAtStar()
     {
+        slingshotMultCount = 0;
         Debug.Log("Arrived at star");
         gameObject.GetComponent<Renderer>().enabled = false;
         
@@ -98,5 +107,22 @@ public class ShipController : MonoBehaviour
         StarScript starScript = dockedStar.GetComponent<StarScript>();
         starScript.ShipInbound(ShipCount, Owner, gameObject);
         gameObject.transform.parent = dockedStar.transform;
+    }
+    void SlingshotAtStar()
+    {
+        if (endStar.GetComponent<StarScript>().isGoingToSlingshot(0))
+        {
+            Debug.Log("Commencing gravity assist on star: " + endStar.name);
+            slingshotMultCount++;
+            slingStar = endStar;
+            StarScript starScript = slingStar.GetComponent<StarScript>();
+            starScript.startSlingshot(gameObject);
+            gameObject.transform.parent = dockedStar.transform;
+        }
+        else
+        {
+            Debug.LogWarning("Slingshot failed, please check this");
+            ArrivedAtStar();
+        }
     }
 }
