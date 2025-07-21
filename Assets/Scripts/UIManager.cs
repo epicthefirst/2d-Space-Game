@@ -14,11 +14,11 @@ public class CycleEvent : EventArgs
     public int TickPerCycle { get; set; }
 }
 
-public class UIManager : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHandler*/
 {
 
 
-    //Detect if the Cursor starts to pass over the GameObject
+/*    //Detect if the Cursor starts to pass over the GameObject
     public void OnPointerEnter(PointerEventData pointerEventData)
     {
         //Output to console the GameObject's name and the following message
@@ -30,7 +30,7 @@ public class UIManager : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     {
         //Output the following message with the GameObject's name
         Debug.Log("Cursor Exiting " + name + " GameObject");
-    }
+    }*/
 
 
     public MapGeneration mapGeneration;
@@ -286,7 +286,7 @@ public class UIManager : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             StopAllCoroutines();
             starSelected = false;
         }
-        if (Input.GetMouseButtonDown(0))
+/*        if (Input.GetMouseButtonDown(0))
         {
             Debug.Log("Yurr");
             RaycastHit2D ray = Physics2D.Raycast(new Vector2(mainCamera.ScreenToWorldPoint(Input.mousePosition).x, mainCamera.ScreenToWorldPoint(Input.mousePosition).y), Vector2.zero, 0f);
@@ -295,7 +295,7 @@ public class UIManager : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                 Debug.LogWarning(ray.point.ToSafeString());
                 InitUI(ray.transform.gameObject);
             }
-        }
+        }*/
     }
     private void BuyEconomy()
     {

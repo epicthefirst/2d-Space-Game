@@ -348,12 +348,13 @@ public class StarScript : MonoBehaviour
         PolygonRefresh();
     }
 
-/*    void OnMouseOver()
+    void OnMouseOver()
     {
-        if (Input.GetMouseButtonDown(0)) {
-            
-            
-            
+        if (Input.GetMouseButtonDown(0))
+        {
+
+
+
             uIManager.InitUI(gameObject);
             string text = "Start, " + planetTimings.Count + ":";
             foreach (Tuple<int, int> tu in planetTimings)
@@ -362,7 +363,8 @@ public class StarScript : MonoBehaviour
             }
             Debug.Log(text);
         }
-    }*/
+    }
+
 
 
 
