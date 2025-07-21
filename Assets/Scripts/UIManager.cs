@@ -5,6 +5,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class CycleEvent : EventArgs
 {
@@ -13,10 +14,29 @@ public class CycleEvent : EventArgs
     public int TickPerCycle { get; set; }
 }
 
-public class UIManager : MonoBehaviour
+public class UIManager : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
+
+
+    //Detect if the Cursor starts to pass over the GameObject
+    public void OnPointerEnter(PointerEventData pointerEventData)
+    {
+        //Output to console the GameObject's name and the following message
+        Debug.Log("Cursor Entering " + name + " GameObject");
+    }
+
+    //Detect when Cursor leaves the GameObject
+    public void OnPointerExit(PointerEventData pointerEventData)
+    {
+        //Output the following message with the GameObject's name
+        Debug.Log("Cursor Exiting " + name + " GameObject");
+    }
+
+
     public MapGeneration mapGeneration;
     public OwnerColourScript ownerColourScript;
+
+    [SerializeField] Camera mainCamera;
 
     [SerializeField] Image panel;
     [SerializeField] Image panel2;
@@ -37,17 +57,18 @@ public class UIManager : MonoBehaviour
     [SerializeField] TMP_Text sciencePriceText;
 
     [SerializeField] Button nextTickButton;
-    [SerializeField] Button createShipButton;
+    [SerializeField] Button createCarrierButton;
     [SerializeField] TMP_Text messagePrompt;
 
     [SerializeField] TMP_InputField shipInput;
     [SerializeField] Button shipInputButton;
-    [SerializeField] Button slingshotToggleButton;
+/*    [SerializeField] Button slingshotToggleButton;*/
 
     //Buy buttons
     [SerializeField] Button buyEconButton;
     [SerializeField] Button buyIndustryButton;
     [SerializeField] Button buyScienceButton;
+    [SerializeField] Button carrierMenuBlueButton;
 
     [SerializeField] PlayerScript playerScript;
 
@@ -85,6 +106,7 @@ public class UIManager : MonoBehaviour
     public int tickCounter = 0;
     public int playerMoney = 500;
     public int cycleLength = 20; // Change this in the future
+    public int carrierCost = 25; //This too
 
     public int baseIncomePerCycle = 250;
     
@@ -98,6 +120,7 @@ public class UIManager : MonoBehaviour
     private int habitableCount;
 
     private bool starSelected = false;
+    private GameObject currentCarrier;
 
     private GameObject currentStar;
     private GameObject tempStar;
@@ -112,6 +135,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] TMP_Text inputedShipCountTextField;
 
     public GameObject carrierButtonPrefab;
+    public bool isOnUI;
 
 
     //Events
@@ -135,7 +159,7 @@ public class UIManager : MonoBehaviour
         setDictionaries();
         shipInputButton.onClick.AddListener(WhenInputConfirmed);
         nextTickButton.onClick.AddListener(OnTickButtonPress);
-        createShipButton.onClick.AddListener(OnCreateShipPress);
+        createCarrierButton.onClick.AddListener(OnCreateCarrierPress);
 
         //Buy buttons
         buyEconButton.onClick.AddListener(BuyEconomy);
@@ -211,7 +235,8 @@ public class UIManager : MonoBehaviour
         econPriceText.text = "Economy: " + econPrice + "$";
         industryPriceText.text = "Industry: " + industryPrice + "$";
         sciencePriceText.text = "Science: " + sciencePrice + "$";
-
+        carrierButtons();
+        currentCarrier = null;
         
         return;
     }
@@ -238,7 +263,7 @@ public class UIManager : MonoBehaviour
                 break;
             case 1:
                 ownerText.text = "Owner: You";
-                createShipButton.gameObject.SetActive(true);
+                createCarrierButton.gameObject.SetActive(true);
                 buyEconButton.gameObject.SetActive(true);
                 buyIndustryButton.gameObject.SetActive(true);
                 buyScienceButton.gameObject.SetActive(true);
@@ -253,13 +278,23 @@ public class UIManager : MonoBehaviour
         circleObject = GenerateCircle(star.transform.position, CStarScript.Range);
         carrierButtons();
     }
-    private void Update()
+    public void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape)) 
         { 
             ClearUI();
             StopAllCoroutines();
             starSelected = false;
+        }
+        if (Input.GetMouseButtonDown(0))
+        {
+            Debug.Log("Yurr");
+            RaycastHit2D ray = Physics2D.Raycast(new Vector2(mainCamera.ScreenToWorldPoint(Input.mousePosition).x, mainCamera.ScreenToWorldPoint(Input.mousePosition).y), Vector2.zero, 0f);
+            if (ray & !isOnUI)
+            {
+                Debug.LogWarning(ray.point.ToSafeString());
+                InitUI(ray.transform.gameObject);
+            }
         }
     }
     private void BuyEconomy()
@@ -354,6 +389,29 @@ public class UIManager : MonoBehaviour
         StarInfo.SetActive(false);
         CarrierInfo.SetActive(true);
         currentStar = null;
+        currentCarrier = linkedCarrier;
+
+    }
+    public void carrierMenuBlueButtonPressed()
+    {
+        tempStar = currentStar;
+        TStarScript = tempStar.GetComponent<StarScript>();
+        starSelected = false;
+        messagePrompt.text = "Select a star within range";
+        messagePrompt.gameObject.SetActive(true);
+/*        StartCoroutine();*/
+    }
+    IEnumerator RoutePlanerCoroutine()
+    {
+        while (true)
+        {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                Debug.Log("SecondStarSelect coroutine stopped");
+                yield break;
+            }
+            yield return null;  // Wait until the next frame
+        }
 
     }
     public void carrierInfoBackButtonPressed()
@@ -372,14 +430,26 @@ public class UIManager : MonoBehaviour
         }
         Debug.Log("Back button pressed");
     }
-    void OnCreateShipPress()
+    void OnCreateCarrierPress()
     {   
-        tempStar = currentStar;
-        TStarScript = tempStar.GetComponent<StarScript>();
-        starSelected = false;
-        messagePrompt.text = "Select a star within range";
-        messagePrompt.gameObject.SetActive(true);
-        StartCoroutine("SecondStarSelectCoroutine");
+        if (playerMoney >= carrierCost)
+        {
+            playerMoney -= carrierCost;
+            //If the user selects the initial star
+            GameObject ship = GameObject.Instantiate(shipPrefab, currentStar.transform.position, Quaternion.identity) as GameObject;
+            ship.transform.parent = currentStar.transform;
+            ShipController shipController = ship.GetComponent<ShipController>();
+            carrierCount++;
+            shipController.Init(nextTickButton, currentStar, inputedShipCount, carrierCount, playerScript);
+            RefreshUI();
+        }
+        else
+        {
+            Debug.Log("It costs " + carrierCost + "$ to do that");
+        }
+
+
+
     }
     IEnumerator SecondStarSelectCoroutine()
     {
@@ -409,7 +479,7 @@ public class UIManager : MonoBehaviour
                 messagePrompt.text = "Input the desired amount of ships to the carrier";
                 messagePrompt.gameObject.SetActive(true);
 
-                slingshotToggleButton.gameObject.SetActive(true);
+/*                slingshotToggleButton.gameObject.SetActive(true);*/
 
                 StartCoroutine(CheckForEnter());
             }
@@ -501,7 +571,7 @@ public class UIManager : MonoBehaviour
         econPriceText.text = string.Empty;
         industryPriceText.text = string.Empty;
         sciencePriceText.text = string.Empty;
-        createShipButton.gameObject.SetActive(false);
+        createCarrierButton.gameObject.SetActive(false);
         messagePrompt.gameObject.SetActive(false);
         shipInput.gameObject.SetActive(false);
         shipInputButton.gameObject.SetActive(false);

@@ -348,7 +348,7 @@ public class StarScript : MonoBehaviour
         PolygonRefresh();
     }
 
-    void OnMouseOver()
+/*    void OnMouseOver()
     {
         if (Input.GetMouseButtonDown(0)) {
             
@@ -362,7 +362,7 @@ public class StarScript : MonoBehaviour
             }
             Debug.Log(text);
         }
-    }
+    }*/
 
 
 
