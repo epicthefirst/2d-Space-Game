@@ -388,7 +388,6 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
     {
         StarInfo.SetActive(false);
         CarrierInfo.SetActive(true);
-        currentStar = null;
         currentCarrier = linkedCarrier;
 
     }
