@@ -81,6 +81,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
 
     [SerializeField] GameObject carrierButtonParent;
     [SerializeField] UnityEngine.Object specImageFolder;
+    [SerializeField] RoutePlanner routePlannetScript;
 
     public GameObject StarInfo;
     public GameObject CarrierInfo;
@@ -398,7 +399,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
         starSelected = false;
         messagePrompt.text = "Select a star within range";
         messagePrompt.gameObject.SetActive(true);
-/*        StartCoroutine();*/
+        routePlannetScript.init(TStarScript.CarrierList);
     }
     IEnumerator RoutePlanerCoroutine()
     {
