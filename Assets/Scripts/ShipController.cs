@@ -2,6 +2,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 
 
@@ -33,6 +34,11 @@ public class ShipController : MonoBehaviour
     public string Name;
     public bool hasSpecialist;
     public string Specialist = null;
+
+    //RoutePlanner
+
+    //In order of going to visit
+    public List<GameObject> starWaypoints;
 
     public void Init(Button nextTickButton, GameObject startStar, int shipShipCountAdd, int carrierCount, PlayerScript ownerScript)
     {

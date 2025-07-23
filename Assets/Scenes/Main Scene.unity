@@ -6180,7 +6180,7 @@ MonoBehaviour:
   scienceIndicator: {fileID: 1543808313}
   carrierButtonParent: {fileID: 823118541}
   specImageFolder: {fileID: 102900000, guid: a5e371469efd5fc4c945562a85aaf49a, type: 3}
-  routePlannetScript: {fileID: 1794237972}
+  routePlannerScript: {fileID: 1794237972}
   StarInfo: {fileID: 1429329851}
   CarrierInfo: {fileID: 133686182}
   tickCounter: 0
@@ -6192,7 +6192,7 @@ MonoBehaviour:
   shipPrefab: {fileID: 9128021471243550003, guid: e229612396a7f4f49844889ea895d47a, type: 3}
   inputedShipCountTextField: {fileID: 1863125715}
   carrierButtonPrefab: {fileID: 3290456688689037092, guid: 2c1fe7a5dfbbf9149909c39db3e16571, type: 3}
-  isOnUI: 0
+  isRoutePlannerActive: 0
 --- !u!1 &1417931329
 GameObject:
   m_ObjectHideFlags: 0
@@ -7892,7 +7892,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 300.00003, y: -60.00006}
+  m_AnchoredPosition: {x: 300, y: -60}
   m_SizeDelta: {x: 600, y: 140}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1794237970
@@ -7954,6 +7954,8 @@ MonoBehaviour:
   shipCountText: {fileID: 0}
   ETAText: {fileID: 0}
   preFab: {fileID: 3724516933365884384, guid: cc2f4e3bb78d16b4e919669675a51c59, type: 3}
+  uIManager: {fileID: 1387152735}
+  isActive: 0
 --- !u!1 &1810351709
 GameObject:
   m_ObjectHideFlags: 0

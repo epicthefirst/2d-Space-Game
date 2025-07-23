@@ -81,7 +81,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
 
     [SerializeField] GameObject carrierButtonParent;
     [SerializeField] UnityEngine.Object specImageFolder;
-    [SerializeField] RoutePlanner routePlannetScript;
+    [SerializeField] RoutePlanner routePlannerScript;
 
     public GameObject StarInfo;
     public GameObject CarrierInfo;
@@ -136,7 +136,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
     [SerializeField] TMP_Text inputedShipCountTextField;
 
     public GameObject carrierButtonPrefab;
-    public bool isOnUI;
+    public bool isRoutePlannerActive = false;
 
 
     //Events
@@ -247,10 +247,31 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
     public void InitUI(GameObject star)
     {
         Debug.Log(star);
+
+        if (isRoutePlannerActive)
+        {
+            Destroy(circleObject);
+            circleObject = GenerateCircle(star.transform.position, star.GetComponent<StarScript>().Range);
+
+
+            if (false)
+            {
+                //Some pathfinding script
+            }
+            else
+            {
+                Debug.LogWarning((currentCarrier != null));
+                List<GameObject> starWaypoints = routePlannerScript.currentCarrier.GetComponent<ShipController>().starWaypoints;
+                starWaypoints.Add(star);
+                routePlannerScript.updateUI(starWaypoints);
+            }
+            return;
+        }
+        
         lastClickedStar = star;
         Debug.Log(lastClickedStar);
         ClearUI();
-        StarInfo.SetActive(true);
+        switchPanels(0);
         starSelected = true;
         currentStar = star;
         CStarScript = star.GetComponent<StarScript>();
@@ -279,12 +300,14 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
         circleObject = GenerateCircle(star.transform.position, CStarScript.Range);
         carrierButtons();
     }
+
     public void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape)) 
         { 
             ClearUI();
             StopAllCoroutines();
+            routePlannerScript.clear();
             starSelected = false;
         }
 /*        if (Input.GetMouseButtonDown(0))
@@ -387,39 +410,63 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
     }
     public void carrierButtonPressed(GameObject linkedCarrier)
     {
-        StarInfo.SetActive(false);
-        CarrierInfo.SetActive(true);
+/*        StarInfo.SetActive(false);
+        CarrierInfo.SetActive(true);*/
+        switchPanels(1);
         currentCarrier = linkedCarrier;
-
     }
     public void carrierMenuBlueButtonPressed()
     {
-        tempStar = currentStar;
-        TStarScript = tempStar.GetComponent<StarScript>();
+
+/*        tempStar = currentStar;
+        TStarScript = tempStar.GetComponent<StarScript>();*/
         starSelected = false;
         messagePrompt.text = "Select a star within range";
         messagePrompt.gameObject.SetActive(true);
-        routePlannetScript.init(TStarScript.CarrierList);
+
+        routePlannerScript.init(currentCarrier);
+        ClearUI();
+        Destroy(circleObject);
+        circleObject = GenerateCircle(currentStar.transform.position, CStarScript.Range);
+        /*        StartCoroutine(RoutePlanerCoroutine());*/
     }
-    IEnumerator RoutePlanerCoroutine()
+/*    IEnumerator RoutePlanerCoroutine()
     {
-        while (true)
+        Debug.Log("Coroutine started");
+        while (!isRouteStarSelected)
         {
             if (Input.GetKeyDown(KeyCode.Escape))
             {
-                Debug.Log("SecondStarSelect coroutine stopped");
+                Debug.Log("RoutePlanerCoroutine stopped");
                 yield break;
             }
             yield return null;  // Wait until the next frame
         }
+        if (isRouteStarSelected)
+        {
+            if (Mathf.RoundToInt(Vector2.Distance(tempStar.transform.position, currentStar.transform.position)) > TStarScript.Range)
+            {
+                //Some pathfinding script
+            }
+            else
+            {
+                List<GameObject> starWaypoints = currentCarrier.GetComponent<ShipController>().starWaypoints;
+                starWaypoints.Add(selectedStar);
+                routePlannerScript.updateUI(starWaypoints);
+            }
+            isRouteStarSelected = false;
+            yield return null;
+        }
 
-    }
+    }*/
+
     public void carrierInfoBackButtonPressed()
     {
         Debug.Log("Last clicked star: " + lastClickedStar);
         Debug.Log("Current star: " + currentStar);
         Debug.Log("Panel: " + (panel != null ? "Panel is not null" : "Panel is null"));
-        CarrierInfo.SetActive(false);
+        /*CarrierInfo.SetActive(false);*/
+        switchPanels(0);
         if (lastClickedStar != null)
         {
             InitUI(lastClickedStar);
@@ -578,11 +625,34 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
 
         carrierText.text = string.Empty;
         carrierList.gameObject.SetActive(false);
+
+        CarrierInfo.SetActive(false);
+        StarInfo.SetActive(false);
         if (IsInvoking("CheckForEnter"))
         {
             StopCoroutine(CheckForEnter());
         }
+/*        if (IsInvoking("RoutePlanerCoroutine()"))
+        {
+            StopCoroutine(RoutePlanerCoroutine());
+        }*/
+    
         Destroy(circleObject);
+    }
+
+    public void switchPanels(int panelNumber)
+    {
+        switch (panelNumber)
+        {
+            case 0:
+                CarrierInfo.SetActive(false);
+                StarInfo.SetActive(true);
+                return;
+            case 1:
+                CarrierInfo.SetActive(true);
+                StarInfo.SetActive(false);
+                return;
+        }
     }
 
 
@@ -620,5 +690,6 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
         circleMaker.material = new Material(Shader.Find("Sprites/Default"));
         return circleObject;
     }
+
 
 }
