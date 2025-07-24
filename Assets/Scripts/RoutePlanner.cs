@@ -20,7 +20,7 @@ public class RoutePlanner : MonoBehaviour
     public bool isActive;
 
     public GameObject currentCarrier;
-    private List<GameObject> starList;
+    private List<GameObject> tempList = new List<GameObject>();
     private List<GameObject> preFabList = new List<GameObject>();
     private Vector2 originalSizeDelta;
     // Start is called before the first frame update
@@ -38,11 +38,14 @@ public class RoutePlanner : MonoBehaviour
         updateUI(carrier.GetComponent<ShipController>().starWaypoints);
         uIManager.isRoutePlannerActive = true;
     }
-
+    public void addStar(GameObject star)
+    {
+        tempList.Add(star);
+        updateUI(tempList);
+    }
     public void updateUI(List<GameObject> starList)
     {
         Vector2 pos = originalSizeDelta;
-        this.starList = starList;
         for (int i = 0; i < starList.Count; i++)
         {
             //, new Vector3(0, -80 - (i * 40)), Quaternion.identity
@@ -64,6 +67,7 @@ public class RoutePlanner : MonoBehaviour
         }
         uIManager.isRoutePlannerActive = false;
         gameObject.SetActive(false);
+        tempList.Clear();
         
 
     }

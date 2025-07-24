@@ -254,16 +254,14 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
             circleObject = GenerateCircle(star.transform.position, star.GetComponent<StarScript>().Range);
 
 
-            if (false)
+            if (Mathf.RoundToInt(Vector2.Distance(lastClickedStar.transform.position, star.transform.position)) <= lastClickedStar.GetComponent<StarScript>().Range)
             {
-                //Some pathfinding script
+                Debug.LogWarning((currentCarrier != null));
+                routePlannerScript.addStar(star);
             }
             else
             {
-                Debug.LogWarning((currentCarrier != null));
-                List<GameObject> starWaypoints = routePlannerScript.currentCarrier.GetComponent<ShipController>().starWaypoints;
-                starWaypoints.Add(star);
-                routePlannerScript.updateUI(starWaypoints);
+                //Some pathfinding script
             }
             return;
         }
