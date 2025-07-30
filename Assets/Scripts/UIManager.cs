@@ -139,6 +139,8 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
     public bool isRoutePlannerActive = false;
 
 
+    public List<GameObject> starList;
+
     //Events
     public event EventHandler<CycleEvent> NewTick;
     CycleEvent cycleEvent = new();
@@ -298,6 +300,8 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
         circleObject = GenerateCircle(star.transform.position, CStarScript.Range);
         carrierButtons();
     }
+
+
 
     public void Update()
     {

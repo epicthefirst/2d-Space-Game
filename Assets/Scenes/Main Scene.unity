@@ -2979,6 +2979,7 @@ GameObject:
   - component: {fileID: 696977110}
   - component: {fileID: 696977109}
   - component: {fileID: 696977111}
+  - component: {fileID: 696977113}
   - component: {fileID: 696977112}
   m_Layer: 0
   m_Name: GalaxyCenter
@@ -3456,6 +3457,7 @@ MonoBehaviour:
   - Zubenelgenubi
   - Zubenelhakrabi
   - Zubeneschamali
+  starList: []
   star: {fileID: 4372693719118703517, guid: 906e2af55fb667f409e6dab833387742, type: 3}
   canvasObject: {fileID: 1387152730}
   capital: {fileID: 238825475}
@@ -3508,6 +3510,18 @@ MonoBehaviour:
   playerArray: []
   unownedArray: []
   enemyArray: []
+--- !u!114 &696977113
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 696977108}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a61bc37c3daaf543847a0b743e97e75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &713276554
 GameObject:
   m_ObjectHideFlags: 0
@@ -6193,6 +6207,7 @@ MonoBehaviour:
   inputedShipCountTextField: {fileID: 1863125715}
   carrierButtonPrefab: {fileID: 3290456688689037092, guid: 2c1fe7a5dfbbf9149909c39db3e16571, type: 3}
   isRoutePlannerActive: 0
+  starList: []
 --- !u!1 &1417931329
 GameObject:
   m_ObjectHideFlags: 0
@@ -6276,7 +6291,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1417931332}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1794237972}
+        m_TargetAssemblyTypeName: RoutePlanner, Assembly-CSharp
+        m_MethodName: test
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1417931332
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7955,7 +7982,9 @@ MonoBehaviour:
   ETAText: {fileID: 0}
   preFab: {fileID: 3724516933365884384, guid: cc2f4e3bb78d16b4e919669675a51c59, type: 3}
   uIManager: {fileID: 1387152735}
+  pathfinder: {fileID: 696977113}
   isActive: 0
+  currentCarrier: {fileID: 0}
 --- !u!1 &1810351709
 GameObject:
   m_ObjectHideFlags: 0

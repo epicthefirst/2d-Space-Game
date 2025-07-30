@@ -16,6 +16,7 @@ public class RoutePlanner : MonoBehaviour
     [SerializeField] TMP_Text ETAText;
     [SerializeField] GameObject preFab;
     [SerializeField] UIManager uIManager;
+    [SerializeField] Pathfinder pathfinder;
 
     public bool isActive;
 
@@ -23,6 +24,8 @@ public class RoutePlanner : MonoBehaviour
     private List<GameObject> tempList = new List<GameObject>();
     private List<GameObject> preFabList = new List<GameObject>();
     private Vector2 originalSizeDelta;
+
+    Pathfinder.Graph graph;
     // Start is called before the first frame update
     void Start()
     {
@@ -58,6 +61,14 @@ public class RoutePlanner : MonoBehaviour
 
         }
         gameObject.GetComponent<RectTransform>().sizeDelta = pos;
+
+        graph = new Pathfinder.Graph(uIManager.starList, 10);
+        pathfinder.calculate(graph, 0, 10);
+    }
+    public void test()
+    {
+        Debug.LogWarning("Testing");
+        pathfinder.calculate(graph, 0, 10);
     }
     public void clear()
     {

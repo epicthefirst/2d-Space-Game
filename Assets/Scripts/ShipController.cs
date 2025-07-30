@@ -12,7 +12,7 @@ public class ShipController : MonoBehaviour
     private GameObject endStar;
     private GameObject dockedStar;
     private Vector2 vector;
-    private float speedPerTick = 10;
+    private int speedPerTick = 10;
     private int time;
     private int timeLeft;
     private float angle;
@@ -63,9 +63,8 @@ public class ShipController : MonoBehaviour
     public void SendToStar(GameObject endStar)
     {
         this.endStar = endStar;
-        distance = Vector2.Distance(startStar.transform.position, endStar.transform.position);
-        time = Mathf.RoundToInt(distance / speedPerTick);
-        timeLeft = time;
+
+        timeLeft = Pathfinder.tripCalc(startStar, endStar, speedPerTick);
         nextTickButton.onClick.AddListener(NewTick);
         nextTickButton.onClick.AddListener(LeavingTick);
 

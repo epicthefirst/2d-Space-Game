@@ -12,7 +12,7 @@ public class TextObjectResizer : MonoBehaviour
         TMP_Text textComponent = TextObject.GetComponent<TMP_Text>();
         // Get the size of the text for the given string.
         Vector2 textSize = TextObject.GetComponent<TMP_Text>().GetPreferredValues(word);
-        Debug.LogWarning(textSize.x + " : " + textSize.y);
+/*        Debug.LogWarning(textSize.x + " : " + textSize.y);*/
         // Set the text
         textComponent.text = word;
         RectTransform textObjTransform = TextObject.GetComponent<RectTransform>();

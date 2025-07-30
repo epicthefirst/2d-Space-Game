@@ -69,6 +69,7 @@ public class MapGeneration : MonoBehaviour
         //Where N is = to 181741560 (The LCM of 5,8,13,21,34,55,89)
     };
 
+    public List<GameObject> starList = new List<GameObject>();
 
     //Stuff to not mess with
     IDictionary<Tuple<int, int>, RingData> ringDictionary = new Dictionary<Tuple<int, int>, RingData>();
@@ -213,6 +214,8 @@ public class MapGeneration : MonoBehaviour
                 lr.loop = true;
                 Debug.LogWarning("Done");*/
 
+        uiManager.starList = starList;
+
     }
 
     private List<Tuple<int, int>> slingshotPeriodCalculator(int planetCount)
@@ -278,6 +281,8 @@ public class MapGeneration : MonoBehaviour
         //playerScript.addStar(new StarData(ref capital));
         ringDictionary.Add((new Tuple<int,int>(-1,1)), new RingData(capital, capital.transform.position ,-1, 1));
         capitalScript.isAwake = true;
+
+        starList.Add(capital);
     }
 
     //Makes the star pattern
@@ -364,6 +369,7 @@ public class MapGeneration : MonoBehaviour
         }
         //Debug.Log(k + "/" + i);
         arrayOfRings[k][i] = new RingData(starSpawn, pos, k, i);
+        starList.Add(starSpawn);
         return starSpawn;
     }
     private string starNameMethod(int starCount)
