@@ -63,6 +63,10 @@ public class RoutePlanner : MonoBehaviour
         gameObject.GetComponent<RectTransform>().sizeDelta = pos;
 
         graph = new Pathfinder.Graph(uIManager.starList, 10, 69);
+
+
+
+/*        graph.calculateGraph();*/
         pathfinder.calculate(graph, 0, 10);
     }
     public void test()

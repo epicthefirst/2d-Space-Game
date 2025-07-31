@@ -17,6 +17,8 @@ public class Pathfinder : MonoBehaviour
     }
 
 
+
+
     //Dijkstra's
     public /*List<Node>*/void calculate(Graph graph, int start, float travelSpeed)
     {
@@ -67,6 +69,12 @@ public class Pathfinder : MonoBehaviour
 
     }
 
+    public void test()
+    {
+        Graph graph = new Graph(null, 10, 0);
+        graph.calculateGridSquaresTree(1024, 3);
+    }
+
     private static int MinimumDistance(int[] distances, bool[] shortestPathTreeSet)
     {
         int min = int.MaxValue;
@@ -106,7 +114,7 @@ public class Pathfinder : MonoBehaviour
         private int vertices;
         private List<Node>[] adjacencyList;
         public List<GameObject> starList;
-        public List<GameObject> dumbStarList;
+        public List<GameObject> shortStarList;
         public int speed;
         public int tickCreated;
 
@@ -117,6 +125,9 @@ public class Pathfinder : MonoBehaviour
             this.speed = speed;
             this.tickCreated = tick;
             Debug.Log("Created graph script on tick:" + tick);
+
+
+
 
             /*        for (int i = 0; i < vertices; i++)
                     {
@@ -176,11 +187,10 @@ public class Pathfinder : MonoBehaviour
             
 /*            int currentSize = squareSize;*/
             GridObject gridTreeParent = new GridObject(null, 0, squareSize, new Vector2Int(0,0));
-            for (int i = 1; i < subdivisionCount; i++)
-            {
-
-                int currentSize = squareSize / (4*i);
-            }
+            gridTreeParent.starsInSquare = starList;
+            calculateChildrenSquares(gridTreeParent, subdivisionCount);
+            Debug.Log("Done");
+            Debug.Log(lowLevelGrid.Count);
 
         }
 
@@ -192,11 +202,10 @@ public class Pathfinder : MonoBehaviour
             Vector2Int parentPosition = gridObject.position;
             gridObject.children = new GridObject[4]
             {
-                    
-                new GridObject(gridObject, gridObject.level + 1, gridObject.sideLenght/4, new Vector2Int(parentPosition.x + (parentPosition.x/4), parentPosition.y + (parentPosition.y/4)) ),
-                new GridObject(gridObject, gridObject.level + 1, gridObject.sideLenght/4, new Vector2Int(parentPosition.x + (parentPosition.x/4), parentPosition.y - (parentPosition.y/4)) ),
-                new GridObject(gridObject, gridObject.level + 1, gridObject.sideLenght/4, new Vector2Int(parentPosition.x - (parentPosition.x/4), parentPosition.y - (parentPosition.y/4)) ),
-                new GridObject(gridObject, gridObject.level + 1, gridObject.sideLenght/4, new Vector2Int(parentPosition.x - (parentPosition.x/4), parentPosition.y + (parentPosition.y/4)) )
+                new GridObject(gridObject, gridObject.level + 1, gridObject.sideLength/4, new Vector2Int(parentPosition.x + (parentPosition.x/4), parentPosition.y + (parentPosition.y/4)) ),
+                new GridObject(gridObject, gridObject.level + 1, gridObject.sideLength/4, new Vector2Int(parentPosition.x + (parentPosition.x/4), parentPosition.y - (parentPosition.y/4)) ),
+                new GridObject(gridObject, gridObject.level + 1, gridObject.sideLength/4, new Vector2Int(parentPosition.x - (parentPosition.x/4), parentPosition.y - (parentPosition.y/4)) ),
+                new GridObject(gridObject, gridObject.level + 1, gridObject.sideLength/4, new Vector2Int(parentPosition.x - (parentPosition.x/4), parentPosition.y + (parentPosition.y/4)) )
             };
 
 
@@ -216,7 +225,37 @@ public class Pathfinder : MonoBehaviour
             }
 
 
+
+
+
+
+
+        }
+
+        public void dumbedListCalculator(GameObject startStar, GameObject endstar)
+        {
+            float lineLength = Vector2.Distance(startStar.transform.position, endstar.transform.position);
+
+            //y = mx + b type shi fr
+
+            float m = (startStar.transform.position.y - endstar.transform.position.y) / (startStar.transform.position.x - endstar.transform.position.x);
+            float b = -(m * startStar.transform.position.x) + startStar.transform.position.y;
+            float bTop = b + (lineLength / 2);
+            float bBottom = b - (lineLength / 2);
+
+/*            float mHigh*/
+            float bHigh = m + lineLength;
+            float bLow = m - lineLength;
+
+            foreach (GridObject square in lowLevelGrid)
+            {
+/*                Vector2*/
             }
+
+        }
+
+
+
 
         public class GridObject
         {
@@ -225,23 +264,39 @@ public class Pathfinder : MonoBehaviour
             public int level;
             public bool isLowest;
             public List<GameObject> stars;
-            public int sideLenght;
+            public int sideLength;
             public Vector2Int position;
-            public GridObject(GridObject parent, int level, int sideLenght, Vector2Int position)
+            public List<GameObject> starsInSquare;
+            public GridObject(GridObject parent, int level, int sideLength, Vector2Int position)
             {
                 this.parent = parent;
                 this.level = level;
-                this.sideLenght = sideLenght;
+                this.sideLength = sideLength;
                 this.position = position;
-
+                calculateStarsInSquare();
             }
             public void addStars(List<GameObject> starsList)
             {
                 stars = starsList;
             }
+            public void calculateStarsInSquare()
+            {
+
+                foreach (GameObject star in this.parent.stars)
+                {
+                    Vector2 pos = star.transform.position;
+                    Vector2Int objPos = this.position;
+                    float side = this.sideLength / 2;
+                    if ((pos.x < objPos.x + side) && (pos.y <= objPos.y + side) && (pos.x >= -side) && (pos.y >= -side))
+                    {
+                        starsInSquare.Add(star);
+                    }
+                }
+
+            }
         }
 
-        public void calculateGraph()
+        public void calculateGraph(List<GameObject> dumbStarList)
         {
 
 
@@ -269,6 +324,8 @@ public class Pathfinder : MonoBehaviour
 
             }
         }
+
+
 
 
         public Dictionary<Vector2Int, List<Vector2>> gridGraph(List<GameObject> starList, int offset, int numOfCircles)
