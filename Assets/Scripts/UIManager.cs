@@ -250,6 +250,8 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
     {
         Debug.Log(star);
 
+
+        lastClickedStar = star;
         if (isRoutePlannerActive)
         {
             Destroy(circleObject);
@@ -268,7 +270,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
             return;
         }
         
-        lastClickedStar = star;
+        
         Debug.Log(lastClickedStar);
         ClearUI();
         switchPanels(0);
