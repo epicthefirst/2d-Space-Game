@@ -119,6 +119,7 @@ public class Pathfinder : MonoBehaviour
         public int tickCreated;
 
         List<GridObject> lowLevelGrid = new List<GridObject>();
+        List<GameObject> slimStarList = new List<GameObject>();
         public Graph(List<GameObject> list, int speed, int tick)
         {
             this.starList = list;
@@ -208,12 +209,17 @@ public class Pathfinder : MonoBehaviour
                 new GridObject(gridObject, gridObject.level + 1, gridObject.sideLength/4, new Vector2Int(parentPosition.x - (parentPosition.x/4), parentPosition.y + (parentPosition.y/4)) )
             };
 
+            foreach (GridObject child in gridObject.children)
+            {
+                child.calculateStarsInSquare(gridObject);
+            }
 
             if (desiredLevel > gridObject.level + 1)
             {
                 for (int i = 0; i < 4; i++)
                 {
                     calculateChildrenSquares(gridObject.children[i], desiredLevel);
+
                 }
             }
             else
@@ -232,25 +238,61 @@ public class Pathfinder : MonoBehaviour
 
         }
 
-        public void dumbedListCalculator(GameObject startStar, GameObject endstar)
+        public List<GameObject> dumbedListCalculator(GameObject startStar, GameObject endstar)
         {
-            float lineLength = Vector2.Distance(startStar.transform.position, endstar.transform.position);
+            
 
-            //y = mx + b type shi fr
+            Vector2 difference = endstar.transform.position - startStar.transform.position;
 
-            float m = (startStar.transform.position.y - endstar.transform.position.y) / (startStar.transform.position.x - endstar.transform.position.x);
-            float b = -(m * startStar.transform.position.x) + startStar.transform.position.y;
-            float bTop = b + (lineLength / 2);
-            float bBottom = b - (lineLength / 2);
+            float length = Mathf.Sqrt((difference.x * difference.x) + (difference.y * difference.y));
 
-/*            float mHigh*/
-            float bHigh = m + lineLength;
-            float bLow = m - lineLength;
+            Vector2 normalAdjust = new Vector2(difference.x / length, difference.y / length);
 
-            foreach (GridObject square in lowLevelGrid)
+            Vector2 temp1 = new Vector2(startStar.transform.position.x, startStar.transform.position.y) - (normalAdjust * length / 4);
+            Vector2 temp2 = new Vector2(endstar.transform.position.x, endstar.transform.position.y) + (normalAdjust * length / 4);
+
+            Vector2 perpendicularOffset = new Vector2(-normalAdjust.y, normalAdjust.x) * length/4;
+
+            Vector2 v1 = temp1 - perpendicularOffset;
+            Vector2 v2 = temp1 + perpendicularOffset;
+            Vector2 v3 = temp2 + perpendicularOffset;
+            Vector2 v4 = temp2 - perpendicularOffset;
+
+
+            foreach (GridObject obj in lowLevelGrid)
             {
-/*                Vector2*/
+                Vector2 u = v2 - v1;
+                Vector2 v = v4 - v1;
+                Vector2 w = obj.position - v1;
+
+                float s = Vector2.Dot(w, u) / Vector2.Dot(u, u);
+                float t = Vector2.Dot(w, v) / Vector2.Dot(v, v);
+
+                ///////ADD SHIT HERE LATER FOR WORMHOLES
+                if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
+                {
+                    slimStarList.AddRange(obj.starsInSquare);
+                }
             }
+
+            return slimStarList;
+
+
+
+
+            /*            //y = mx + b type shi fr
+
+                        float m = (startStar.transform.position.y - endstar.transform.position.y) / (startStar.transform.position.x - endstar.transform.position.x);
+                        float b = -(m * startStar.transform.position.x) + startStar.transform.position.y;
+                        float bTop = b + (lineLength / 2);
+                        float bBottom = b - (lineLength / 2);
+
+            *//*            float mHigh*//*
+                        float bHigh = m + lineLength;
+                        float bLow = m - lineLength;
+
+                        if (  ()  )*/
+
 
         }
 
@@ -263,7 +305,6 @@ public class Pathfinder : MonoBehaviour
             public GridObject[] children;
             public int level;
             public bool isLowest;
-            public List<GameObject> stars;
             public int sideLength;
             public Vector2Int position;
             public List<GameObject> starsInSquare;
@@ -273,16 +314,12 @@ public class Pathfinder : MonoBehaviour
                 this.level = level;
                 this.sideLength = sideLength;
                 this.position = position;
-                calculateStarsInSquare();
+                
             }
-            public void addStars(List<GameObject> starsList)
-            {
-                stars = starsList;
-            }
-            public void calculateStarsInSquare()
+            public void calculateStarsInSquare(GridObject p)
             {
 
-                foreach (GameObject star in this.parent.stars)
+                foreach (GameObject star in p.starsInSquare)
                 {
                     Vector2 pos = star.transform.position;
                     Vector2Int objPos = this.position;

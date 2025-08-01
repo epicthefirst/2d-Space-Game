@@ -26,6 +26,8 @@ public class RoutePlanner : MonoBehaviour
     private Vector2 originalSizeDelta;
 
     Pathfinder.Graph graph;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -37,13 +39,28 @@ public class RoutePlanner : MonoBehaviour
         gameObject.SetActive(true);
         isActive = true;
         currentCarrier = carrier;
-
-        updateUI(carrier.GetComponent<ShipController>().starWaypoints);
+        tempList = carrier.GetComponent<ShipController>().starWaypoints;
+        updateUI(tempList);
         uIManager.isRoutePlannerActive = true;
+
+        graph = new Pathfinder.Graph(uIManager.starList, 10, 69);
+        graph.calculateGridSquaresTree(1024, 3);
     }
     public void addStar(GameObject star)
     {
-        tempList.Add(star);
+        if (tempList.Count != 0 && Mathf.RoundToInt(Vector2.Distance(star.transform.position, tempList[tempList.Count-1].transform.position)) > tempList[tempList.Count - 1].GetComponent<StarScript>().Range)
+        {
+            Debug.Log("We runnin da calcs");
+
+            graph.calculateGraph(graph.dumbedListCalculator(tempList[tempList.Count - 1], star));
+            pathfinder.calculate(graph, 0, 10);
+        }
+        else
+        {
+            tempList.Add(star);
+        }
+        
+
         updateUI(tempList);
     }
     public void updateUI(List<GameObject> starList)
@@ -62,18 +79,17 @@ public class RoutePlanner : MonoBehaviour
         }
         gameObject.GetComponent<RectTransform>().sizeDelta = pos;
 
-        graph = new Pathfinder.Graph(uIManager.starList, 10, 69);
 
 
 
-/*        graph.calculateGraph();*/
-        pathfinder.calculate(graph, 0, 10);
+
+
     }
-    public void test()
+/*    public void test()
     {
         Debug.LogWarning("Testing");
         pathfinder.calculate(graph, 0, 10);
-    }
+    }*/
     public void clear()
     {
         foreach(GameObject p in preFabList)

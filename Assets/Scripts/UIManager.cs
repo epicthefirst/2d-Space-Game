@@ -140,6 +140,8 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
 
 
     public List<GameObject> starList;
+    Pathfinder.Graph graph;
+    [SerializeField] Pathfinder pathfinder;
 
     //Events
     public event EventHandler<CycleEvent> NewTick;
@@ -258,15 +260,9 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
             circleObject = GenerateCircle(star.transform.position, star.GetComponent<StarScript>().Range);
 
 
-            if (Mathf.RoundToInt(Vector2.Distance(lastClickedStar.transform.position, star.transform.position)) <= lastClickedStar.GetComponent<StarScript>().Range)
-            {
-                Debug.LogWarning((currentCarrier != null));
-                routePlannerScript.addStar(star);
-            }
-            else
-            {
-                //Some pathfinding script
-            }
+
+            routePlannerScript.addStar(star);
+
             return;
         }
         

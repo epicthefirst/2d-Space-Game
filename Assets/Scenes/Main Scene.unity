@@ -6208,6 +6208,7 @@ MonoBehaviour:
   carrierButtonPrefab: {fileID: 3290456688689037092, guid: 2c1fe7a5dfbbf9149909c39db3e16571, type: 3}
   isRoutePlannerActive: 0
   starList: []
+  pathfinder: {fileID: 696977113}
 --- !u!1 &1417931329
 GameObject:
   m_ObjectHideFlags: 0
