@@ -1,11 +1,13 @@
 using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Pathfinder : MonoBehaviour
 {
 
-
+    public GameObject blueCircleDot;
 
 
     //Output time in ticks to destination. Also used as weight
@@ -72,7 +74,7 @@ public class Pathfinder : MonoBehaviour
     public void test()
     {
         Graph graph = new Graph(null, 10, 0);
-        graph.calculateGridSquaresTree(1024, 3);
+        graph.calculateGridSquaresTree(1024, 4);
     }
 
     private static int MinimumDistance(int[] distances, bool[] shortestPathTreeSet)
@@ -199,18 +201,52 @@ public class Pathfinder : MonoBehaviour
         //RECURSIVE, BEWARE!!!
         public void calculateChildrenSquares(GridObject gridObject, int desiredLevel)
         {
+            Debug.LogError("calculateChildrenSquares");
 
             Vector2Int parentPosition = gridObject.position;
             gridObject.children = new GridObject[4]
             {
-                new GridObject(gridObject, gridObject.level + 1, gridObject.sideLength/4, new Vector2Int(parentPosition.x + (parentPosition.x/4), parentPosition.y + (parentPosition.y/4)) ),
-                new GridObject(gridObject, gridObject.level + 1, gridObject.sideLength/4, new Vector2Int(parentPosition.x + (parentPosition.x/4), parentPosition.y - (parentPosition.y/4)) ),
-                new GridObject(gridObject, gridObject.level + 1, gridObject.sideLength/4, new Vector2Int(parentPosition.x - (parentPosition.x/4), parentPosition.y - (parentPosition.y/4)) ),
-                new GridObject(gridObject, gridObject.level + 1, gridObject.sideLength/4, new Vector2Int(parentPosition.x - (parentPosition.x/4), parentPosition.y + (parentPosition.y/4)) )
+                new GridObject(gridObject, gridObject.level + 1, gridObject.sideLength/2, new Vector2Int(parentPosition.x + (gridObject.sideLength/4), parentPosition.y + (gridObject.sideLength/4)) ),
+                new GridObject(gridObject, gridObject.level + 1, gridObject.sideLength/2, new Vector2Int(parentPosition.x + (gridObject.sideLength/4), parentPosition.y - (gridObject.sideLength/4)) ),
+                new GridObject(gridObject, gridObject.level + 1, gridObject.sideLength/2, new Vector2Int(parentPosition.x - (gridObject.sideLength/4), parentPosition.y - (gridObject.sideLength/4)) ),
+                new GridObject(gridObject, gridObject.level + 1, gridObject.sideLength/2, new Vector2Int(parentPosition.x - (gridObject.sideLength/4), parentPosition.y + (gridObject.sideLength/4)) )
             };
 
             foreach (GridObject child in gridObject.children)
             {
+                int radius = 4;
+
+                GameObject circleObject = new GameObject("circleObject");
+                LineRenderer circleMaker = circleObject.AddComponent<LineRenderer>();
+                circleMaker.material = new Material(Shader.Find("Sprites/Default"));
+
+                circleMaker.startColor = Color.cyan;
+                circleMaker.endColor = Color.cyan;
+                circleMaker.startWidth = 1f;
+                circleMaker.endWidth = 1f;
+
+                int steps = (int)MathF.Round(2 * MathF.PI * radius);
+                circleMaker.positionCount = (steps) + 2;
+
+                for (int i = 0; i < (steps) + 2; i++)
+                {
+                    float circumferenceProgress = (float)i / steps;
+
+                    float currentRadian = (circumferenceProgress * 2 * Mathf.PI);
+
+                    float xScaled = Mathf.Cos(currentRadian);
+                    float yScaled = Mathf.Sin(currentRadian);
+
+                    float x = xScaled * radius;
+                    float y = yScaled * radius;
+
+                    Vector2 position = new Vector2(x, y) + child.position;
+
+                    circleMaker.SetPosition(i, position);
+                }
+                circleMaker.material = new Material(Shader.Find("Sprites/Default"));
+
+                Debug.LogWarning(gridObject.starsInSquare.Count);
                 child.calculateStarsInSquare(gridObject);
             }
 
@@ -240,7 +276,7 @@ public class Pathfinder : MonoBehaviour
 
         public List<GameObject> dumbedListCalculator(GameObject startStar, GameObject endstar)
         {
-            
+            Debug.LogError("Running");
 
             Vector2 difference = endstar.transform.position - startStar.transform.position;
 
@@ -248,15 +284,27 @@ public class Pathfinder : MonoBehaviour
 
             Vector2 normalAdjust = new Vector2(difference.x / length, difference.y / length);
 
-            Vector2 temp1 = new Vector2(startStar.transform.position.x, startStar.transform.position.y) - (normalAdjust * length / 4);
-            Vector2 temp2 = new Vector2(endstar.transform.position.x, endstar.transform.position.y) + (normalAdjust * length / 4);
+            Vector2 temp1 = new Vector2(startStar.transform.position.x, startStar.transform.position.y) - (normalAdjust * length);
+            Vector2 temp2 = new Vector2(endstar.transform.position.x, endstar.transform.position.y) + (normalAdjust * length);
 
-            Vector2 perpendicularOffset = new Vector2(-normalAdjust.y, normalAdjust.x) * length/4;
+            Vector2 perpendicularOffset = new Vector2(-normalAdjust.y, normalAdjust.x) * length;
 
             Vector2 v1 = temp1 - perpendicularOffset;
             Vector2 v2 = temp1 + perpendicularOffset;
             Vector2 v3 = temp2 + perpendicularOffset;
             Vector2 v4 = temp2 - perpendicularOffset;
+            Debug.Log(lowLevelGrid.Count);
+            Debug.Log("Vectors");
+            Debug.Log(v1);
+            Debug.Log(v2);
+            Debug.Log(v3);
+            Debug.Log(v4);
+            Debug.Log(perpendicularOffset);
+
+            Instantiate(endstar, v1, Quaternion.identity, null);
+            Instantiate(endstar, v2, Quaternion.identity, null);
+            Instantiate(endstar, v3, Quaternion.identity, null);
+            Instantiate(endstar, v4, Quaternion.identity, null);
 
 
             foreach (GridObject obj in lowLevelGrid)
@@ -273,6 +321,44 @@ public class Pathfinder : MonoBehaviour
                 {
                     slimStarList.AddRange(obj.starsInSquare);
                 }
+            }
+
+            //Debug
+            Debug.Log("SlimStarList.Count = " + slimStarList.Count);
+            foreach(GameObject tempStar in slimStarList)
+            {
+                Debug.Log("Starname: " + tempStar.name);
+                int radius = 10;
+
+                GameObject circleObject = new GameObject("circleObject");
+                LineRenderer circleMaker = circleObject.AddComponent<LineRenderer>();
+                circleMaker.material = new Material(Shader.Find("Sprites/Default"));
+
+                circleMaker.startColor = Color.yellow;
+                circleMaker.endColor = Color.yellow;
+                circleMaker.startWidth = 1f;
+                circleMaker.endWidth = 1f;
+
+                int steps = (int)MathF.Round(2 * MathF.PI * radius);
+                circleMaker.positionCount = (steps) + 2;
+
+                for (int i = 0; i < (steps) + 2; i++)
+                {
+                    float circumferenceProgress = (float)i / steps;
+
+                    float currentRadian = (circumferenceProgress * 2 * Mathf.PI);
+
+                    float xScaled = Mathf.Cos(currentRadian);
+                    float yScaled = Mathf.Sin(currentRadian);
+
+                    float x = xScaled * radius;
+                    float y = yScaled * radius;
+
+                    Vector2 position = new Vector3(x, y) + tempStar.transform.position;
+
+                    circleMaker.SetPosition(i, position);
+                }
+                circleMaker.material = new Material(Shader.Find("Sprites/Default"));
             }
 
             return slimStarList;
@@ -318,7 +404,7 @@ public class Pathfinder : MonoBehaviour
             }
             public void calculateStarsInSquare(GridObject p)
             {
-
+                starsInSquare = new List<GameObject>();
                 foreach (GameObject star in p.starsInSquare)
                 {
                     Vector2 pos = star.transform.position;

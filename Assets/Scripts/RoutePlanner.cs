@@ -44,7 +44,7 @@ public class RoutePlanner : MonoBehaviour
         uIManager.isRoutePlannerActive = true;
 
         graph = new Pathfinder.Graph(uIManager.starList, 10, 69);
-        graph.calculateGridSquaresTree(1024, 3);
+        graph.calculateGridSquaresTree(1024, 4);
     }
     public void addStar(GameObject star)
     {

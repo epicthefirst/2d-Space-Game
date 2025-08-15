@@ -215,6 +215,7 @@ public class MapGeneration : MonoBehaviour
                 Debug.LogWarning("Done");*/
 
         uiManager.starList = starList;
+        Debug.LogWarning(starList.Count);
 
     }
 
