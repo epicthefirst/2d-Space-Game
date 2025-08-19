@@ -424,7 +424,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
         messagePrompt.text = "Select a star within range";
         messagePrompt.gameObject.SetActive(true);
 
-        routePlannerScript.init(currentCarrier);
+        routePlannerScript.init(currentCarrier, currentStar);
         ClearUI();
         Destroy(circleObject);
         circleObject = GenerateCircle(currentStar.transform.position, CStarScript.Range);

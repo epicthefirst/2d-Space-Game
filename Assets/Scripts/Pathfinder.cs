@@ -180,6 +180,18 @@ public class Pathfinder : MonoBehaviour
             /*        float distance = Vector2.Distance(start.star.transform.position, endStar.transform.position);*/
         }
 
+        public int findStarIndex(GameObject star)
+        {
+            for (int i = 0; i > slimStarList.Count; i++)
+            {
+                if (star = slimStarList[i])
+                {
+                    return i;
+                }
+            }
+            Debug.LogError("FIX ME");
+            return int.MaxValue;
+        }
         public void calculateGridSquaresTree(int squareSize, int subdivisionCount)
         {
             /*            Vector2Int v1 = new Vector2Int(squareSize, squareSize); //Top right
@@ -246,8 +258,9 @@ public class Pathfinder : MonoBehaviour
                 }
                 circleMaker.material = new Material(Shader.Find("Sprites/Default"));
 
-                Debug.LogWarning(gridObject.starsInSquare.Count);
+                
                 child.calculateStarsInSquare(gridObject);
+                Debug.LogWarning(gridObject.starsInSquare.Count);
             }
 
             if (desiredLevel > gridObject.level + 1)
@@ -306,7 +319,7 @@ public class Pathfinder : MonoBehaviour
             Instantiate(endstar, v3, Quaternion.identity, null);
             Instantiate(endstar, v4, Quaternion.identity, null);
 
-
+            Debug.LogError(lowLevelGrid.Count);
             foreach (GridObject obj in lowLevelGrid)
             {
                 Vector2 u = v2 - v1;
@@ -319,7 +332,10 @@ public class Pathfinder : MonoBehaviour
                 ///////ADD SHIT HERE LATER FOR WORMHOLES
                 if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
                 {
-                    slimStarList.AddRange(obj.starsInSquare);
+                    foreach (GameObject star in obj.starsInSquare)
+                    {
+                        slimStarList.Add(star);
+                    }
                 }
             }
 

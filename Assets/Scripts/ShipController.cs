@@ -10,7 +10,7 @@ public class ShipController : MonoBehaviour
 {
     private GameObject startStar;
     private GameObject endStar;
-    private GameObject dockedStar;
+    public GameObject dockedStar;
     private Vector2 vector;
     private int speedPerTick = 10;
     private int time;

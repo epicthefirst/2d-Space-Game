@@ -21,9 +21,11 @@ public class RoutePlanner : MonoBehaviour
     public bool isActive;
 
     public GameObject currentCarrier;
+    public GameObject currentStar;
     private List<GameObject> tempList = new List<GameObject>();
     private List<GameObject> preFabList = new List<GameObject>();
     private Vector2 originalSizeDelta;
+    private ShipController carrierScript;
 
     Pathfinder.Graph graph;
 
@@ -34,32 +36,76 @@ public class RoutePlanner : MonoBehaviour
         originalSizeDelta = gameObject.GetComponent<RectTransform>().sizeDelta;
         gameObject.SetActive(false);
     }
-    public void init(GameObject carrier)
+    public void init(GameObject carrier, GameObject currentStar)
     {
+        this.currentStar = currentStar;
         gameObject.SetActive(true);
         isActive = true;
+        carrierScript = carrier.GetComponent<ShipController>();
         currentCarrier = carrier;
-        tempList = carrier.GetComponent<ShipController>().starWaypoints;
+        tempList = carrierScript.starWaypoints;
         updateUI(tempList);
         uIManager.isRoutePlannerActive = true;
-
         graph = new Pathfinder.Graph(uIManager.starList, 10, 69);
         graph.calculateGridSquaresTree(1024, 4);
     }
     public void addStar(GameObject star)
     {
-        if (tempList.Count != 0 && Mathf.RoundToInt(Vector2.Distance(star.transform.position, tempList[tempList.Count-1].transform.position)) > tempList[tempList.Count - 1].GetComponent<StarScript>().Range)
+        if (tempList.Count == 0)
+        {
+            if (Mathf.RoundToInt(Vector2.Distance(star.transform.position, currentStar.transform.position)) <= currentStar.GetComponent<StarScript>().Range)
+            {
+                tempList.Add(star);
+            }
+            else if (star == currentStar)
+            {
+                tempList.Add(star);
+            }
+            else
+            {
+                Debug.Log("Too far, running algorithm");
+
+                graph.calculateGraph(graph.dumbedListCalculator(currentStar, star));
+                pathfinder.calculate(graph, graph.findStarIndex(currentStar), 10);
+            }
+        }
+        else if (Mathf.RoundToInt(Vector2.Distance(star.transform.position, tempList[tempList.Count - 1].transform.position)) > tempList[tempList.Count - 1].GetComponent<StarScript>().Range)
         {
             Debug.Log("We runnin da calcs");
 
             graph.calculateGraph(graph.dumbedListCalculator(tempList[tempList.Count - 1], star));
-            pathfinder.calculate(graph, 0, 10);
+            pathfinder.calculate(graph, graph.findStarIndex(tempList[tempList.Count - 1]), 10);
         }
         else
         {
             tempList.Add(star);
         }
-        
+
+
+        /*        if(tempList == null)
+                {
+                    Debug.LogWarning("tempList = null");
+                    if (Mathf.RoundToInt(Vector2.Distance(star.transform.position, carrierScript.dockedStar.transform.position)) < carrierScript.dockedStar.GetComponent<StarScript>().Range)
+                    {
+                        tempList.Add(star);
+                    }
+                    else
+                    {
+                        Debug.LogError("Error here?");
+                    }
+                }
+                else if (Mathf.RoundToInt(Vector2.Distance(star.transform.position, tempList[tempList.Count-1].transform.position)) > tempList[tempList.Count - 1].GetComponent<StarScript>().Range)
+                {
+                    Debug.Log("We runnin da calcs");
+
+                    graph.calculateGraph(graph.dumbedListCalculator(tempList[tempList.Count - 1], star));
+                    pathfinder.calculate(graph, 0, 10);
+                }
+                else
+                {
+                    tempList.Add(star);
+                }*/
+
 
         updateUI(tempList);
     }
