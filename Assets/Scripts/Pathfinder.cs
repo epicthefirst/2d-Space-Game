@@ -322,6 +322,11 @@ public class Pathfinder : MonoBehaviour
             Debug.LogError(lowLevelGrid.Count);
             foreach (GridObject obj in lowLevelGrid)
             {
+
+
+
+
+
                 Vector2 u = v2 - v1;
                 Vector2 v = v4 - v1;
                 Vector2 w = obj.position - v1;
@@ -426,7 +431,7 @@ public class Pathfinder : MonoBehaviour
                     Vector2 pos = star.transform.position;
                     Vector2Int objPos = this.position;
                     float side = this.sideLength / 2;
-                    if ((pos.x < objPos.x + side) && (pos.y <= objPos.y + side) && (pos.x >= -side) && (pos.y >= -side))
+                    if ((pos.x <= objPos.x + side) && (pos.y <= objPos.y + side) && (pos.x >= objPos.x - side) && (pos.y >= objPos.y - side))
                     {
                         starsInSquare.Add(star);
                     }
