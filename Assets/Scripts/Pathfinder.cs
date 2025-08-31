@@ -66,9 +66,23 @@ public class Pathfinder : MonoBehaviour
             }
         }
 
-        Debug.Log(distances[minIndex]);
+        /*        Debug.Log(distances[minIndex]);
+                Debug.Log(minIndex);
+                Debug.Log(shortestPathTreeSet.Length);*/
 
-
+        string text = "|";
+        for (int i = 0; i < shortestPathTreeSet.Length; i++)
+        {
+            if (shortestPathTreeSet[i] == true)
+            {
+                text = text + "X";
+            }
+            else
+            {
+                text = text + " . ";
+            }
+        }
+        Debug.Log(text);
     }
 
     public void test()
@@ -182,15 +196,20 @@ public class Pathfinder : MonoBehaviour
 
         public int findStarIndex(GameObject star)
         {
-            for (int i = 0; i > slimStarList.Count; i++)
+            /*            for (int i = 0; i > slimStarList.Count; i++)
+                        {
+                            if (star = slimStarList[i])
+                            {
+                                return i;
+                            }
+                        }*/
+            int thing = slimStarList.IndexOf(star);
+            Debug.Log(thing);
+            if (thing == -1)
             {
-                if (star = slimStarList[i])
-                {
-                    return i;
-                }
+                Debug.LogError("FIX ME");
             }
-            Debug.LogError("FIX ME");
-            return int.MaxValue;
+            return thing;
         }
         public void calculateGridSquaresTree(int squareSize, int subdivisionCount)
         {
@@ -442,10 +461,10 @@ public class Pathfinder : MonoBehaviour
 
         public void calculateGraph(List<GameObject> dumbStarList)
         {
-
+            adjacencyList = new List<Node>[dumbStarList.Count];
 
             //Brute Forceish
-            for (int i = 0; i < vertices; i++)
+            for (int i = 0; i < dumbStarList.Count; i++)
             {
 
                 adjacencyList[i] = new List<Node>();
@@ -495,6 +514,7 @@ public class Pathfinder : MonoBehaviour
 
         public List<Node>[] GetAdjacencyList()
         {
+            Debug.Log("Adjacency length: "+adjacencyList.Length);
             return adjacencyList;
         }
     }
