@@ -2981,6 +2981,7 @@ GameObject:
   - component: {fileID: 696977111}
   - component: {fileID: 696977113}
   - component: {fileID: 696977112}
+  - component: {fileID: 696977114}
   m_Layer: 0
   m_Name: GalaxyCenter
   m_TagString: Untagged
@@ -3522,6 +3523,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a61bc37c3daaf543847a0b743e97e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  blueCircleDot: {fileID: 0}
+--- !u!114 &696977114
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 696977108}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 854ccfa34c217944085874fdc6e988b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dottedLineMaterial: {fileID: 2100000, guid: fd33dbb6b497b7f46890665a8f02c17b, type: 2}
 --- !u!1 &713276554
 GameObject:
   m_ObjectHideFlags: 0
@@ -7986,6 +8001,7 @@ MonoBehaviour:
   pathfinder: {fileID: 696977113}
   isActive: 0
   currentCarrier: {fileID: 0}
+  currentStar: {fileID: 0}
 --- !u!1 &1810351709
 GameObject:
   m_ObjectHideFlags: 0
