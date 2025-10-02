@@ -44,6 +44,7 @@ public class RoutePlanner : MonoBehaviour
         carrierScript = carrier.GetComponent<ShipController>();
         currentCarrier = carrier;
         tempList = carrierScript.starWaypoints;
+        Debug.Log(tempList.Count);
         updateUI(tempList);
         uIManager.isRoutePlannerActive = true;
         graph = new Pathfinder.Graph(uIManager.starList, 10, 69);
@@ -142,10 +143,23 @@ public class RoutePlanner : MonoBehaviour
         {
             Destroy(p);
         }
+
         uIManager.isRoutePlannerActive = false;
         gameObject.SetActive(false);
         tempList.Clear();
         
 
+    }
+
+    public void save()
+    {
+        if (currentCarrier.GetComponent<ShipController>().starWaypoints != null)
+        {
+            Debug.Log("Yay");
+            Debug.Log(tempList.Count);
+        }
+        currentCarrier.GetComponent<ShipController>().starWaypoints = tempList;
+        Debug.LogError("Good");
+        clear();
     }
 }

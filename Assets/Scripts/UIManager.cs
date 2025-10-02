@@ -417,14 +417,15 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
     }
     public void carrierMenuBlueButtonPressed()
     {
-
+        Debug.LogError("Iran");
 /*        tempStar = currentStar;
         TStarScript = tempStar.GetComponent<StarScript>();*/
         starSelected = false;
         messagePrompt.text = "Select a star within range";
         messagePrompt.gameObject.SetActive(true);
-
+        Debug.Log(currentCarrier.GetComponent<ShipController>().starWaypoints.Count);
         routePlannerScript.init(currentCarrier, currentStar);
+        
         ClearUI();
         Destroy(circleObject);
         circleObject = GenerateCircle(currentStar.transform.position, CStarScript.Range);
