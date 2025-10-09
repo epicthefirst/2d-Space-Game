@@ -70,6 +70,7 @@ public class StarScript : MonoBehaviour
 
     public Vector3[] array = new Vector3[10];
 
+
     public void Initialize(int Id, string Name, List<int> planetList, List<Tuple<int,int>> PlanetTimings, int Range, int Owner, GameObject canvas, int GarrisonCount, GameObject[] planetArray, int qualityMultiplier, Dictionary<int, int> slingshotWindowDurations)
     {
 

@@ -228,11 +228,15 @@ public class Pathfinder : MonoBehaviour
 
         }
 
+        public void calculateChildrenSquaresV2(GridObject grid, int subdivisionCount)
+        {
+            
+        }
 
         //RECURSIVE, BEWARE!!!
         public void calculateChildrenSquares(GridObject gridObject, int desiredLevel)
         {
-            Debug.LogError("calculateChildrenSquares");
+            Debug.Log("calculateChildrenSquares");
 
             Vector2Int parentPosition = gridObject.position;
             gridObject.children = new GridObject[4]

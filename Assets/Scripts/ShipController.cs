@@ -70,6 +70,11 @@ public class ShipController : MonoBehaviour
 
         Debug.Log(time);
     }
+    public void SetNewWaypoints(List<GameObject> wayPoints)
+    {
+        starWaypoints = wayPoints;
+        Debug.Log("Updated star waypoints for: "+this +", with a length of " + starWaypoints.Count);
+    }
     void NewTick()
     {
 
