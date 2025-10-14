@@ -8,6 +8,7 @@ using System.Collections.Generic;
 
 public class ShipController : MonoBehaviour
 {
+    public DrawLine lineDrawer;
     private GameObject startStar;
     private GameObject endStar;
     public GameObject dockedStar;
@@ -40,8 +41,9 @@ public class ShipController : MonoBehaviour
     //In order of going to visit
     public List<GameObject> starWaypoints;
 
-    public void Init(Button nextTickButton, GameObject startStar, int shipShipCountAdd, int carrierCount, PlayerScript ownerScript)
+    public void Init(Button nextTickButton, GameObject startStar, int shipShipCountAdd, int carrierCount, PlayerScript ownerScript, DrawLine drawline)
     {
+        lineDrawer = drawline;
         this.ownerScript = ownerScript;
         startStarScript = startStar.GetComponent<StarScript>();
         ShipCount += shipShipCountAdd;
@@ -72,8 +74,22 @@ public class ShipController : MonoBehaviour
     }
     public void SetNewWaypoints(List<GameObject> wayPoints)
     {
-        starWaypoints = wayPoints;
+        starWaypoints.Clear();
+        starWaypoints.AddRange(wayPoints);
+        List<Vector2> tempVectorList = new List<Vector2>();
+        tempVectorList.Add(new Vector2(gameObject.transform.position.x, gameObject.transform.position.y));
+        foreach (GameObject waypoint in wayPoints)
+        {
+            tempVectorList.Add(new Vector2(waypoint.transform.position.x, waypoint.transform.position.y));
+        }
+        lineDrawer.drawLinePath(tempVectorList, this);
         Debug.Log("Updated star waypoints for: "+this +", with a length of " + starWaypoints.Count);
+    }
+    public List<GameObject> GetWaypoints()
+    {
+        List<GameObject> CopyList = new List<GameObject>();
+        CopyList.AddRange(starWaypoints);
+        return CopyList;
     }
     void NewTick()
     {
@@ -98,6 +114,9 @@ public class ShipController : MonoBehaviour
         Vector2 vector = new Vector2(moveX, moveY);
         gameObject.transform.position += (Vector3)vector / time;
         Debug.Log(currentPosition +"/"+ timeLeft);
+
+
+        
     }
     void LeavingTick()
     {

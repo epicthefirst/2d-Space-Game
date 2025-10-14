@@ -71,6 +71,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
     [SerializeField] Button carrierMenuBlueButton;
 
     [SerializeField] PlayerScript playerScript;
+    [SerializeField] DrawLine lineDrawer;
 
     [SerializeField] TMP_Text carrierText;
     [SerializeField] ScrollRect carrierList;
@@ -488,7 +489,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
             ship.transform.parent = currentStar.transform;
             ShipController shipController = ship.GetComponent<ShipController>();
             carrierCount++;
-            shipController.Init(nextTickButton, currentStar, inputedShipCount, carrierCount, playerScript);
+            shipController.Init(nextTickButton, currentStar, inputedShipCount, carrierCount, playerScript, lineDrawer);
             RefreshUI();
         }
         else
@@ -573,7 +574,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
             ship.transform.parent = tempStar.transform;
             ShipController shipController = ship.GetComponent<ShipController>();
             carrierCount++;
-            shipController.Init(nextTickButton, tempStar, inputedShipCount, carrierCount, playerScript);
+            shipController.Init(nextTickButton, tempStar, inputedShipCount, carrierCount, playerScript, lineDrawer);
             ClearUI();
         }
         else
@@ -583,7 +584,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
             ship.transform.parent = tempStar.transform;
             ShipController shipController = ship.GetComponent<ShipController>();
             carrierCount++;
-            shipController.Init(nextTickButton, tempStar, inputedShipCount, carrierCount, playerScript);
+            shipController.Init(nextTickButton, tempStar, inputedShipCount, carrierCount, playerScript, lineDrawer);
             shipController.SendToStar(currentStar);
             ClearUI();
         }

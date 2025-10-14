@@ -3549,6 +3549,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dottedLineMaterial: {fileID: 2100000, guid: fd33dbb6b497b7f46890665a8f02c17b, type: 2}
+  uIManager: {fileID: 1387152735}
 --- !u!1 &713276554
 GameObject:
   m_ObjectHideFlags: 0
@@ -6238,6 +6239,7 @@ MonoBehaviour:
   buyScienceButton: {fileID: 13569670}
   carrierMenuBlueButton: {fileID: 1532690707}
   playerScript: {fileID: 238825482}
+  lineDrawer: {fileID: 696977114}
   carrierText: {fileID: 332686970}
   carrierList: {fileID: 47316025}
   econIndicator: {fileID: 843701827}

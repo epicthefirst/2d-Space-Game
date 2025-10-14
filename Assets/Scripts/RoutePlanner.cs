@@ -44,7 +44,7 @@ public class RoutePlanner : MonoBehaviour
         isActive = true;
         carrierScript = carrier.GetComponent<ShipController>();
         currentCarrier = carrier;
-        tempList = carrierScript.starWaypoints;
+        tempList = carrierScript.GetWaypoints();
         Debug.Log(carrier.GetComponent<ShipController>().starWaypoints.Count);
         updateUI(tempList);
         uIManager.isRoutePlannerActive = true;
@@ -157,7 +157,8 @@ public class RoutePlanner : MonoBehaviour
         if (currentCarrier.GetComponent<ShipController>().starWaypoints != null)
         {
             Debug.Log("Yay");
-            Debug.Log(tempList.Count); 
+            Debug.Log(tempList.Count);
+            Debug.Log(currentCarrier.GetComponent<ShipController>().GetWaypoints().Count);
         }
         currentCarrier.GetComponent<ShipController>().SetNewWaypoints(tempList);
         Debug.LogError("Good");
