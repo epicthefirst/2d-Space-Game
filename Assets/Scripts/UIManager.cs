@@ -488,7 +488,10 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
             GameObject ship = GameObject.Instantiate(shipPrefab, currentStar.transform.position, Quaternion.identity) as GameObject;
             ship.transform.parent = currentStar.transform;
             ShipController shipController = ship.GetComponent<ShipController>();
-            carrierCount++;
+
+            currentStar.GetComponent<StarScript>().AttachCarrier(1, ship);
+            shipController.dockedStar = currentStar;
+
             shipController.Init(nextTickButton, currentStar, inputedShipCount, carrierCount, playerScript, lineDrawer);
             RefreshUI();
         }
@@ -573,7 +576,8 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
             GameObject ship = GameObject.Instantiate(shipPrefab, tempStar.transform.position, Quaternion.identity) as GameObject;
             ship.transform.parent = tempStar.transform;
             ShipController shipController = ship.GetComponent<ShipController>();
-            carrierCount++;
+            tempStar.GetComponent<StarScript>().AttachCarrier(1, ship);
+            shipController.dockedStar = tempStar;
             shipController.Init(nextTickButton, tempStar, inputedShipCount, carrierCount, playerScript, lineDrawer);
             ClearUI();
         }
@@ -583,7 +587,8 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
             GameObject ship = GameObject.Instantiate(shipPrefab, tempStar.transform.position, Quaternion.identity) as GameObject;
             ship.transform.parent = tempStar.transform;
             ShipController shipController = ship.GetComponent<ShipController>();
-            carrierCount++;
+            tempStar.GetComponent<StarScript>().AttachCarrier(1, ship);
+            shipController.dockedStar = tempStar;
             shipController.Init(nextTickButton, tempStar, inputedShipCount, carrierCount, playerScript, lineDrawer);
             shipController.SendToStar(currentStar);
             ClearUI();

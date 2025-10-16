@@ -22,7 +22,9 @@ public class DrawLine : MonoBehaviour
         lineMaker.endWidth = 1;
 
         lineMaker.textureMode = LineTextureMode.Tile;
-        lineMaker.material.mainTexture.wrapMode = TextureWrapMode.MirrorOnce;
+        lineMaker.material.mainTexture.wrapMode = TextureWrapMode.Repeat;
+        lineMaker.numCornerVertices = 1;
+        
         lineMaker.positionCount = pointList.Count;
 
         for (int i = 0; i < pointList.Count; i++)
@@ -34,11 +36,21 @@ public class DrawLine : MonoBehaviour
     }
     private void thisNewTick(object sender, CycleEvent e)
     {
-        foreach (GameObject thing in linePathDictionary.Values)
+        foreach (ShipController thing in linePathDictionary.Keys)
         {
-            Destroy(thing);
+            List<Vector2> tempVectors = new List<Vector2>();
+            tempVectors.Add(thing.gameObject.transform.position);
+            List<GameObject> waypoints = thing.GetWaypoints();
+            if (waypoints.Count == 0)
+            {
+                linePathDictionary.Remove(thing);
+            }
+            foreach (GameObject obj in waypoints)
+            {
+                tempVectors.Add(obj.transform.position);
+            }
+            
         }
-        linePathDictionary.Clear();
     }
     void dottedLine(Vector2 startPoint, Vector2 endPoint, GameObject linkedObject)
     {

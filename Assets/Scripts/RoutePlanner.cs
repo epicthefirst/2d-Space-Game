@@ -161,6 +161,7 @@ public class RoutePlanner : MonoBehaviour
             Debug.Log(currentCarrier.GetComponent<ShipController>().GetWaypoints().Count);
         }
         currentCarrier.GetComponent<ShipController>().SetNewWaypoints(tempList);
+        currentCarrier.GetComponent<ShipController>().StartJourney();
         Debug.LogError("Good");
         clear();
     }

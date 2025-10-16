@@ -36,6 +36,8 @@ public class ShipController : MonoBehaviour
     public bool hasSpecialist;
     public string Specialist = null;
 
+    public int totalTimeLeft;
+
     //RoutePlanner
 
     //In order of going to visit
@@ -72,6 +74,32 @@ public class ShipController : MonoBehaviour
 
         Debug.Log(time);
     }
+    public void StartJourney()
+    {
+        dockedStar.GetComponent<StarScript>().DetachCarrier(1, gameObject);
+        if (starWaypoints.Count == 0)
+        {
+            Debug.LogError("This ain't supposed to happen twin");
+        }
+        else
+        {
+
+            endStar = starWaypoints[0];
+            time = Pathfinder.tripCalc(startStar, endStar, speedPerTick);
+            timeLeft = Pathfinder.tripCalc(startStar, endStar, speedPerTick);
+            
+
+            foreach (GameObject obj in starWaypoints)
+            {
+                totalTimeLeft += Pathfinder.tripCalc(startStar, endStar, speedPerTick);
+            }
+            Debug.Log(timeLeft);
+            Debug.Log(totalTimeLeft);
+
+            nextTickButton.onClick.AddListener(NewTick);
+            nextTickButton.onClick.AddListener(LeavingTick);
+        }
+    }
     public void SetNewWaypoints(List<GameObject> wayPoints)
     {
         starWaypoints.Clear();
@@ -96,9 +124,11 @@ public class ShipController : MonoBehaviour
 
         Debug.Log(timeLeft);
         timeLeft--;
+        totalTimeLeft--;
 
         if (timeLeft == 0) 
         {
+            
             nextTickButton.onClick.RemoveListener(NewTick);
             if (wantToSlingshot)
             {
@@ -123,19 +153,31 @@ public class ShipController : MonoBehaviour
         // Remove the child from the parent
         gameObject.transform.parent = null;
         gameObject.GetComponent<Renderer>().enabled = true;
+
         startStarScript.DetachCarrier(1, gameObject);
         nextTickButton.onClick.RemoveListener(LeavingTick);
     }
     void ArrivedAtStar()
     {
+
         slingshotMultCount = 0;
         Debug.Log("Arrived at star");
+        dockedStar = endStar;
+        starWaypoints.RemoveAt(0);
+        endStar = starWaypoints[0];
+
         gameObject.GetComponent<Renderer>().enabled = false;
         
-        dockedStar = endStar;
+        
+        startStar = dockedStar;
         StarScript starScript = dockedStar.GetComponent<StarScript>();
         starScript.ShipInbound(ShipCount, Owner, gameObject);
         gameObject.transform.parent = dockedStar.transform;
+        
+        if (starWaypoints.Count > 0)
+        {
+            StartJourney();
+        }
     }
     void SlingshotAtStar()
     {
