@@ -104,13 +104,13 @@ public class ShipController : MonoBehaviour
     {
         starWaypoints.Clear();
         starWaypoints.AddRange(wayPoints);
-        List<Vector2> tempVectorList = new List<Vector2>();
+/*        List<Vector2> tempVectorList = new List<Vector2>();
         tempVectorList.Add(new Vector2(gameObject.transform.position.x, gameObject.transform.position.y));
         foreach (GameObject waypoint in wayPoints)
         {
             tempVectorList.Add(new Vector2(waypoint.transform.position.x, waypoint.transform.position.y));
-        }
-        lineDrawer.drawLinePath(tempVectorList, this);
+        }*/
+        lineDrawer.addCarrierPath(this);
         Debug.Log("Updated star waypoints for: "+this +", with a length of " + starWaypoints.Count);
     }
     public List<GameObject> GetWaypoints()
@@ -128,7 +128,9 @@ public class ShipController : MonoBehaviour
 
         if (timeLeft == 0) 
         {
-            
+            gameObject.transform.position = endStar.transform.position;
+            lineDrawer.updateCarrier(this);
+
             nextTickButton.onClick.RemoveListener(NewTick);
             if (wantToSlingshot)
             {
@@ -146,7 +148,7 @@ public class ShipController : MonoBehaviour
         Debug.Log(currentPosition +"/"+ timeLeft);
 
 
-        
+        lineDrawer.updateCarrier(this);
     }
     void LeavingTick()
     {
@@ -164,7 +166,7 @@ public class ShipController : MonoBehaviour
         Debug.Log("Arrived at star");
         dockedStar = endStar;
         starWaypoints.RemoveAt(0);
-        endStar = starWaypoints[0];
+        endStar = null;
 
         gameObject.GetComponent<Renderer>().enabled = false;
         
@@ -176,7 +178,12 @@ public class ShipController : MonoBehaviour
         
         if (starWaypoints.Count > 0)
         {
+            endStar = starWaypoints[0];
             StartJourney();
+        }
+        else
+        {
+
         }
     }
     void SlingshotAtStar()
