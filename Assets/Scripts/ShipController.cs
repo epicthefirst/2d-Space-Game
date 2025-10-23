@@ -62,7 +62,7 @@ public class ShipController : MonoBehaviour
 
         
         startStarScript.ReduceShipCount(shipShipCountAdd);
-        startStarScript.AttachCarrier(1, gameObject);
+/*        startStarScript.AttachCarrier(gameObject);*/
     }
     public void SendToStar(GameObject endStar)
     {
@@ -76,7 +76,7 @@ public class ShipController : MonoBehaviour
     }
     public void StartJourney()
     {
-        dockedStar.GetComponent<StarScript>().DetachCarrier(1, gameObject);
+        
         if (starWaypoints.Count == 0)
         {
             Debug.LogError("This ain't supposed to happen twin");
@@ -156,15 +156,18 @@ public class ShipController : MonoBehaviour
         gameObject.transform.parent = null;
         gameObject.GetComponent<Renderer>().enabled = true;
 
-        startStarScript.DetachCarrier(1, gameObject);
+        dockedStar.GetComponent<StarScript>().DetachCarrier(gameObject);
         nextTickButton.onClick.RemoveListener(LeavingTick);
     }
     void ArrivedAtStar()
     {
 
+        //KEEP IN MIND, MUST NOT BE DISCRIMINATE TO OWNERSHIP
+
         slingshotMultCount = 0;
         Debug.Log("Arrived at star");
         dockedStar = endStar;
+        
         starWaypoints.RemoveAt(0);
         endStar = null;
 
@@ -179,11 +182,12 @@ public class ShipController : MonoBehaviour
         if (starWaypoints.Count > 0)
         {
             endStar = starWaypoints[0];
+
             StartJourney();
         }
         else
         {
-
+            lineDrawer.removeCarrierPath(this);
         }
     }
     void SlingshotAtStar()

@@ -46,6 +46,10 @@ public class DrawLine : MonoBehaviour
         linePathDictionary.Add(linkedController, drawLinePath(pointList));
         Debug.LogWarning("Made addCarrierPath");
     }
+    public void removeCarrierPath(ShipController controller)
+    {
+        linePathDictionary.Remove(controller);
+    }
     private void thisNewTick(object sender, CycleEvent e)
     {
         /*        foreach (ShipController thing in linePathDictionary.Keys)
@@ -100,10 +104,7 @@ public class DrawLine : MonoBehaviour
             lr.SetPosition(i, vectors[i]);
         }
     }
-    public void removeKeyPair(ShipController controller)
-    {
 
-    }
     void dottedLine(Vector2 startPoint, Vector2 endPoint, GameObject linkedObject)
     {
         GameObject dottedLine = new GameObject("dottedLine");   

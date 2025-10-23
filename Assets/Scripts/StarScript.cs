@@ -208,7 +208,7 @@ public class StarScript : MonoBehaviour
         if (shipOwner == Owner)
         {
 
-            AttachCarrier(1, carrier);
+            AttachCarrier(carrier);
             Refresh();
         }
         else if (Owner == 0)
@@ -216,7 +216,7 @@ public class StarScript : MonoBehaviour
             Owner = shipOwner;
             //canvas.GetComponent<UIManager>().playerStars.Add(gameObject);
             //Come back to this
-            AttachCarrier(1, carrier);
+            AttachCarrier(carrier);
             Refresh();
         }
         else
@@ -229,7 +229,7 @@ public class StarScript : MonoBehaviour
                 EconCount = 0;
                 IndustryCount = 0;
                 ScienceCount = 0;
-                AttachCarrier(1, carrier);
+                AttachCarrier(carrier);
                 //canvas.GetComponent<UIManager>().playerStars.Add(gameObject);
                 // Do some stuff here
                 Refresh();
@@ -245,17 +245,17 @@ public class StarScript : MonoBehaviour
 
 
     }
-    public void AttachCarrier(int increase, GameObject carrier)
+    public void AttachCarrier(GameObject carrier)
     {
         CarrierList.Add(carrier);
-        CarrierCount += increase;
+        CarrierCount += 1;
         PolygonRefresh();
         Refresh();
     }
-    public void DetachCarrier(int decrease, GameObject carrier)
+    public void DetachCarrier(GameObject carrier)
     {
         CarrierList.Remove(carrier);
-        CarrierCount -= decrease;
+        CarrierCount -= 1;
         PolygonRefresh();
         Refresh();
     }
