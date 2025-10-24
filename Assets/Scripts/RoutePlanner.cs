@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Linq;
 
 public class RoutePlanner : MonoBehaviour
 {
@@ -19,6 +20,7 @@ public class RoutePlanner : MonoBehaviour
     [SerializeField] Pathfinder pathfinder;
 
     public bool isActive;
+    public DrawLine lineDrawer;
 
     public GameObject currentCarrier;
     public GameObject currentStar;
@@ -26,6 +28,10 @@ public class RoutePlanner : MonoBehaviour
     private List<GameObject> preFabList = new List<GameObject>();
     private Vector2 originalSizeDelta;
     private ShipController carrierScript;
+
+    GameObject tempPath;
+    LineRenderer lr;
+
 
     Pathfinder.Graph graph;
 
@@ -38,6 +44,10 @@ public class RoutePlanner : MonoBehaviour
     }
     public void init(GameObject carrier, GameObject currentStar)
     {
+
+        tempPath = lineDrawer.makeTempPathObject();
+        lr = tempPath.GetComponent<LineRenderer>();
+
         Debug.Log("Running init for: " + carrier.ToString() + " | " + currentStar.name);
         this.currentStar = currentStar;
         gameObject.SetActive(true);
@@ -113,7 +123,15 @@ public class RoutePlanner : MonoBehaviour
     }
     public void updateUI(List<GameObject> starList)
     {
+
         Vector2 pos = originalSizeDelta;
+        foreach (GameObject p in preFabList)
+        {
+            Destroy(p);
+        }
+        preFabList.Clear();
+        lr.positionCount = starList.Count + 1;
+        lr.SetPosition(0, currentStar.transform.position);
         for (int i = 0; i < starList.Count; i++)
         {
             //, new Vector3(0, -80 - (i * 40)), Quaternion.identity
@@ -123,6 +141,7 @@ public class RoutePlanner : MonoBehaviour
             obj.GetComponent<TextObjectResizer>().write(starList[i].GetComponent<StarScript>().Name);
             preFabList.Add(obj);
 
+            lr.SetPosition(i + 1, starList[i].transform.position);
 
         }
         gameObject.GetComponent<RectTransform>().sizeDelta = pos;
@@ -150,6 +169,22 @@ public class RoutePlanner : MonoBehaviour
         tempList.Clear();
         
 
+    }
+
+    public void undoOne()
+    {
+        if (preFabList != null)
+        {
+            Debug.Log(tempList.Count);
+            tempList.RemoveAt(tempList.Count - 1);
+            Debug.Log(tempList.Count);
+            updateUI(tempList);
+
+        }
+        else
+        {
+            Debug.Log("ts empty twin");
+        }
     }
 
     public void save()

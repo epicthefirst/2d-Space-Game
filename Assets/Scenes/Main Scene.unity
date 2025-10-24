@@ -38,7 +38,6 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -4661,9 +4660,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 696977113}
-        m_TargetAssemblyTypeName: Pathfinder, Assembly-CSharp
-        m_MethodName: test
+      - m_Target: {fileID: 1794237972}
+        m_TargetAssemblyTypeName: RoutePlanner, Assembly-CSharp
+        m_MethodName: undoOne
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6165,6 +6164,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -8038,6 +8038,7 @@ MonoBehaviour:
   uIManager: {fileID: 1387152735}
   pathfinder: {fileID: 696977113}
   isActive: 0
+  lineDrawer: {fileID: 696977114}
   currentCarrier: {fileID: 0}
   currentStar: {fileID: 0}
 --- !u!1 &1810351709

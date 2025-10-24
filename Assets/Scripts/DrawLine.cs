@@ -1,7 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
+using UnityEngine;
+using UnityEngine.Experimental.GlobalIllumination;
 
 public class DrawLine : MonoBehaviour
 {
@@ -12,6 +13,34 @@ public class DrawLine : MonoBehaviour
     private void Start()
     {
 /*        uIManager.NewTick += thisNewTick;*/
+    }
+    public GameObject makeTempPathObject()
+    {
+        GameObject dottedPath = new GameObject("tempDottedPath");
+        LineRenderer lineMaker = dottedPath.AddComponent<LineRenderer>();
+/*        dottedLineMaterial.mainTexture.*/
+        lineMaker.material = dottedLineMaterial;
+/*        Color old = lineMaker.material.color;
+        old.a = 0.5f;
+        old.b = 255f;
+        lineMaker.material.SetColor("colour", old);*/
+
+        lineMaker.material.mainTextureScale = new Vector2(1.0f, 1.0f);
+        lineMaker.startWidth = 1;
+        lineMaker.endWidth = 1;
+
+        lineMaker.textureMode = LineTextureMode.Tile;
+        lineMaker.material.mainTexture.wrapMode = TextureWrapMode.Repeat;
+        lineMaker.numCornerVertices = 1;
+
+        //lineMaker.positionCount = pointList.Count;
+
+        //for (int i = 0; i < pointList.Count; i++)
+        //{
+        //    lineMaker.SetPosition(i, pointList[i]);
+        //}
+        //Debug.Log("Made path");
+        return dottedPath;
     }
     public GameObject drawLinePath(List<Vector2> pointList)
     {
