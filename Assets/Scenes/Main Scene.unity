@@ -3548,6 +3548,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dottedLineMaterial: {fileID: 2100000, guid: fd33dbb6b497b7f46890665a8f02c17b, type: 2}
+  transparentDottedLineMaterial: {fileID: 2100000, guid: 602f1618016f1dc4685203524e9df2d2, type: 2}
   uIManager: {fileID: 1387152735}
 --- !u!1 &713276554
 GameObject:

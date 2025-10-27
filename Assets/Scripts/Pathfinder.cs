@@ -22,10 +22,11 @@ public class Pathfinder : MonoBehaviour
 
 
     //Dijkstra's
-    public /*List<Node>*/void calculate(Graph graph, int start, float travelSpeed)
+    public List<GameObject> calculate(Graph graph, int start, float travelSpeed)
     {
-        List<Node> travelList = new List<Node>();
+        List<GameObject> travelList = new List<GameObject>();
         int vertices = graph.GetAdjacencyList().Length;
+        /*int vertices = graph.slimStarList.Count;*/
         bool[] shortestPathTreeSet = new bool[vertices];
         int[] distances = new int[vertices];
 
@@ -75,6 +76,7 @@ public class Pathfinder : MonoBehaviour
         {
             if (shortestPathTreeSet[i] == true)
             {
+                travelList.Add(graph.starList[i]);
                 text = text + "X";
             }
             else
@@ -83,13 +85,16 @@ public class Pathfinder : MonoBehaviour
             }
         }
         Debug.Log(text);
+
+        Debug.Log(travelList.Count);
+        return travelList;
     }
 
-    public void test()
+/*    public void test()
     {
         Graph graph = new Graph(null, 10, 0);
         graph.calculateGridSquaresTree(1024, 4);
-    }
+    }*/
 
     private static int MinimumDistance(int[] distances, bool[] shortestPathTreeSet)
     {
@@ -135,7 +140,7 @@ public class Pathfinder : MonoBehaviour
         public int tickCreated;
 
         List<GridObject> lowLevelGrid = new List<GridObject>();
-        List<GameObject> slimStarList = new List<GameObject>();
+        public List<GameObject> slimStarList = new List<GameObject>();
         public Graph(List<GameObject> list, int speed, int tick)
         {
             this.starList = list;
@@ -146,10 +151,10 @@ public class Pathfinder : MonoBehaviour
 
 
 
-            /*        for (int i = 0; i < vertices; i++)
-                    {
-                        adjacencyList[i] = new List<Node>();
-                    }*/
+            for (int i = 0; i < vertices; i++)
+            {
+                adjacencyList[i] = new List<Node>();
+            }
 
 
 
@@ -249,7 +254,7 @@ public class Pathfinder : MonoBehaviour
 
             foreach (GridObject child in gridObject.children)
             {
-                int radius = 4;
+/*                int radius = 4;
 
                 GameObject circleObject = new GameObject("circleObject");
                 LineRenderer circleMaker = circleObject.AddComponent<LineRenderer>();
@@ -279,7 +284,7 @@ public class Pathfinder : MonoBehaviour
 
                     circleMaker.SetPosition(i, position);
                 }
-                circleMaker.material = new Material(Shader.Find("Sprites/Default"));
+                circleMaker.material = new Material(Shader.Find("Sprites/Default"));*/
 
                 
                 child.calculateStarsInSquare(gridObject);
@@ -337,10 +342,10 @@ public class Pathfinder : MonoBehaviour
             Debug.Log(v4);
             Debug.Log(perpendicularOffset);
 
-            Instantiate(endstar, v1, Quaternion.identity, null);
+/*            Instantiate(endstar, v1, Quaternion.identity, null);
             Instantiate(endstar, v2, Quaternion.identity, null);
             Instantiate(endstar, v3, Quaternion.identity, null);
-            Instantiate(endstar, v4, Quaternion.identity, null);
+            Instantiate(endstar, v4, Quaternion.identity, null);*/
 
             Debug.LogError(lowLevelGrid.Count);
             foreach (GridObject obj in lowLevelGrid)
@@ -367,7 +372,7 @@ public class Pathfinder : MonoBehaviour
                 }
             }
 
-            //Debug
+/*            //Debug
             Debug.Log("SlimStarList.Count = " + slimStarList.Count);
             foreach(GameObject tempStar in slimStarList)
             {
@@ -403,7 +408,7 @@ public class Pathfinder : MonoBehaviour
                     circleMaker.SetPosition(i, position);
                 }
                 circleMaker.material = new Material(Shader.Find("Sprites/Default"));
-            }
+            }*/
 
             return slimStarList;
 

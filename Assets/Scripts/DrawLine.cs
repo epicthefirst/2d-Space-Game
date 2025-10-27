@@ -7,6 +7,7 @@ using UnityEngine.Experimental.GlobalIllumination;
 public class DrawLine : MonoBehaviour
 {
     public Material dottedLineMaterial;
+    public Material transparentDottedLineMaterial;
     public Dictionary<ShipController, GameObject> linePathDictionary = new Dictionary<ShipController, GameObject>();
     public UIManager uIManager;
 
@@ -18,12 +19,9 @@ public class DrawLine : MonoBehaviour
     {
         GameObject dottedPath = new GameObject("tempDottedPath");
         LineRenderer lineMaker = dottedPath.AddComponent<LineRenderer>();
-/*        dottedLineMaterial.mainTexture.*/
+
         lineMaker.material = dottedLineMaterial;
-/*        Color old = lineMaker.material.color;
-        old.a = 0.5f;
-        old.b = 255f;
-        lineMaker.material.SetColor("colour", old);*/
+        lineMaker.material.color -= new Color(0, 0, 0, 0.5f);
 
         lineMaker.material.mainTextureScale = new Vector2(1.0f, 1.0f);
         lineMaker.startWidth = 1;

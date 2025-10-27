@@ -661,7 +661,11 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
                 return;
         }
     }
-
+    public void MoveCircle(Vector2 pos, int radius)
+    {
+        Destroy(circleObject);
+        circleObject = GenerateCircle(pos, radius);
+    }
 
     static GameObject GenerateCircle(Vector2 pos, int radius)
     {

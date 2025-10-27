@@ -78,7 +78,7 @@ public class RoutePlanner : MonoBehaviour
                 Debug.Log("Too far, running algorithm");
 
                 graph.calculateGraph(graph.dumbedListCalculator(currentStar, star));
-                pathfinder.calculate(graph, graph.findStarIndex(currentStar), 10);
+                tempList.AddRange(pathfinder.calculate(graph, graph.findStarIndex(currentStar), 10f));
             }
         }
         else if (Mathf.RoundToInt(Vector2.Distance(star.transform.position, tempList[tempList.Count - 1].transform.position)) > tempList[tempList.Count - 1].GetComponent<StarScript>().Range)
@@ -121,6 +121,7 @@ public class RoutePlanner : MonoBehaviour
 
         updateUI(tempList);
     }
+
     public void updateUI(List<GameObject> starList)
     {
 
@@ -176,9 +177,13 @@ public class RoutePlanner : MonoBehaviour
         if (preFabList != null)
         {
             Debug.Log(tempList.Count);
+            
             tempList.RemoveAt(tempList.Count - 1);
+            uIManager.MoveCircle(tempList[tempList.Count - 1].transform.position, tempList[tempList.Count - 1].GetComponent<StarScript>().Range);
             Debug.Log(tempList.Count);
             updateUI(tempList);
+
+            
 
         }
         else
@@ -195,6 +200,7 @@ public class RoutePlanner : MonoBehaviour
             Debug.Log(tempList.Count);
             Debug.Log(currentCarrier.GetComponent<ShipController>().GetWaypoints().Count);
         }
+        Destroy(tempPath);
         currentCarrier.GetComponent<ShipController>().SetNewWaypoints(tempList);
         currentCarrier.GetComponent<ShipController>().StartJourney();
         Debug.LogError("Good");
