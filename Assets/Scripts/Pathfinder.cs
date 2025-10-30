@@ -19,21 +19,39 @@ public class Pathfinder : MonoBehaviour
     }
 
 
+    public List<GameObject> findPath(Graph simpleGraph, GameObject startStar, GameObject endStar)
+    {
+        List<GameObject> path = new List<GameObject>();
 
+        //Checks
+        if (simpleGraph.starList.Count != simpleGraph.GetAdjacencyList().Length)
+        {
+            Debug.LogError("FIX ME");
+        }
+
+        int vertices = simpleGraph.starList.Count;
+        
+
+
+
+        return path;
+    }
 
     //Dijkstra's
-    public List<GameObject> calculate(Graph graph, int start, float travelSpeed)
+    public List<GameObject> calculate(Graph graph, int start, int end)
     {
         List<GameObject> travelList = new List<GameObject>();
         int vertices = graph.GetAdjacencyList().Length;
         /*int vertices = graph.slimStarList.Count;*/
         bool[] shortestPathTreeSet = new bool[vertices];
         int[] distances = new int[vertices];
+        int[] previous = new int[vertices];
 
         for (int i = 0; i < vertices; i++)
         {
             distances[i] = int.MaxValue;
             shortestPathTreeSet[i] = false;
+            previous[i] = -1;
         }
 
         distances[start] = 0;
@@ -42,6 +60,7 @@ public class Pathfinder : MonoBehaviour
         {
             int u = MinimumDistance(distances, shortestPathTreeSet);
             shortestPathTreeSet[u] = true;
+            Debug.Log("Node " + u + " is now processed.");  
 
             foreach (var neighbor in graph.GetAdjacencyList()[u])
             {
@@ -52,39 +71,40 @@ public class Pathfinder : MonoBehaviour
                 {
 
                     distances[v] = distances[u] + weight;
-/*                    Debug.Log(graph.GetAdjacencyList()[u].ToString());*/
+                    previous[v] = u;
+                    Debug.Log("Updated distance for node " + v + " to " + distances[v] + " via " + u);
                 }
             }
         }
-        int min = distances[0];
-        int minIndex = 0;
-        for (int i = 0; i < distances.Length; i++)
+        int currentNode = end;
+        int size = 0;
+        while (currentNode != -1)  // While there is a valid path
         {
-            if (distances[i] < min)
-            {
-                min = distances[i];
-                minIndex = i;
-            }
+            size++;
+            travelList.Insert(0, graph.starList[currentNode]);  // Insert at the beginning to get the path in the correct order
+            currentNode = previous[currentNode];  // Move to the predecessor
         }
+        Debug.Log(size);
 
-        /*        Debug.Log(distances[minIndex]);
-                Debug.Log(minIndex);
-                Debug.Log(shortestPathTreeSet.Length);*/
-
-        string text = "|";
-        for (int i = 0; i < shortestPathTreeSet.Length; i++)
+/*        int currentNode = end;
+        int size = 0;
+        while (currentNode != -1)
         {
-            if (shortestPathTreeSet[i] == true)
-            {
-                travelList.Add(graph.starList[i]);
-                text = text + "X";
-            }
-            else
-            {
-                text = text + " . ";
-            }
+            size++;
+            currentNode = previous[currentNode];
         }
-        Debug.Log(text);
+        while (currentNode != -1)
+        {
+            //Array stuff
+            currentNode = previous[currentNode];
+        }*/
+
+        string pathText = "|";
+        foreach (var star in travelList)
+        {
+            pathText += star.name + " -> ";
+        }
+        Debug.Log("Path: " + pathText);
 
         Debug.Log(travelList.Count);
         return travelList;
@@ -135,7 +155,6 @@ public class Pathfinder : MonoBehaviour
         private int vertices;
         private List<Node>[] adjacencyList;
         public List<GameObject> starList;
-        public List<GameObject> shortStarList;
         public int speed;
         public int tickCreated;
 
@@ -208,8 +227,10 @@ public class Pathfinder : MonoBehaviour
                                 return i;
                             }
                         }*/
-            int thing = slimStarList.IndexOf(star);
+            int thing = starList.IndexOf(star);
             Debug.Log(thing);
+            Debug.Log(starList[thing].name);
+            Debug.Log(star.name);
             if (thing == -1)
             {
                 Debug.LogError("FIX ME");

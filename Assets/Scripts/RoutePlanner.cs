@@ -78,7 +78,7 @@ public class RoutePlanner : MonoBehaviour
                 Debug.Log("Too far, running algorithm");
 
                 graph.calculateGraph(graph.dumbedListCalculator(currentStar, star));
-                tempList.AddRange(pathfinder.calculate(graph, graph.findStarIndex(currentStar), 10f));
+                tempList.AddRange(pathfinder.calculate(graph, graph.findStarIndex(star), graph.findStarIndex(currentStar)));
             }
         }
         else if (Mathf.RoundToInt(Vector2.Distance(star.transform.position, tempList[tempList.Count - 1].transform.position)) > tempList[tempList.Count - 1].GetComponent<StarScript>().Range)
