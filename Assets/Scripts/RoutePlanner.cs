@@ -28,6 +28,7 @@ public class RoutePlanner : MonoBehaviour
     private List<GameObject> preFabList = new List<GameObject>();
     private Vector2 originalSizeDelta;
     private ShipController carrierScript;
+    private List<Pathfinder.Graph.GridObject> gridObjects;
 
     GameObject tempPath;
     LineRenderer lr;
@@ -58,8 +59,10 @@ public class RoutePlanner : MonoBehaviour
         Debug.Log(carrier.GetComponent<ShipController>().starWaypoints.Count);
         updateUI(tempList);
         uIManager.isRoutePlannerActive = true;
-        graph = new Pathfinder.Graph(uIManager.starList, 10, 69);
-        graph.calculateGridSquaresTree(1024, 4);
+        /*        graph = new Pathfinder.Graph(uIManager.starList, 10, 69);*/
+        /*        graph.calculateGridSquaresTree(1024, 4);*/
+
+        gridObjects = pathfinder.calculateGridSquaresTree(1024, 4, uIManager.starList);
     }
     public void addStar(GameObject star)
     {
@@ -77,15 +80,18 @@ public class RoutePlanner : MonoBehaviour
             {
                 Debug.Log("Too far, running algorithm");
 
-                graph.calculateGraph(graph.dumbedListCalculator(currentStar, star));
-                tempList.AddRange(pathfinder.calculate(graph, graph.findStarIndex(star), graph.findStarIndex(currentStar)));
+                /*graph.calculateGraph(graph.dumbedListCalculator(currentStar, star));*/
+                Pathfinder.Graph tinyGraph = new Pathfinder.Graph(Pathfinder.dumbedListCalculator(gridObjects, star, currentStar), 10, 67);
+                tempList.AddRange(pathfinder.calculate(tinyGraph, tinyGraph.findStarIndex(star), tinyGraph.findStarIndex(currentStar)));
+
+/*                tempList.AddRange(pathfinder.calculate(graph, graph.findStarIndex(star), graph.findStarIndex(currentStar)));*/
             }
         }
         else if (Mathf.RoundToInt(Vector2.Distance(star.transform.position, tempList[tempList.Count - 1].transform.position)) > tempList[tempList.Count - 1].GetComponent<StarScript>().Range)
         {
             Debug.Log("We runnin da calcs");
 
-            graph.calculateGraph(graph.dumbedListCalculator(tempList[tempList.Count - 1], star));
+            /*graph.calculateGraph(graph.dumbedListCalculator(tempList[tempList.Count - 1], star));*/
             pathfinder.calculate(graph, graph.findStarIndex(tempList[tempList.Count - 1]), 10);
         }
         else

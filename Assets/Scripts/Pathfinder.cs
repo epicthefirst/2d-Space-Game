@@ -1,13 +1,15 @@
-using System.Collections;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static Pathfinder.Graph;
 
 public class Pathfinder : MonoBehaviour
 {
 
     public GameObject blueCircleDot;
+    private List<GridObject> gridObjects;
 
 
     //Output time in ticks to destination. Also used as weight
@@ -19,17 +21,150 @@ public class Pathfinder : MonoBehaviour
     }
 
 
-    public List<GameObject> findPath(Graph simpleGraph, GameObject startStar, GameObject endStar)
+
+    public static List<GameObject> dumbedListCalculator(List<GridObject> gridList, GameObject startStar, GameObject endstar)
+    {
+        Debug.LogError("Running");
+
+        List<GameObject> outputList = new List<GameObject>();
+
+        Vector2 difference = endstar.transform.position - startStar.transform.position;
+
+        float length = Mathf.Sqrt((difference.x * difference.x) + (difference.y * difference.y));
+
+        Vector2 normalAdjust = new Vector2(difference.x / length, difference.y / length);
+
+        Vector2 temp1 = new Vector2(startStar.transform.position.x, startStar.transform.position.y) - (normalAdjust * length);
+        Vector2 temp2 = new Vector2(endstar.transform.position.x, endstar.transform.position.y) + (normalAdjust * length);
+
+        Vector2 perpendicularOffset = new Vector2(-normalAdjust.y, normalAdjust.x) * length;
+
+        Vector2 v1 = temp1 - perpendicularOffset;
+        Vector2 v2 = temp1 + perpendicularOffset;
+        Vector2 v3 = temp2 + perpendicularOffset;
+        Vector2 v4 = temp2 - perpendicularOffset;
+
+
+        //DEBUG
+        Debug.Log(gridList.Count);
+        Debug.Log("Vectors");
+        Debug.Log(v1);
+        Debug.Log(v2);
+        Debug.Log(v3);
+        Debug.Log(v4);
+        Debug.Log(perpendicularOffset);
+
+        /*            Instantiate(endstar, v1, Quaternion.identity, null);
+                    Instantiate(endstar, v2, Quaternion.identity, null);
+                    Instantiate(endstar, v3, Quaternion.identity, null);
+                    Instantiate(endstar, v4, Quaternion.identity, null);*/
+        GameObject lrsquaredebugthingy = new GameObject();
+        LineRenderer lr = lrsquaredebugthingy.AddComponent<LineRenderer>();
+        lr.startColor = Color.blue;
+        lr.endColor = Color.red;
+        lr.startWidth = 1;
+        lr.endWidth = 1;
+        lr.positionCount = 4;
+        lr.SetPosition(0, v1);
+        lr.SetPosition(1, v2);
+        lr.SetPosition(2, v3);
+        lr.SetPosition(3, v4);
+        lr.loop = true;
+
+
+        Debug.LogError(gridList.Count);
+
+
+        //END OF DEBUG
+        foreach (GridObject obj in gridList)
+        {
+
+
+
+
+
+            Vector2 u = v2 - v1;
+            Vector2 v = v4 - v1;
+            Vector2 w = obj.position - v1;
+
+            float s = Vector2.Dot(w, u) / Vector2.Dot(u, u);
+            float t = Vector2.Dot(w, v) / Vector2.Dot(v, v);
+
+            ///////ADD SHIT HERE LATER FOR WORMHOLES
+            if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
+            {
+                foreach (GameObject star in obj.starsInSquare)
+                {
+                    outputList.Add(star);
+                }
+            }
+        }
+
+        /*            //Debug
+                    Debug.Log("SlimStarList.Count = " + slimStarList.Count);
+                    foreach(GameObject tempStar in slimStarList)
+                    {
+                        Debug.Log("Starname: " + tempStar.name);
+                        int radius = 10;
+
+                        GameObject circleObject = new GameObject("circleObject");
+                        LineRenderer circleMaker = circleObject.AddComponent<LineRenderer>();
+                        circleMaker.material = new Material(Shader.Find("Sprites/Default"));
+
+                        circleMaker.startColor = Color.yellow;
+                        circleMaker.endColor = Color.yellow;
+                        circleMaker.startWidth = 1f;
+                        circleMaker.endWidth = 1f;
+
+                        int steps = (int)MathF.Round(2 * MathF.PI * radius);
+                        circleMaker.positionCount = (steps) + 2;
+
+                        for (int i = 0; i < (steps) + 2; i++)
+                        {
+                            float circumferenceProgress = (float)i / steps;
+
+                            float currentRadian = (circumferenceProgress * 2 * Mathf.PI);
+
+                            float xScaled = Mathf.Cos(currentRadian);
+                            float yScaled = Mathf.Sin(currentRadian);
+
+                            float x = xScaled * radius;
+                            float y = yScaled * radius;
+
+                            Vector2 position = new Vector3(x, y) + tempStar.transform.position;
+
+                            circleMaker.SetPosition(i, position);
+                        }
+                        circleMaker.material = new Material(Shader.Find("Sprites/Default"));
+                    }*/
+
+        return outputList;
+
+
+
+
+        /*            //y = mx + b type shi fr
+
+                    float m = (startStar.transform.position.y - endstar.transform.position.y) / (startStar.transform.position.x - endstar.transform.position.x);
+                    float b = -(m * startStar.transform.position.x) + startStar.transform.position.y;
+                    float bTop = b + (lineLength / 2);
+                    float bBottom = b - (lineLength / 2);
+
+        *//*            float mHigh*//*
+                    float bHigh = m + lineLength;
+                    float bLow = m - lineLength;
+
+                    if (  ()  )*/
+
+
+    }
+
+
+    public List<GameObject> findPath(List<GameObject> starList, GameObject startStar, GameObject endStar)
     {
         List<GameObject> path = new List<GameObject>();
 
-        //Checks
-        if (simpleGraph.starList.Count != simpleGraph.GetAdjacencyList().Length)
-        {
-            Debug.LogError("FIX ME");
-        }
-
-        int vertices = simpleGraph.starList.Count;
+        
         
 
 
@@ -41,7 +176,7 @@ public class Pathfinder : MonoBehaviour
     public List<GameObject> calculate(Graph graph, int start, int end)
     {
         List<GameObject> travelList = new List<GameObject>();
-        int vertices = graph.GetAdjacencyList().Length;
+        int vertices = graph.vertices;
         /*int vertices = graph.slimStarList.Count;*/
         bool[] shortestPathTreeSet = new bool[vertices];
         int[] distances = new int[vertices];
@@ -61,11 +196,18 @@ public class Pathfinder : MonoBehaviour
             int u = MinimumDistance(distances, shortestPathTreeSet);
             shortestPathTreeSet[u] = true;
             Debug.Log("Node " + u + " is now processed.");  
+            Debug.Log(shortestPathTreeSet[u]);
+            Debug.Log(shortestPathTreeSet.Length);
 
             foreach (var neighbor in graph.GetAdjacencyList()[u])
             {
+
                 int v = neighbor.vertex;
                 int weight = neighbor.weight;
+
+                Debug.Log(distances[u]);
+                Debug.Log(distances[v]);
+                Debug.Log(shortestPathTreeSet[v]);
 
                 if (!shortestPathTreeSet[v] && distances[u] != int.MaxValue && distances[u] + weight < distances[v])
                 {
@@ -77,14 +219,14 @@ public class Pathfinder : MonoBehaviour
             }
         }
         int currentNode = end;
-        int size = 0;
+/*        int size = 0;*/
         while (currentNode != -1)  // While there is a valid path
         {
-            size++;
-            travelList.Insert(0, graph.starList[currentNode]);  // Insert at the beginning to get the path in the correct order
+/*            size++;*/
+            travelList.Add(graph.starList[currentNode]);  // Insert at the beginning to get the path in the correct order
             currentNode = previous[currentNode];  // Move to the predecessor
         }
-        Debug.Log(size);
+/*        Debug.Log(size);*/
 
 /*        int currentNode = end;
         int size = 0;
@@ -107,6 +249,7 @@ public class Pathfinder : MonoBehaviour
         Debug.Log("Path: " + pathText);
 
         Debug.Log(travelList.Count);
+        travelList.RemoveAt(0);
         return travelList;
     }
 
@@ -133,6 +276,101 @@ public class Pathfinder : MonoBehaviour
         return minIndex;
     }
 
+
+    public List<GridObject> calculateGridSquaresTree(int squareSize, int subdivisionCount, List<GameObject> starList)
+    {
+        gridObjects = new List<GridObject>();
+        /*            Vector2Int v1 = new Vector2Int(squareSize, squareSize); //Top right
+                    Vector2Int v2 = new Vector2Int(squareSize, -squareSize); //Bottom right
+                    Vector2Int v3 = new Vector2Int(-squareSize, -squareSize); //Bottom left
+                    Vector2Int v4 = new Vector2Int(-squareSize, squareSize); //Top Right*/
+
+
+        /*            int currentSize = squareSize;*/
+        GridObject gridTreeParent = new GridObject(null, 0, squareSize, new Vector2Int(0, 0));
+        gridTreeParent.starsInSquare = starList;
+        calculateChildrenSquares(gridTreeParent, subdivisionCount);
+        Debug.Log("Done");
+        return gridObjects;
+    }
+
+    //RECURSIVE, BEWARE!!!
+    private void calculateChildrenSquares(GridObject gridObject, int desiredLevel)
+    {
+        Debug.Log("calculateChildrenSquares");
+
+        Vector2Int parentPosition = gridObject.position;
+        gridObject.children = new GridObject[4]
+        {
+                new GridObject(gridObject, gridObject.level + 1, gridObject.sideLength/2, new Vector2Int(parentPosition.x + (gridObject.sideLength/4), parentPosition.y + (gridObject.sideLength/4)) ),
+                new GridObject(gridObject, gridObject.level + 1, gridObject.sideLength/2, new Vector2Int(parentPosition.x + (gridObject.sideLength/4), parentPosition.y - (gridObject.sideLength/4)) ),
+                new GridObject(gridObject, gridObject.level + 1, gridObject.sideLength/2, new Vector2Int(parentPosition.x - (gridObject.sideLength/4), parentPosition.y - (gridObject.sideLength/4)) ),
+                new GridObject(gridObject, gridObject.level + 1, gridObject.sideLength/2, new Vector2Int(parentPosition.x - (gridObject.sideLength/4), parentPosition.y + (gridObject.sideLength/4)) )
+        };
+
+        foreach (GridObject child in gridObject.children)
+        {
+            /*                int radius = 4;
+
+                            GameObject circleObject = new GameObject("circleObject");
+                            LineRenderer circleMaker = circleObject.AddComponent<LineRenderer>();
+                            circleMaker.material = new Material(Shader.Find("Sprites/Default"));
+
+                            circleMaker.startColor = Color.cyan;
+                            circleMaker.endColor = Color.cyan;
+                            circleMaker.startWidth = 1f;
+                            circleMaker.endWidth = 1f;
+
+                            int steps = (int)MathF.Round(2 * MathF.PI * radius);
+                            circleMaker.positionCount = (steps) + 2;
+
+                            for (int i = 0; i < (steps) + 2; i++)
+                            {
+                                float circumferenceProgress = (float)i / steps;
+
+                                float currentRadian = (circumferenceProgress * 2 * Mathf.PI);
+
+                                float xScaled = Mathf.Cos(currentRadian);
+                                float yScaled = Mathf.Sin(currentRadian);
+
+                                float x = xScaled * radius;
+                                float y = yScaled * radius;
+
+                                Vector2 position = new Vector2(x, y) + child.position;
+
+                                circleMaker.SetPosition(i, position);
+                            }
+                            circleMaker.material = new Material(Shader.Find("Sprites/Default"));*/
+
+
+            child.calculateStarsInSquare(gridObject);
+            Debug.LogWarning(gridObject.starsInSquare.Count);
+        }
+
+        if (desiredLevel > gridObject.level + 1)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                calculateChildrenSquares(gridObject.children[i], desiredLevel);
+
+            }
+        }
+        else
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                gridObjects.Add(gridObject.children[i]);
+            }
+        }
+
+
+
+
+
+
+
+    }
+
     //////////////
 
 
@@ -152,7 +390,7 @@ public class Pathfinder : MonoBehaviour
     }
     public class Graph
     {
-        private int vertices;
+        public int vertices;
         private List<Node>[] adjacencyList;
         public List<GameObject> starList;
         public int speed;
@@ -165,14 +403,37 @@ public class Pathfinder : MonoBehaviour
             this.starList = list;
             this.speed = speed;
             this.tickCreated = tick;
-            Debug.Log("Created graph script on tick:" + tick);
+            this.vertices = list.Count;
+            Debug.Log("Created graph script on tick:" + tick + " with " + vertices + " vertices");
 
-
-
-
+            // Initialize adjacency list properly
+            adjacencyList = new List<Node>[vertices];
             for (int i = 0; i < vertices; i++)
             {
                 adjacencyList[i] = new List<Node>();
+            }
+
+            //Brute Forceish
+            for (int i = 0; i < vertices; i++)
+            {
+
+                /*            Node node = new Node()
+                            {
+                                star = tempStar,
+                                range = tempStar.GetComponent<StarScript>().Range,
+                            };*/
+
+
+                for (int j = 0; j < vertices; j++)
+                {
+                    if ((Mathf.Pow((list[j].transform.position.x - list[i].transform.position.x), 2) + Mathf.Pow((list[j].transform.position.y - list[i].transform.position.y), 2) <= Mathf.Pow(list[i].GetComponent<StarScript>().Range, 2)))
+                    {
+                        AddEdge(i, j, tripCalc(list[i], list[j], speed));
+                        /*                        Debug.Log("Added edge");*/
+                    }
+
+                }
+
             }
 
 
@@ -237,220 +498,9 @@ public class Pathfinder : MonoBehaviour
             }
             return thing;
         }
-        public void calculateGridSquaresTree(int squareSize, int subdivisionCount)
-        {
-            /*            Vector2Int v1 = new Vector2Int(squareSize, squareSize); //Top right
-                        Vector2Int v2 = new Vector2Int(squareSize, -squareSize); //Bottom right
-                        Vector2Int v3 = new Vector2Int(-squareSize, -squareSize); //Bottom left
-                        Vector2Int v4 = new Vector2Int(-squareSize, squareSize); //Top Right*/
-
-            
-/*            int currentSize = squareSize;*/
-            GridObject gridTreeParent = new GridObject(null, 0, squareSize, new Vector2Int(0,0));
-            gridTreeParent.starsInSquare = starList;
-            calculateChildrenSquares(gridTreeParent, subdivisionCount);
-            Debug.Log("Done");
-            Debug.Log(lowLevelGrid.Count);
-
-        }
-
-        public void calculateChildrenSquaresV2(GridObject grid, int subdivisionCount)
-        {
-            
-        }
-
-        //RECURSIVE, BEWARE!!!
-        public void calculateChildrenSquares(GridObject gridObject, int desiredLevel)
-        {
-            Debug.Log("calculateChildrenSquares");
-
-            Vector2Int parentPosition = gridObject.position;
-            gridObject.children = new GridObject[4]
-            {
-                new GridObject(gridObject, gridObject.level + 1, gridObject.sideLength/2, new Vector2Int(parentPosition.x + (gridObject.sideLength/4), parentPosition.y + (gridObject.sideLength/4)) ),
-                new GridObject(gridObject, gridObject.level + 1, gridObject.sideLength/2, new Vector2Int(parentPosition.x + (gridObject.sideLength/4), parentPosition.y - (gridObject.sideLength/4)) ),
-                new GridObject(gridObject, gridObject.level + 1, gridObject.sideLength/2, new Vector2Int(parentPosition.x - (gridObject.sideLength/4), parentPosition.y - (gridObject.sideLength/4)) ),
-                new GridObject(gridObject, gridObject.level + 1, gridObject.sideLength/2, new Vector2Int(parentPosition.x - (gridObject.sideLength/4), parentPosition.y + (gridObject.sideLength/4)) )
-            };
-
-            foreach (GridObject child in gridObject.children)
-            {
-/*                int radius = 4;
-
-                GameObject circleObject = new GameObject("circleObject");
-                LineRenderer circleMaker = circleObject.AddComponent<LineRenderer>();
-                circleMaker.material = new Material(Shader.Find("Sprites/Default"));
-
-                circleMaker.startColor = Color.cyan;
-                circleMaker.endColor = Color.cyan;
-                circleMaker.startWidth = 1f;
-                circleMaker.endWidth = 1f;
-
-                int steps = (int)MathF.Round(2 * MathF.PI * radius);
-                circleMaker.positionCount = (steps) + 2;
-
-                for (int i = 0; i < (steps) + 2; i++)
-                {
-                    float circumferenceProgress = (float)i / steps;
-
-                    float currentRadian = (circumferenceProgress * 2 * Mathf.PI);
-
-                    float xScaled = Mathf.Cos(currentRadian);
-                    float yScaled = Mathf.Sin(currentRadian);
-
-                    float x = xScaled * radius;
-                    float y = yScaled * radius;
-
-                    Vector2 position = new Vector2(x, y) + child.position;
-
-                    circleMaker.SetPosition(i, position);
-                }
-                circleMaker.material = new Material(Shader.Find("Sprites/Default"));*/
-
-                
-                child.calculateStarsInSquare(gridObject);
-                Debug.LogWarning(gridObject.starsInSquare.Count);
-            }
-
-            if (desiredLevel > gridObject.level + 1)
-            {
-                for (int i = 0; i < 4; i++)
-                {
-                    calculateChildrenSquares(gridObject.children[i], desiredLevel);
-
-                }
-            }
-            else
-            {
-                for (int i = 0; i < 4; i++)
-                {
-                    lowLevelGrid.Add(gridObject.children[i]);
-                }
-            }
 
 
 
-
-
-
-
-        }
-
-        public List<GameObject> dumbedListCalculator(GameObject startStar, GameObject endstar)
-        {
-            Debug.LogError("Running");
-
-            Vector2 difference = endstar.transform.position - startStar.transform.position;
-
-            float length = Mathf.Sqrt((difference.x * difference.x) + (difference.y * difference.y));
-
-            Vector2 normalAdjust = new Vector2(difference.x / length, difference.y / length);
-
-            Vector2 temp1 = new Vector2(startStar.transform.position.x, startStar.transform.position.y) - (normalAdjust * length);
-            Vector2 temp2 = new Vector2(endstar.transform.position.x, endstar.transform.position.y) + (normalAdjust * length);
-
-            Vector2 perpendicularOffset = new Vector2(-normalAdjust.y, normalAdjust.x) * length;
-
-            Vector2 v1 = temp1 - perpendicularOffset;
-            Vector2 v2 = temp1 + perpendicularOffset;
-            Vector2 v3 = temp2 + perpendicularOffset;
-            Vector2 v4 = temp2 - perpendicularOffset;
-            Debug.Log(lowLevelGrid.Count);
-            Debug.Log("Vectors");
-            Debug.Log(v1);
-            Debug.Log(v2);
-            Debug.Log(v3);
-            Debug.Log(v4);
-            Debug.Log(perpendicularOffset);
-
-/*            Instantiate(endstar, v1, Quaternion.identity, null);
-            Instantiate(endstar, v2, Quaternion.identity, null);
-            Instantiate(endstar, v3, Quaternion.identity, null);
-            Instantiate(endstar, v4, Quaternion.identity, null);*/
-
-            Debug.LogError(lowLevelGrid.Count);
-            foreach (GridObject obj in lowLevelGrid)
-            {
-
-
-
-
-
-                Vector2 u = v2 - v1;
-                Vector2 v = v4 - v1;
-                Vector2 w = obj.position - v1;
-
-                float s = Vector2.Dot(w, u) / Vector2.Dot(u, u);
-                float t = Vector2.Dot(w, v) / Vector2.Dot(v, v);
-
-                ///////ADD SHIT HERE LATER FOR WORMHOLES
-                if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
-                {
-                    foreach (GameObject star in obj.starsInSquare)
-                    {
-                        slimStarList.Add(star);
-                    }
-                }
-            }
-
-/*            //Debug
-            Debug.Log("SlimStarList.Count = " + slimStarList.Count);
-            foreach(GameObject tempStar in slimStarList)
-            {
-                Debug.Log("Starname: " + tempStar.name);
-                int radius = 10;
-
-                GameObject circleObject = new GameObject("circleObject");
-                LineRenderer circleMaker = circleObject.AddComponent<LineRenderer>();
-                circleMaker.material = new Material(Shader.Find("Sprites/Default"));
-
-                circleMaker.startColor = Color.yellow;
-                circleMaker.endColor = Color.yellow;
-                circleMaker.startWidth = 1f;
-                circleMaker.endWidth = 1f;
-
-                int steps = (int)MathF.Round(2 * MathF.PI * radius);
-                circleMaker.positionCount = (steps) + 2;
-
-                for (int i = 0; i < (steps) + 2; i++)
-                {
-                    float circumferenceProgress = (float)i / steps;
-
-                    float currentRadian = (circumferenceProgress * 2 * Mathf.PI);
-
-                    float xScaled = Mathf.Cos(currentRadian);
-                    float yScaled = Mathf.Sin(currentRadian);
-
-                    float x = xScaled * radius;
-                    float y = yScaled * radius;
-
-                    Vector2 position = new Vector3(x, y) + tempStar.transform.position;
-
-                    circleMaker.SetPosition(i, position);
-                }
-                circleMaker.material = new Material(Shader.Find("Sprites/Default"));
-            }*/
-
-            return slimStarList;
-
-
-
-
-            /*            //y = mx + b type shi fr
-
-                        float m = (startStar.transform.position.y - endstar.transform.position.y) / (startStar.transform.position.x - endstar.transform.position.x);
-                        float b = -(m * startStar.transform.position.x) + startStar.transform.position.y;
-                        float bTop = b + (lineLength / 2);
-                        float bBottom = b - (lineLength / 2);
-
-            *//*            float mHigh*//*
-                        float bHigh = m + lineLength;
-                        float bLow = m - lineLength;
-
-                        if (  ()  )*/
-
-
-        }
 
 
 
@@ -489,7 +539,7 @@ public class Pathfinder : MonoBehaviour
             }
         }
 
-        public void calculateGraph(List<GameObject> dumbStarList)
+/*        public void calculateGraph(List<GameObject> dumbStarList)
         {
             adjacencyList = new List<Node>[dumbStarList.Count];
 
@@ -498,25 +548,25 @@ public class Pathfinder : MonoBehaviour
             {
 
                 adjacencyList[i] = new List<Node>();
-                /*            Node node = new Node()
+                *//*            Node node = new Node()
                             {
                                 star = tempStar,
                                 range = tempStar.GetComponent<StarScript>().Range,
-                            };*/
+                            };*//*
 
 
-                for (int j = 0; j < vertices; j++)
+                for (int j = 0; j < dumbStarList.Count; j++)
                 {
                     if ((Mathf.Pow((dumbStarList[j].transform.position.x - dumbStarList[i].transform.position.x), 2) + Mathf.Pow((dumbStarList[j].transform.position.y - dumbStarList[i].transform.position.y), 2) <= Mathf.Pow(dumbStarList[i].GetComponent<StarScript>().Range, 2)))
                     {
                         AddEdge(i, j, tripCalc(dumbStarList[i], dumbStarList[j], speed));
-                        /*                        Debug.Log("Added edge");*/
+                        *//*                        Debug.Log("Added edge");*//*
                     }
 
                 }
 
             }
-        }
+        }*/
 
 
 
@@ -544,7 +594,7 @@ public class Pathfinder : MonoBehaviour
 
         public List<Node>[] GetAdjacencyList()
         {
-            Debug.Log("Adjacency length: "+adjacencyList.Length);
+
             return adjacencyList;
         }
     }

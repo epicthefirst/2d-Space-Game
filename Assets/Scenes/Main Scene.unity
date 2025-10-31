@@ -3012,7 +3012,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb1e4dcd2d74c544b8b70679c38c21b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numberOfCircles: 5
+  numberOfCircles: 20
   offset: 60
   minRandOffset: 10
   maxRandOffset: 15
