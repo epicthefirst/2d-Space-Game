@@ -63,6 +63,7 @@ public class RoutePlanner : MonoBehaviour
         /*        graph.calculateGridSquaresTree(1024, 4);*/
 
         gridObjects = pathfinder.calculateGridSquaresTree(1024, 4, uIManager.starList);
+        graph = new Pathfinder.Graph(uIManager.starList, 10, 69);
     }
     public void addStar(GameObject star)
     {
@@ -81,8 +82,8 @@ public class RoutePlanner : MonoBehaviour
                 Debug.Log("Too far, running algorithm");
 
                 /*graph.calculateGraph(graph.dumbedListCalculator(currentStar, star));*/
-                Pathfinder.Graph tinyGraph = new Pathfinder.Graph(Pathfinder.dumbedListCalculator(gridObjects, star, currentStar), 10, 67);
-                tempList.AddRange(pathfinder.calculate(tinyGraph, tinyGraph.findStarIndex(star), tinyGraph.findStarIndex(currentStar)));
+                /*Pathfinder.Graph tinyGraph = new Pathfinder.Graph(Pathfinder.dumbedListCalculator(gridObjects, star, currentStar), 10, 67);*/
+                tempList.AddRange(pathfinder.calculate(graph, graph.findStarIndex(star), graph.findStarIndex(currentStar)));
 
 /*                tempList.AddRange(pathfinder.calculate(graph, graph.findStarIndex(star), graph.findStarIndex(currentStar)));*/
             }

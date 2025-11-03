@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using static Pathfinder.Graph;
@@ -10,6 +11,7 @@ public class Pathfinder : MonoBehaviour
 
     public GameObject blueCircleDot;
     private List<GridObject> gridObjects;
+    public Graph mainGraph;
 
 
     //Output time in ticks to destination. Also used as weight
@@ -19,8 +21,11 @@ public class Pathfinder : MonoBehaviour
         int time = Mathf.CeilToInt(distance / speedPerTick);
         return time;
     }
+/*
+    public void calculateMainGraph()
+    {
 
-
+    }*/
 
     public static List<GameObject> dumbedListCalculator(List<GridObject> gridList, GameObject startStar, GameObject endstar)
     {
@@ -173,7 +178,7 @@ public class Pathfinder : MonoBehaviour
     }
 
     //Dijkstra's
-    public List<GameObject> calculate(Graph graph, int start, int end)
+    public List<GameObject> Hicalculate(Graph graph, int start, int end)
     {
         List<GameObject> travelList = new List<GameObject>();
         int vertices = graph.vertices;
@@ -195,7 +200,7 @@ public class Pathfinder : MonoBehaviour
         {
             int u = MinimumDistance(distances, shortestPathTreeSet);
             shortestPathTreeSet[u] = true;
-            Debug.Log("Node " + u + " is now processed.");  
+            Debug.Log("Node " + u + " is now processed.");
             Debug.Log(shortestPathTreeSet[u]);
             Debug.Log(shortestPathTreeSet.Length);
 
@@ -219,27 +224,27 @@ public class Pathfinder : MonoBehaviour
             }
         }
         int currentNode = end;
-/*        int size = 0;*/
+        /*        int size = 0;*/
         while (currentNode != -1)  // While there is a valid path
         {
-/*            size++;*/
+            /*            size++;*/
             travelList.Add(graph.starList[currentNode]);  // Insert at the beginning to get the path in the correct order
             currentNode = previous[currentNode];  // Move to the predecessor
         }
-/*        Debug.Log(size);*/
+        /*        Debug.Log(size);*/
 
-/*        int currentNode = end;
-        int size = 0;
-        while (currentNode != -1)
-        {
-            size++;
-            currentNode = previous[currentNode];
-        }
-        while (currentNode != -1)
-        {
-            //Array stuff
-            currentNode = previous[currentNode];
-        }*/
+        /*        int currentNode = end;
+                int size = 0;
+                while (currentNode != -1)
+                {
+                    size++;
+                    currentNode = previous[currentNode];
+                }
+                while (currentNode != -1)
+                {
+                    //Array stuff
+                    currentNode = previous[currentNode];
+                }*/
 
         string pathText = "|";
         foreach (var star in travelList)
@@ -252,12 +257,112 @@ public class Pathfinder : MonoBehaviour
         travelList.RemoveAt(0);
         return travelList;
     }
-
-/*    public void test()
+    private class SimpleMinHeap
     {
-        Graph graph = new Graph(null, 10, 0);
-        graph.calculateGridSquaresTree(1024, 4);
-    }*/
+        private List<(int node, int distance)> elements = new List<(int, int)>();
+
+        public int Count => elements.Count;
+
+        public void Enqueue(int node, int distance)
+        {
+            elements.Add((node, distance));
+        }
+
+        public int Dequeue()
+        {
+            int bestIndex = 0;
+            for (int i = 1; i < elements.Count; i++)
+                if (elements[i].distance < elements[bestIndex].distance)
+                    bestIndex = i;
+
+            int node = elements[bestIndex].node;
+            elements.RemoveAt(bestIndex);
+            return node;
+        }
+    }
+    private class BinaryHeap
+    {
+        private List<(int node, int distance)> elements = new List<(int, int)>();
+
+        public int Count => elements.Count;
+
+        public void Add(int node, int distance)
+        {
+            
+            elements.Add((node, distance));
+            int parent = (elements.Count - 2) / 2;
+
+        }
+    }
+
+    public List<GameObject> calculate(Graph graph, int start, int end)
+    {
+        int vertices = graph.vertices;
+        int[] distances = new int[vertices];
+        int[] previous = new int[vertices];
+        bool[] visited = new bool[vertices];
+
+        for (int i = 0; i < vertices; i++)
+        {
+            distances[i] = int.MaxValue;
+            previous[i] = -1;
+            visited[i] = false;
+        }
+
+        distances[start] = 0;
+        SimpleMinHeap pq = new SimpleMinHeap();
+        pq.Enqueue(start, 0);
+
+        while (pq.Count > 0)
+        {
+            int u = pq.Dequeue();
+            if (visited[u]) continue;
+            visited[u] = true;
+
+            if (u == end) break;
+
+            foreach (var neighbor in graph.GetAdjacencyList()[u])
+            {
+                int v = neighbor.vertex;
+                int weight = neighbor.weight;
+
+                if (visited[v]) continue;
+
+                int newDist = distances[u] + weight;
+                if (newDist < distances[v])
+                {
+                    distances[v] = newDist;
+                    previous[v] = u;
+                    pq.Enqueue(v, newDist);
+                }
+            }
+        }
+
+        // Reconstruct path
+        List<GameObject> path = new List<GameObject>();
+        int current = end;
+        if (distances[end] == int.MaxValue)
+        {
+            Debug.LogWarning("No path found!");
+            return path;
+        }
+
+        while (current != -1)
+        {
+            path.Add(graph.starList[current]);
+            current = previous[current];
+        }
+
+        Debug.Log($"Path found with {path.Count} nodes.");
+        path.RemoveAt(0);
+        return path;
+    }
+
+    /*    public void test()
+        {
+            Graph graph = new Graph(null, 10, 0);
+            graph.calculateGridSquaresTree(1024, 4);
+        }*/
 
     private static int MinimumDistance(int[] distances, bool[] shortestPathTreeSet)
     {
