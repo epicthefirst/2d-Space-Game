@@ -283,20 +283,79 @@ public class Pathfinder : MonoBehaviour
     private class BinaryHeap
     {
         private List<(int node, int distance)> elements = new List<(int, int)>();
+        Comparer<int> compare;
 
-        public int Count => elements.Count;
+        public int Size => elements.Count;
 
-        public void Add(int node, int distance)
+        public void Insert(int node, int distance)
         {
             
             elements.Add((node, distance));
-            int parent = (elements.Count - 2) / 2;
+            int index = Size - 1;
 
+            while (index > 0)
+            {
+                
+                int parent = (index + 1) / 2 - 1;
+
+                if (elements[index].distance.CompareTo(elements[parent].distance) < 0)
+                {
+                    SwapAt(index, parent);
+                    index = parent;
+                }
+                else break;
+            }
+
+            
+            //If adding to 9 in array, parent should
+
+        }
+
+        public int Pop()
+        {
+            int nodeReturn = elements[0].node;
+            int index = 0;
+
+            SwapAt(0, Size - 1);
+            elements.RemoveAt(Size - 1);
+
+            while (index < Size)
+            {
+                int childIndex = MinChildIndex(index);
+
+                if (childIndex >= 0 && elements[childIndex].distance.CompareTo(elements[index].distance) < 0)
+                {
+                    SwapAt(index, childIndex);
+                    index = childIndex;
+                }
+                else break;
+            }
+
+
+            return nodeReturn;
+
+        }
+        void SwapAt(int i, int j)
+        {
+            var temp = elements[i];
+            elements[i] = elements[j];
+            elements[j] = temp;
+        }
+        int MinChildIndex(int i)
+        {
+            int childR = (i + 1) * 2;
+            int childL = childR - 1;
+
+            if (childL >= Size) return -1;
+            else if (childR < Size && elements[childR].CompareTo(elements[childL]) < 0) return childR;
+            else return childL;
         }
     }
 
     public List<GameObject> calculate(Graph graph, int start, int end)
     {
+        var watch = System.Diagnostics.Stopwatch.StartNew();
+
         int vertices = graph.vertices;
         int[] distances = new int[vertices];
         int[] previous = new int[vertices];
@@ -310,12 +369,12 @@ public class Pathfinder : MonoBehaviour
         }
 
         distances[start] = 0;
-        SimpleMinHeap pq = new SimpleMinHeap();
-        pq.Enqueue(start, 0);
+        BinaryHeap pq = new BinaryHeap();
+        pq.Insert(start, 0);
 
-        while (pq.Count > 0)
+        while (pq.Size > 0)
         {
-            int u = pq.Dequeue();
+            int u = pq.Pop();
             if (visited[u]) continue;
             visited[u] = true;
 
@@ -333,7 +392,7 @@ public class Pathfinder : MonoBehaviour
                 {
                     distances[v] = newDist;
                     previous[v] = u;
-                    pq.Enqueue(v, newDist);
+                    pq.Insert(v, newDist);
                 }
             }
         }
@@ -355,6 +414,9 @@ public class Pathfinder : MonoBehaviour
 
         Debug.Log($"Path found with {path.Count} nodes.");
         path.RemoveAt(0);
+
+        watch.Stop();
+        Debug.LogError(watch.Elapsed);
         return path;
     }
 

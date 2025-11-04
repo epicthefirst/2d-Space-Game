@@ -3012,7 +3012,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb1e4dcd2d74c544b8b70679c38c21b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numberOfCircles: 20
+  numberOfCircles: 5
   offset: 60
   minRandOffset: 10
   maxRandOffset: 15
@@ -8038,6 +8038,7 @@ MonoBehaviour:
   preFab: {fileID: 3724516933365884384, guid: cc2f4e3bb78d16b4e919669675a51c59, type: 3}
   uIManager: {fileID: 1387152735}
   pathfinder: {fileID: 696977113}
+  mapGeneration: {fileID: 696977109}
   isActive: 0
   lineDrawer: {fileID: 696977114}
   currentCarrier: {fileID: 0}

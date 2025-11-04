@@ -19,6 +19,8 @@ public class RoutePlanner : MonoBehaviour
     [SerializeField] UIManager uIManager;
     [SerializeField] Pathfinder pathfinder;
 
+    [SerializeField] MapGeneration mapGeneration;
+
     public bool isActive;
     public DrawLine lineDrawer;
 
@@ -62,8 +64,9 @@ public class RoutePlanner : MonoBehaviour
         /*        graph = new Pathfinder.Graph(uIManager.starList, 10, 69);*/
         /*        graph.calculateGridSquaresTree(1024, 4);*/
 
-        gridObjects = pathfinder.calculateGridSquaresTree(1024, 4, uIManager.starList);
-        graph = new Pathfinder.Graph(uIManager.starList, 10, 69);
+        /*        gridObjects = pathfinder.calculateGridSquaresTree(1024, 4, uIManager.starList);*/
+        graph = mapGeneration.graphFullSpeed;
+
     }
     public void addStar(GameObject star)
     {

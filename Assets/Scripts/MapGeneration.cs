@@ -5,10 +5,11 @@ using csDelaunay;
 using Unity.Burst.Intrinsics;
 using Unity.Mathematics;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using static Pathfinder;
 using static UnityEditor.PlayerSettings;
-using UnityEditor;
 
 public class MapGeneration : MonoBehaviour
 {  //Stuff to mess with (yay!)
@@ -93,6 +94,9 @@ public class MapGeneration : MonoBehaviour
     public GameObject storage;
 
     GameObject[] planetArray = new GameObject[3];
+
+
+    public Pathfinder.Graph graphFullSpeed;
 
     // Start is called before the first frame update
     void Start()
@@ -216,6 +220,14 @@ public class MapGeneration : MonoBehaviour
         uiManager.starList = starList;
         Debug.LogWarning(starList.Count);
 
+
+        computeGraphs();
+    }
+
+
+    private void computeGraphs()
+    {
+        graphFullSpeed = new Pathfinder.Graph(starList, 10, 69);
     }
 
     private List<Tuple<int, int>> slingshotPeriodCalculator(int planetCount)
