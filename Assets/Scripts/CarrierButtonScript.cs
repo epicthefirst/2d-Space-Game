@@ -15,13 +15,13 @@ public class CarrierButtonScript : MonoBehaviour
 
     public string carrierSpecialist;
 
-    public void init(GameObject linkedCarrier, Color colour, UIManager uIManager, string carrierSpecialist)
+    public void init(string name, GameObject linkedCarrier, Color colour, UIManager uIManager, string carrierSpecialist)
     {
         this.carrierSpecialist = carrierSpecialist;
         this.uIManager = uIManager;
         lastLinkedCarrier = linkedCarrier;
         this.GetComponent<Button>().image.color = colour;
-        carrierNameText.text = linkedCarrier.name;
+        carrierNameText.text = linkedCarrier.GetComponent<ShipController>().Name;
         carrierShipCountText.text = linkedCarrier.GetComponent<ShipController>().ShipCount.ToString();
         specialistImage = uIManager.getSpecImage(carrierSpecialist);
         if (specialistImage != null)

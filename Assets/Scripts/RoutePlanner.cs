@@ -96,7 +96,7 @@ public class RoutePlanner : MonoBehaviour
             Debug.Log("We runnin da calcs");
 
             /*graph.calculateGraph(graph.dumbedListCalculator(tempList[tempList.Count - 1], star));*/
-            pathfinder.calculate(graph, graph.findStarIndex(tempList[tempList.Count - 1]), 10);
+            tempList.AddRange(pathfinder.calculate(graph, graph.findStarIndex(star), graph.findStarIndex(tempList[tempList.Count - 1])));
         }
         else
         {

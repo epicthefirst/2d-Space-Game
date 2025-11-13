@@ -84,6 +84,8 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
     [SerializeField] UnityEngine.Object specImageFolder;
     [SerializeField] RoutePlanner routePlannerScript;
 
+    [SerializeField] CarrierInfoScript carrierInfoScript;
+
     public GameObject StarInfo;
     public GameObject CarrierInfo;
 
@@ -114,6 +116,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
     
     public int cycleCount = 0;
     private int carrierCount = 0;
+    private int carrierNameIncrement = 0;
 
 
 
@@ -185,6 +188,8 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
         specImageDictionary.TryGetValue(specialistName, out specImage);
         return specImage;
     }
+
+
     void RefreshUI()
     {
         
@@ -398,7 +403,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
             GameObject carrierButton = Instantiate(carrierButtonPrefab, new Vector3(0, 0, 0), Quaternion.identity, carrierButtonParent.transform);
             carrierButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -y);
             CarrierButtonScript cBScript = carrierButton.GetComponent<CarrierButtonScript>();
-            cBScript.init(i, ownerColourScript.GetMainColour(owner), this, "TestingCarrier");
+            cBScript.init(i.GetComponent<ShipController>().Name, i, ownerColourScript.GetMainColour(owner), this, "TestingCarrier");
             carrierButton.transform.GetChild(3).gameObject.GetComponent<RawImage>().texture = getSpecImage(cBScript.carrierSpecialist);
 
             y += 50;
@@ -411,9 +416,13 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
     }
     public void carrierButtonPressed(GameObject linkedCarrier)
     {
-/*        StarInfo.SetActive(false);
-        CarrierInfo.SetActive(true);*/
+        /*        StarInfo.SetActive(false);
+                CarrierInfo.SetActive(true);*/
         switchPanels(1);
+
+        ShipController sc = linkedCarrier.GetComponent<ShipController>();
+
+        carrierInfoScript.init(sc.Name, sc.ShipCount, sc.starWaypoints.Count == 0 ? null : sc.starWaypoints[sc.starWaypoints.Count - 1], sc.Specialist, 67, sc.Owner.ToString());
         currentCarrier = linkedCarrier;
     }
     public void carrierMenuBlueButtonPressed()
@@ -479,6 +488,11 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
         }
         Debug.Log("Back button pressed");
     }
+    public string carrierNameGenerator()
+    {
+        carrierNameIncrement++;
+        return "Carrier " + carrierNameIncrement.ToString();
+    }
     void OnCreateCarrierPress()
     {   
         if (playerMoney >= carrierCost)
@@ -492,7 +506,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
             currentStar.GetComponent<StarScript>().AttachCarrier(ship);
             shipController.dockedStar = currentStar;
 
-            shipController.Init(nextTickButton, currentStar, inputedShipCount, carrierCount, playerScript, lineDrawer);
+            shipController.Init(carrierNameGenerator(), nextTickButton, currentStar, inputedShipCount, carrierCount, playerScript, lineDrawer);
             RefreshUI();
         }
         else
@@ -578,7 +592,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
             ShipController shipController = ship.GetComponent<ShipController>();
             tempStar.GetComponent<StarScript>().AttachCarrier(ship);
             shipController.dockedStar = tempStar;
-            shipController.Init(nextTickButton, tempStar, inputedShipCount, carrierCount, playerScript, lineDrawer);
+            shipController.Init(carrierNameGenerator(), nextTickButton, tempStar, inputedShipCount, carrierCount, playerScript, lineDrawer);
             ClearUI();
         }
         else
@@ -589,7 +603,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
             ShipController shipController = ship.GetComponent<ShipController>();
             tempStar.GetComponent<StarScript>().AttachCarrier(ship);
             shipController.dockedStar = tempStar;
-            shipController.Init(nextTickButton, tempStar, inputedShipCount, carrierCount, playerScript, lineDrawer);
+            shipController.Init(carrierNameGenerator(), nextTickButton, tempStar, inputedShipCount, carrierCount, playerScript, lineDrawer);
             shipController.SendToStar(currentStar);
             ClearUI();
         }
@@ -652,12 +666,16 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
         switch (panelNumber)
         {
             case 0:
+                //StarInfo
                 CarrierInfo.SetActive(false);
                 StarInfo.SetActive(true);
                 return;
             case 1:
+                //CarrierInfo
                 CarrierInfo.SetActive(true);
                 StarInfo.SetActive(false);
+
+
                 return;
         }
     }

@@ -43,8 +43,9 @@ public class ShipController : MonoBehaviour
     //In order of going to visit
     public List<GameObject> starWaypoints;
 
-    public void Init(Button nextTickButton, GameObject startStar, int shipShipCountAdd, int carrierCount, PlayerScript ownerScript, DrawLine drawline)
+    public void Init(string name, Button nextTickButton, GameObject startStar, int shipShipCountAdd, int carrierCount, PlayerScript ownerScript, DrawLine drawline)
     {
+        Name = name;
         lineDrawer = drawline;
         this.ownerScript = ownerScript;
         startStarScript = startStar.GetComponent<StarScript>();

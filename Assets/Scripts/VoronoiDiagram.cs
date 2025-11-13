@@ -106,19 +106,21 @@ public class VoronoiDiagram : MonoBehaviour
     {
         List<Vector2> newPolygon = new List<Vector2>();
 
+
+        Vector2 average = Vector2.zero;
+        foreach (Vector2 point in polygon)
+        {
+            average += point;
+        }
+        average /= polygon.Count;
+
         for (int i = 0; i < polygon.Count; i++)
         {
             Vector2 current = polygon[i];
-            Vector2 next = polygon[(i + 1) % polygon.Count];
 
-            // Calculate the edge vector
-            Vector2 edge = next - current;
+            Vector2 normal = new Vector2(current.x - average.x, current.y - average.y).normalized;
 
-            // Calculate the normal vector to this edge (perpendicular)
-            Vector2 normal = new Vector2(-edge.y, edge.x).normalized;
-
-            // Offset the vertex inward along the normal direction
-            Vector2 newVertex = current + normal * borderThickness;
+            Vector2 newVertex = current - normal * borderThickness;
 
             newPolygon.Add(newVertex);
         }
