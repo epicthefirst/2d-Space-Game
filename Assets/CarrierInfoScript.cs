@@ -23,5 +23,10 @@ public class CarrierInfoScript : MonoBehaviour
         ownerText.text = "Owner: " + owner;
     }
 
+    public void editShipCount()
+    {
+
+    }
+
 
 }

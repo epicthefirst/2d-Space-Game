@@ -246,7 +246,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
         econPriceText.text = "Economy: " + econPrice + "$";
         industryPriceText.text = "Industry: " + industryPrice + "$";
         sciencePriceText.text = "Science: " + sciencePrice + "$";
-        carrierButtons();
+        /*carrierButtons();*/
         currentCarrier = null;
         
         return;
@@ -499,14 +499,15 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
         {
             playerMoney -= carrierCost;
             //If the user selects the initial star
-            GameObject ship = GameObject.Instantiate(shipPrefab, currentStar.transform.position, Quaternion.identity) as GameObject;
-            ship.transform.parent = currentStar.transform;
-            ShipController shipController = ship.GetComponent<ShipController>();
+            GameObject c = GameObject.Instantiate(shipPrefab, currentStar.transform.position, Quaternion.identity) as GameObject;
+            c.transform.parent = currentStar.transform;
+            ShipController shipController = c.GetComponent<ShipController>();
 
-            currentStar.GetComponent<StarScript>().AttachCarrier(ship);
+            currentStar.GetComponent<StarScript>().AttachCarrier(c);
             shipController.dockedStar = currentStar;
 
             shipController.Init(carrierNameGenerator(), nextTickButton, currentStar, inputedShipCount, carrierCount, playerScript, lineDrawer);
+            carrierButtons();
             RefreshUI();
         }
         else
