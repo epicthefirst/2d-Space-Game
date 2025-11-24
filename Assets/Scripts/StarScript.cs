@@ -116,7 +116,7 @@ public class StarScript : MonoBehaviour
 
         uIManager.NewTick += thisNewTick;
 
-        Debug.Log(gameObject.transform.position);
+        /*Debug.Log(gameObject.transform.position);*/
 
         if (planetList.Count == planetTimings.Count)
         {

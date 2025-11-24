@@ -86,6 +86,8 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
 
     [SerializeField] CarrierInfoScript carrierInfoScript;
 
+    [SerializeField] PromptUIScript promptUI;
+
     public GameObject StarInfo;
     public GameObject CarrierInfo;
 
@@ -166,7 +168,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
     {
         cycleEvent.TickPerCycle = cycleLength;
         setDictionaries();
-        shipInputButton.onClick.AddListener(WhenInputConfirmed);
+        //shipInputButton.onClick.AddListener(WhenInputConfirmed);
         nextTickButton.onClick.AddListener(OnTickButtonPress);
         createCarrierButton.onClick.AddListener(OnCreateCarrierPress);
 
@@ -508,6 +510,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
 
             shipController.Init(carrierNameGenerator(), nextTickButton, currentStar, inputedShipCount, carrierCount, playerScript, lineDrawer);
             carrierButtons();
+            promptUI.init(c);
             RefreshUI();
         }
         else
@@ -548,26 +551,38 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
 
 /*                slingshotToggleButton.gameObject.SetActive(true);*/
 
-                StartCoroutine(CheckForEnter());
+                /*StartCoroutine(CheckForEnter());*/
             }
             yield break;
         }
 
     }
-    IEnumerator CheckForEnter()
-    {   
-        while (!Input.GetKeyDown(KeyCode.Return))
-        {
-            yield return null;
-        }
-        WhenInputConfirmed();
-        yield break;
-    }
+    //IEnumerator CheckForEnter()
+    //{   
+    //    while (!Input.GetKeyDown(KeyCode.Return))
+    //    {
+    //        yield return null;
+    //    }
+    //    WhenInputConfirmed();
+    //    yield break;
+    //}
 
-    void WhenInputConfirmed()
+    public void WhenInputConfirmed(int inputedShips, ShipController carrierController)
     {
-        messagePrompt.gameObject.SetActive(false);
-        Debug.Log(inputedShipCountTextField.text);
+        int garrisonCount = carrierController.dockedStar.GetComponent<StarScript>().GarrisonCount;
+        if (garrisonCount + carrierController.ShipCount >= inputedShips)
+        {
+
+            garrisonCount += (inputedShips - carrierController.ShipCount);
+            carrierController.ShipCount = inputedShips;
+        }
+        else
+        {
+            Debug.Log("You tried putting too many ships.");
+        }
+        
+        
+/*        Debug.Log(inputedShipCountTextField.text);
         if(int.TryParse(shipInput.text, out int inputedShipCount))
         {
             Debug.Log(inputedShipCount);
@@ -575,39 +590,9 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
         else
         {
             Debug.Log("Damn, something broke");
-        }
+        }*/
 
-
-        if (inputedShipCount > TStarScript.GarrisonCount)
-        {
-            messagePrompt.gameObject.SetActive(true);
-            messagePrompt.text = "The number you inputed is too large";
-            shipInput.gameObject.SetActive(false);
-            shipInputButton.gameObject.SetActive(false);
-        }
-        else if (tempStar.transform.position == currentStar.transform.position)
-        {
-            //If the user selects the initial star
-            GameObject ship = GameObject.Instantiate(shipPrefab, tempStar.transform.position, Quaternion.identity) as GameObject;
-            ship.transform.parent = tempStar.transform;
-            ShipController shipController = ship.GetComponent<ShipController>();
-            tempStar.GetComponent<StarScript>().AttachCarrier(ship);
-            shipController.dockedStar = tempStar;
-            shipController.Init(carrierNameGenerator(), nextTickButton, tempStar, inputedShipCount, carrierCount, playerScript, lineDrawer);
-            ClearUI();
-        }
-        else
-        {
-            //If the user sends it to another star
-            GameObject ship = GameObject.Instantiate(shipPrefab, tempStar.transform.position, Quaternion.identity) as GameObject;
-            ship.transform.parent = tempStar.transform;
-            ShipController shipController = ship.GetComponent<ShipController>();
-            tempStar.GetComponent<StarScript>().AttachCarrier(ship);
-            shipController.dockedStar = tempStar;
-            shipController.Init(carrierNameGenerator(), nextTickButton, tempStar, inputedShipCount, carrierCount, playerScript, lineDrawer);
-            shipController.SendToStar(currentStar);
-            ClearUI();
-        }
+        
     }
 
     public void ClearUI()
@@ -650,10 +635,10 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
 
         CarrierInfo.SetActive(false);
         StarInfo.SetActive(false);
-        if (IsInvoking("CheckForEnter"))
+/*        if (IsInvoking("CheckForEnter"))
         {
             StopCoroutine(CheckForEnter());
-        }
+        }*/
 /*        if (IsInvoking("RoutePlanerCoroutine()"))
         {
             StopCoroutine(RoutePlanerCoroutine());
