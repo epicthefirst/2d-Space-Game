@@ -1066,6 +1066,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 238af19ceb45e2641b7ec97c424dc04e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  promptUIScript: {fileID: 1685836234}
   carrierNameText: {fileID: 2088349963}
   shipCountText: {fileID: 494308050}
   carrierDestinationText: {fileID: 75751388}
@@ -7950,7 +7951,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1689634226}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 133686184}
+        m_TargetAssemblyTypeName: CarrierInfoScript, Assembly-CSharp
+        m_MethodName: editShipCount
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1689634226
 MonoBehaviour:
   m_ObjectHideFlags: 0

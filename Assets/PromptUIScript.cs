@@ -46,16 +46,22 @@ public class PromptUIScript : MonoBehaviour
     }
     public void confirmButtonPressed()
     {
-        
+        isActive = false;
+        input.gameObject.SetActive(isActive);
+        confirmButton.gameObject.SetActive(isActive);
+        message.gameObject.SetActive(isActive);
+
         int parsed = int.Parse(input.text);
         Debug.Log(parsed);
         uIManager.WhenInputConfirmed(parsed, sc);
+
+
     }
     public void maxButtonPressed()
     {
         if (isActive)
         {
-            input.text = sc.dockedStar.GetComponent<StarScript>().GarrisonCount.ToString();
+            input.text = (sc.dockedStar.GetComponent<StarScript>().GarrisonCount + sc.ShipCount).ToString();
         }
         else
         {
@@ -73,5 +79,13 @@ public class PromptUIScript : MonoBehaviour
             Debug.LogError("This shouldn't happen :(");
         }
     }
-
+    public void postMessage(string text)
+    {
+        message.gameObject.SetActive(true);
+        message.text = text;
+    }
+    public void clearMessage()
+    {
+        message.gameObject.SetActive(false);
+    }
 }

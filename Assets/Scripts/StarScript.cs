@@ -223,8 +223,9 @@ public class StarScript : MonoBehaviour
         }
         else
         {
-            if (shipShipCount > GarrisonCount)
+            if (shipShipCount > GarrisonCount + CarrierShipTally)
             {
+                //WORK ON THIS LATER
                 Owner = shipOwner;
                 carrier.GetComponent<ShipController>().ShipCount -= GarrisonCount;
                 GarrisonCount = 0;

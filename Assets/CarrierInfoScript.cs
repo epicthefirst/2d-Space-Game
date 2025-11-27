@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine.UI;
 public class CarrierInfoScript : MonoBehaviour
 {
+    [SerializeField] PromptUIScript promptUIScript;
     [SerializeField] TMP_Text carrierNameText;
     [SerializeField] TMP_Text shipCountText;
     [SerializeField] TMP_Text carrierDestinationText;
@@ -12,20 +13,35 @@ public class CarrierInfoScript : MonoBehaviour
     [SerializeField] TMP_Text weaponStrengthText;
     [SerializeField] TMP_Text ownerText;
 
+    private ShipController linkedController;
 
-    public void init(string carrierName, int shipCount, GameObject destination, string specialist, int weaponStrength, string owner)
+    public void init(ShipController shipController)
     {
-        carrierNameText.text = carrierName;
-        shipCountText.text = "Ships: " + shipCount.ToString();
+        linkedController = shipController;
+
+        carrierNameText.text = linkedController.Name;
+        shipCountText.text = "Ships: " + linkedController.ShipCount.ToString();
+        GameObject destination = linkedController.starWaypoints.Count == 0 ? null : linkedController.starWaypoints[linkedController.starWaypoints.Count - 1];
         carrierDestinationText.text = "Destination: " + (destination == null ? "None" : destination.name);
-        specialistsText.text = "Specialist: "+ specialist;
-        weaponStrengthText.text = "Weapons: " + weaponStrength.ToString();
-        ownerText.text = "Owner: " + owner;
+        specialistsText.text = "Specialist: "+ linkedController.Specialist;
+        weaponStrengthText.text = "Weapons: " + 67.ToString();
+        ownerText.text = "Owner: " + linkedController.Owner.ToString();
     }
+    public void refresh()
+    {
+        carrierNameText.text = linkedController.Name;
+        shipCountText.text = "Ships: " + linkedController.ShipCount.ToString();
+        GameObject destination = linkedController.starWaypoints.Count == 0 ? null : linkedController.starWaypoints[linkedController.starWaypoints.Count - 1];
+        carrierDestinationText.text = "Destination: " + (destination == null ? "None" : destination.name);
+        specialistsText.text = "Specialist: " + linkedController.Specialist;
+        weaponStrengthText.text = "Weapons: " + 67.ToString();
+        ownerText.text = "Owner: " + linkedController.Owner.ToString();
+    }
+
 
     public void editShipCount()
     {
-
+        promptUIScript.init(linkedController.gameObject);
     }
 
 

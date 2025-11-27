@@ -227,9 +227,33 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
 
             starNameText.text = "Star: " + CStarScript.Name;
 
-            planetaryText.text = "Terrestrial: " + CStarScript.PlanetaryCount;
-            habitableText.text = "Habitable: " + CStarScript.HabitableCount;
-            gasText.text = "Gas: " + CStarScript.GasCount;
+            if (CStarScript.PlanetaryCount != 0)
+            {
+                planetaryText.text = "Terrestrial: " + CStarScript.PlanetaryCount;
+            }
+            else
+            {
+                planetaryText.text = null;
+            }
+            if (CStarScript.HabitableCount != 0)
+            {
+                habitableText.text = "Habitable: " + CStarScript.HabitableCount;
+            }
+            else
+            {
+                habitableText.text = null;
+            }
+            if (CStarScript.GasCount != 0)
+            {
+                gasText.text = "Gas: " + CStarScript.GasCount;
+            }
+            else
+            {
+                gasText.text = null;
+            }
+
+
+            
 
             econIndicator.text = CStarScript.EconCount.ToString();
             industryIndicator.text = CStarScript.IndustryCount.ToString();
@@ -249,7 +273,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
         industryPriceText.text = "Industry: " + industryPrice + "$";
         sciencePriceText.text = "Science: " + sciencePrice + "$";
         /*carrierButtons();*/
-        currentCarrier = null;
+/*        currentCarrier = null;*/
         
         return;
     }
@@ -316,6 +340,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
             ClearUI();
             StopAllCoroutines();
             routePlannerScript.clear();
+            
             starSelected = false;
         }
 /*        if (Input.GetMouseButtonDown(0))
@@ -424,7 +449,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
 
         ShipController sc = linkedCarrier.GetComponent<ShipController>();
 
-        carrierInfoScript.init(sc.Name, sc.ShipCount, sc.starWaypoints.Count == 0 ? null : sc.starWaypoints[sc.starWaypoints.Count - 1], sc.Specialist, 67, sc.Owner.ToString());
+        carrierInfoScript.init(sc);
         currentCarrier = linkedCarrier;
     }
     public void carrierMenuBlueButtonPressed()
@@ -435,6 +460,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
         starSelected = false;
         messagePrompt.text = "Select a star within range";
         messagePrompt.gameObject.SetActive(true);
+        Debug.Log(currentCarrier.name);
         Debug.Log(currentCarrier.GetComponent<ShipController>().starWaypoints.Count);
         routePlannerScript.init(currentCarrier, currentStar);
         
@@ -511,6 +537,10 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
             shipController.Init(carrierNameGenerator(), nextTickButton, currentStar, inputedShipCount, carrierCount, playerScript, lineDrawer);
             carrierButtons();
             promptUI.init(c);
+            carrierButtonPressed(c);
+            
+/*            carrierInfoScript.init(shipController);*/
+            carrierInfoScript.refresh();
             RefreshUI();
         }
         else
@@ -570,17 +600,20 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
     public void WhenInputConfirmed(int inputedShips, ShipController carrierController)
     {
         int garrisonCount = carrierController.dockedStar.GetComponent<StarScript>().GarrisonCount;
+
         if (garrisonCount + carrierController.ShipCount >= inputedShips)
         {
 
-            garrisonCount += (inputedShips - carrierController.ShipCount);
+            carrierController.dockedStar.GetComponent<StarScript>().GarrisonCount += (carrierController.ShipCount - inputedShips);
             carrierController.ShipCount = inputedShips;
         }
         else
         {
-            Debug.Log("You tried putting too many ships.");
+            promptUI.postMessage("You tried putting too many ships.");
         }
-        
+        carrierController.dockedStar.GetComponent<StarScript>().Refresh();
+        RefreshUI();
+        carrierInfoScript.refresh();
         
 /*        Debug.Log(inputedShipCountTextField.text);
         if(int.TryParse(shipInput.text, out int inputedShipCount))
@@ -605,6 +638,8 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
         {
             Debug.LogWarning("Panel is null when trying to deactivate it!");
         }
+
+        promptUI.clearMessage();
 
         buyEconButton.gameObject.SetActive(false);
         buyIndustryButton.gameObject.SetActive(false);
@@ -643,6 +678,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
         {
             StopCoroutine(RoutePlanerCoroutine());
         }*/
+        currentCarrier = null;
     
         Destroy(circleObject);
     }
