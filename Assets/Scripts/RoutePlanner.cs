@@ -175,6 +175,7 @@ public class RoutePlanner : MonoBehaviour
             Destroy(p);
         }
 
+        Destroy(lr);
         uIManager.isRoutePlannerActive = false;
         gameObject.SetActive(false);
         tempList.Clear();
@@ -184,12 +185,20 @@ public class RoutePlanner : MonoBehaviour
 
     public void undoOne()
     {
-        if (preFabList != null)
+        if (tempList.Count > 0)
         {
             Debug.Log(tempList.Count);
             
             tempList.RemoveAt(tempList.Count - 1);
-            uIManager.MoveCircle(tempList[tempList.Count - 1].transform.position, tempList[tempList.Count - 1].GetComponent<StarScript>().Range);
+            if (tempList.Count > 0)
+            {
+                uIManager.MoveCircle(tempList[tempList.Count - 1].transform.position, tempList[tempList.Count - 1].GetComponent<StarScript>().Range);
+            }
+            else
+            {
+                uIManager.RemoveCircle();
+            }
+
             Debug.Log(tempList.Count);
             updateUI(tempList);
 
@@ -212,8 +221,12 @@ public class RoutePlanner : MonoBehaviour
         }
         Destroy(tempPath);
         currentCarrier.GetComponent<ShipController>().SetNewWaypoints(tempList);
-        currentCarrier.GetComponent<ShipController>().StartJourney();
-        Debug.LogError("Good");
+        if (tempList.Count > 0)
+        {
+            currentCarrier.GetComponent<ShipController>().ResetWaiting();
+            currentCarrier.GetComponent<ShipController>().StartJourney();
+        }
+
         clear();
     }
 }

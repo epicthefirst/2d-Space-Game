@@ -37,6 +37,7 @@ public class ShipController : MonoBehaviour
     public string Specialist = null;
 
     public int totalTimeLeft;
+    public int totalWaitTimeLeft;
 
     //RoutePlanner
 
@@ -86,6 +87,25 @@ public class ShipController : MonoBehaviour
         {
 
             endStar = starWaypoints[0];
+            if(startStar == endStar)
+            {
+                int counter = 0;
+
+                while (counter < starWaypoints.Count)
+                {
+                    if(startStar == starWaypoints[counter])
+                    {
+                        counter++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                Debug.Log("Waiting for " + counter + " ticks");
+                WaitAtStar(counter);
+                return;
+            }
             time = Pathfinder.tripCalc(startStar, endStar, speedPerTick);
             timeLeft = Pathfinder.tripCalc(startStar, endStar, speedPerTick);
             
@@ -95,12 +115,49 @@ public class ShipController : MonoBehaviour
                 totalTimeLeft += Pathfinder.tripCalc(startStar, endStar, speedPerTick);
             }
             Debug.Log(timeLeft);
-            Debug.Log(totalTimeLeft);
+            Debug.Log(totalTimeLeft); //FIX ME
 
             nextTickButton.onClick.AddListener(NewTick);
             nextTickButton.onClick.AddListener(LeavingTick);
         }
     }
+    public void WaitAtStar(int length)
+    {
+        if (length == 0)
+        {
+            Debug.LogError("Bad");
+        }
+        totalWaitTimeLeft = length;
+        nextTickButton.onClick.AddListener(WaitTick);
+    }
+    public void ResetWaiting()
+    {
+        nextTickButton.onClick.RemoveListener(WaitTick);
+        totalTimeLeft = 0;
+    }
+    public void WaitTick()
+    {
+        startStar = starWaypoints[0];
+        starWaypoints.RemoveAt(0);
+
+        totalWaitTimeLeft--;
+        if (totalWaitTimeLeft <= 0)
+        {
+
+
+            nextTickButton.onClick.RemoveListener(WaitTick);
+
+            if (starWaypoints.Count > 0)
+            {
+
+
+                StartJourney();
+                Debug.Log("StartedJourney");
+            }
+        }
+
+    }
+
     public void SetNewWaypoints(List<GameObject> wayPoints)
     {
         starWaypoints.Clear();
@@ -185,6 +242,7 @@ public class ShipController : MonoBehaviour
             endStar = starWaypoints[0];
 
             StartJourney();
+            Debug.Log("StartedJourney");
         }
         else
         {

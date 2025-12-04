@@ -599,18 +599,10 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
 
     public void WhenInputConfirmed(int inputedShips, ShipController carrierController)
     {
-        int garrisonCount = carrierController.dockedStar.GetComponent<StarScript>().GarrisonCount;
 
-        if (garrisonCount + carrierController.ShipCount >= inputedShips)
-        {
+        carrierController.dockedStar.GetComponent<StarScript>().GarrisonCount += (carrierController.ShipCount - inputedShips);
+        carrierController.ShipCount = inputedShips;
 
-            carrierController.dockedStar.GetComponent<StarScript>().GarrisonCount += (carrierController.ShipCount - inputedShips);
-            carrierController.ShipCount = inputedShips;
-        }
-        else
-        {
-            promptUI.postMessage("You tried putting too many ships.");
-        }
         carrierController.dockedStar.GetComponent<StarScript>().Refresh();
         RefreshUI();
         carrierInfoScript.refresh();
@@ -639,7 +631,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
             Debug.LogWarning("Panel is null when trying to deactivate it!");
         }
 
-        promptUI.clearMessage();
+        promptUI.clearAll();
 
         buyEconButton.gameObject.SetActive(false);
         buyIndustryButton.gameObject.SetActive(false);
@@ -661,9 +653,6 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
         industryPriceText.text = string.Empty;
         sciencePriceText.text = string.Empty;
         createCarrierButton.gameObject.SetActive(false);
-        messagePrompt.gameObject.SetActive(false);
-        shipInput.gameObject.SetActive(false);
-        shipInputButton.gameObject.SetActive(false);
 
         carrierText.text = string.Empty;
         carrierList.gameObject.SetActive(false);
@@ -705,6 +694,10 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
     {
         Destroy(circleObject);
         circleObject = GenerateCircle(pos, radius);
+    }
+    public void RemoveCircle()
+    {
+        Destroy(circleObject);
     }
 
     static GameObject GenerateCircle(Vector2 pos, int radius)

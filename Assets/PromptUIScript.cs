@@ -39,6 +39,9 @@ public class PromptUIScript : MonoBehaviour
         confirmButton.gameObject.SetActive(isActive);
         message.gameObject.SetActive(isActive);
 
+        max.gameObject.SetActive(isActive);
+        min.gameObject.SetActive(isActive);
+
         input.text = sc.ShipCount.ToString();
         message.text = "Enter the desired amount of ships";
 
@@ -46,16 +49,49 @@ public class PromptUIScript : MonoBehaviour
     }
     public void confirmButtonPressed()
     {
+
+        int parsed = int.Parse(input.text);
+        Debug.Log(parsed);
+        if (parsed < 0)
+        {
+            postMessage("You can't have a negative amount of ships silly!");
+            return;
+        }
+
+        int garrisonCount = sc.dockedStar.GetComponent<StarScript>().GarrisonCount;
+
+        if (garrisonCount + sc.ShipCount >= parsed)
+        {
+            isActive = false;
+            input.gameObject.SetActive(isActive);
+            confirmButton.gameObject.SetActive(isActive);
+            message.gameObject.SetActive(isActive);
+
+            max.gameObject.SetActive(isActive);
+            min.gameObject.SetActive(isActive);
+
+
+            uIManager.WhenInputConfirmed(parsed, sc);
+
+        }
+        else
+        {
+            postMessage("You tried putting too many ships.");
+        }
+
+
+
+
+    }
+    public void clearAll()
+    {
         isActive = false;
         input.gameObject.SetActive(isActive);
         confirmButton.gameObject.SetActive(isActive);
         message.gameObject.SetActive(isActive);
 
-        int parsed = int.Parse(input.text);
-        Debug.Log(parsed);
-        uIManager.WhenInputConfirmed(parsed, sc);
-
-
+        max.gameObject.SetActive(isActive);
+        min.gameObject.SetActive(isActive);
     }
     public void maxButtonPressed()
     {

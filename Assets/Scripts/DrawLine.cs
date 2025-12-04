@@ -64,6 +64,7 @@ public class DrawLine : MonoBehaviour
     }
     public void addCarrierPath(ShipController linkedController)
     {
+        linePathDictionary.Remove(linkedController);
         List<Vector2> pointList = new List<Vector2>();
         pointList.Add(linkedController.gameObject.transform.position);
         for (int i = 0; i < linkedController.starWaypoints.Count; i++)
