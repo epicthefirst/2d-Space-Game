@@ -114,13 +114,23 @@ public class DrawLine : MonoBehaviour
     {
         if (controller.starWaypoints.Count > 0)
         {
-            List<Vector2> pointList = new List<Vector2>();
-            pointList.Add(controller.gameObject.transform.position);
-            foreach (GameObject obj in controller.starWaypoints)
+
+            if (linePathDictionary.TryGetValue(controller, out GameObject var))
             {
-                pointList.Add(obj.transform.position);
+                List<Vector2> pointList = new List<Vector2>();
+                pointList.Add(controller.gameObject.transform.position);
+                foreach (GameObject obj in controller.starWaypoints)
+                {
+                    pointList.Add(obj.transform.position);
+                }
+
+                reDrawLine(var, pointList);
             }
-            reDrawLine(linePathDictionary[controller], pointList);
+            else
+            {
+                addCarrierPath(controller);
+            }
+            
         }
     }
     public void reDrawLine(GameObject line, List<Vector2> vectors)

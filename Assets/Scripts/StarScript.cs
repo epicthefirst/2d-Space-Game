@@ -257,8 +257,14 @@ public class StarScript : MonoBehaviour
     }
     public void DetachCarrier(GameObject carrier)
     {
-        CarrierList.Remove(carrier);
-        CarrierCount -= 1;
+        if (CarrierList.Contains(carrier))
+        {
+            CarrierList.Remove(carrier);
+            CarrierCount -= 1;
+
+            Debug.LogError("Dettached carrier");
+        }
+
         PolygonRefresh();
         Refresh();
     }

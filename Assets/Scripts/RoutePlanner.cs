@@ -34,6 +34,7 @@ public class RoutePlanner : MonoBehaviour
 
     GameObject tempPath;
     LineRenderer lr;
+    GameObject line;
 
 
     Pathfinder.Graph graph;
@@ -45,8 +46,18 @@ public class RoutePlanner : MonoBehaviour
         originalSizeDelta = gameObject.GetComponent<RectTransform>().sizeDelta;
         gameObject.SetActive(false);
     }
+    public void newTickClear(object sender, CycleEvent e)
+    {
+        clear();
+    }
     public void init(GameObject carrier, GameObject currentStar)
     {
+
+
+        uIManager.NewTick += newTickClear;
+        carrierScript = carrier.GetComponent<ShipController>();
+
+
 
         tempPath = lineDrawer.makeTempPathObject();
         lr = tempPath.GetComponent<LineRenderer>();
@@ -55,9 +66,15 @@ public class RoutePlanner : MonoBehaviour
         this.currentStar = currentStar;
         gameObject.SetActive(true);
         isActive = true;
-        carrierScript = carrier.GetComponent<ShipController>();
+        
         currentCarrier = carrier;
         tempList = carrierScript.GetWaypoints();
+
+        if (tempList.Count > 0)
+        {
+            uIManager.MoveCircle(tempList[tempList.Count - 1].transform.position, tempList[tempList.Count - 1].GetComponent<StarScript>().Range);
+        }
+
         Debug.Log(carrier.GetComponent<ShipController>().starWaypoints.Count);
         updateUI(tempList);
         uIManager.isRoutePlannerActive = true;
@@ -67,6 +84,7 @@ public class RoutePlanner : MonoBehaviour
         /*        gridObjects = pathfinder.calculateGridSquaresTree(1024, 4, uIManager.starList);*/
         graph = mapGeneration.graphFullSpeed;
 
+        lineDrawer.removeCarrierPath(carrierScript);
     }
     public void addStar(GameObject star)
     {
@@ -135,6 +153,10 @@ public class RoutePlanner : MonoBehaviour
     public void updateUI(List<GameObject> starList)
     {
 
+        if (lineDrawer.linePathDictionary.TryGetValue(carrierScript, out line))
+        {
+            line.SetActive(false);
+        }
         Vector2 pos = originalSizeDelta;
         foreach (GameObject p in preFabList)
         {
@@ -175,18 +197,26 @@ public class RoutePlanner : MonoBehaviour
             Destroy(p);
         }
 
-        Destroy(lr);
+        Destroy(tempPath);
         uIManager.isRoutePlannerActive = false;
         gameObject.SetActive(false);
         tempList.Clear();
-        
 
+        if (line != null)
+        {
+            line.SetActive(true);
+        }
+        
     }
 
     public void undoOne()
     {
         if (tempList.Count > 0)
         {
+            if (carrierScript.inTransit && tempList.Count < 2)
+            {
+                return;
+            }
             Debug.Log(tempList.Count);
             
             tempList.RemoveAt(tempList.Count - 1);
@@ -220,7 +250,10 @@ public class RoutePlanner : MonoBehaviour
             Debug.Log(currentCarrier.GetComponent<ShipController>().GetWaypoints().Count);
         }
         Destroy(tempPath);
+
         currentCarrier.GetComponent<ShipController>().SetNewWaypoints(tempList);
+        lineDrawer.updateCarrier(carrierScript);
+        lineDrawer.linePathDictionary[carrierScript].SetActive(true);
         if (tempList.Count > 0)
         {
             currentCarrier.GetComponent<ShipController>().ResetWaiting();

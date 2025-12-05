@@ -39,6 +39,9 @@ public class ShipController : MonoBehaviour
     public int totalTimeLeft;
     public int totalWaitTimeLeft;
 
+    public bool isLeavingNextTick;
+    public bool inTransit;
+
     //RoutePlanner
 
     //In order of going to visit
@@ -72,12 +75,13 @@ public class ShipController : MonoBehaviour
 
         timeLeft = Pathfinder.tripCalc(startStar, endStar, speedPerTick);
         nextTickButton.onClick.AddListener(NewTick);
-        nextTickButton.onClick.AddListener(LeavingTick);
+        isLeavingNextTick = true;
 
         Debug.Log(time);
     }
     public void StartJourney()
     {
+
         
         if (starWaypoints.Count == 0)
         {
@@ -108,17 +112,22 @@ public class ShipController : MonoBehaviour
             }
             time = Pathfinder.tripCalc(startStar, endStar, speedPerTick);
             timeLeft = Pathfinder.tripCalc(startStar, endStar, speedPerTick);
+
+
+            isLeavingNextTick = true;
+
             
+            totalTimeLeft = 0;
 
             foreach (GameObject obj in starWaypoints)
             {
                 totalTimeLeft += Pathfinder.tripCalc(startStar, endStar, speedPerTick);
             }
             Debug.Log(timeLeft);
-            Debug.Log(totalTimeLeft); //FIX ME
+            Debug.Log(totalTimeLeft); //Fix me
 
             nextTickButton.onClick.AddListener(NewTick);
-            nextTickButton.onClick.AddListener(LeavingTick);
+
         }
     }
     public void WaitAtStar(int length)
@@ -127,6 +136,7 @@ public class ShipController : MonoBehaviour
         {
             Debug.LogError("Bad");
         }
+        dockedStar = endStar;
         totalWaitTimeLeft = length;
         nextTickButton.onClick.AddListener(WaitTick);
     }
@@ -162,12 +172,14 @@ public class ShipController : MonoBehaviour
     {
         starWaypoints.Clear();
         starWaypoints.AddRange(wayPoints);
+
 /*        List<Vector2> tempVectorList = new List<Vector2>();
         tempVectorList.Add(new Vector2(gameObject.transform.position.x, gameObject.transform.position.y));
         foreach (GameObject waypoint in wayPoints)
         {
             tempVectorList.Add(new Vector2(waypoint.transform.position.x, waypoint.transform.position.y));
         }*/
+        
         lineDrawer.addCarrierPath(this);
         Debug.Log("Updated star waypoints for: "+this +", with a length of " + starWaypoints.Count);
     }
@@ -179,17 +191,31 @@ public class ShipController : MonoBehaviour
     }
     void NewTick()
     {
+        if (isLeavingNextTick)
+        {
+            gameObject.transform.parent = null;
+            gameObject.GetComponent<Renderer>().enabled = true;
 
+            dockedStar.GetComponent<StarScript>().DetachCarrier(gameObject);
+            isLeavingNextTick = false;
+        }
+        else
+        {
+            inTransit = true;
+        }
+
+           
         Debug.Log(timeLeft);
         timeLeft--;
         totalTimeLeft--;
 
-        if (timeLeft == 0) 
+        if (timeLeft <= 0) 
         {
             gameObject.transform.position = endStar.transform.position;
             lineDrawer.updateCarrier(this);
 
             nextTickButton.onClick.RemoveListener(NewTick);
+            
             if (wantToSlingshot)
             {
                 SlingshotAtStar();
@@ -203,20 +229,20 @@ public class ShipController : MonoBehaviour
         moveY = endStar.transform.position.y - startStar.transform.position.y;
         Vector2 vector = new Vector2(moveX, moveY);
         gameObject.transform.position += (Vector3)vector / time;
-        Debug.Log(currentPosition +"/"+ timeLeft);
+        Debug.Log(gameObject.transform.position + "/"+ timeLeft);
 
 
         lineDrawer.updateCarrier(this);
     }
-    void LeavingTick()
-    {
-        // Remove the child from the parent
-        gameObject.transform.parent = null;
-        gameObject.GetComponent<Renderer>().enabled = true;
+    //void LeavingTick()
+    //{
+    //    // Remove the child from the parent
+    //    gameObject.transform.parent = null;
+    //    gameObject.GetComponent<Renderer>().enabled = true;
 
-        dockedStar.GetComponent<StarScript>().DetachCarrier(gameObject);
-        nextTickButton.onClick.RemoveListener(LeavingTick);
-    }
+    //    dockedStar.GetComponent<StarScript>().DetachCarrier(gameObject);
+    //    nextTickButton.onClick.RemoveListener(LeavingTick);
+    //}
     void ArrivedAtStar()
     {
 
@@ -225,7 +251,8 @@ public class ShipController : MonoBehaviour
         slingshotMultCount = 0;
         Debug.Log("Arrived at star");
         dockedStar = endStar;
-        
+        inTransit = false;
+
         starWaypoints.RemoveAt(0);
         endStar = null;
 
