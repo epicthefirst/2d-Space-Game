@@ -354,7 +354,7 @@ public class Pathfinder : MonoBehaviour
 
     public List<GameObject> calculate(Graph graph, int start, int end)
     {
-        var watch = System.Diagnostics.Stopwatch.StartNew();
+        //var watch = System.Diagnostics.Stopwatch.StartNew();
 
         int vertices = graph.vertices;
         int[] distances = new int[vertices];
@@ -415,8 +415,8 @@ public class Pathfinder : MonoBehaviour
         Debug.Log($"Path found with {path.Count} nodes.");
         path.RemoveAt(0);
 
-        watch.Stop();
-        Debug.LogError(watch.Elapsed);
+        //watch.Stop();
+        //Debug.LogError(watch.Elapsed);
         return path;
     }
 

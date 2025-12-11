@@ -454,7 +454,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
     }
     public void carrierMenuBlueButtonPressed()
     {
-        Debug.LogError("Iran"); 
+/*        Debug.LogError("Iran"); */
 /*        tempStar = currentStar;
         TStarScript = tempStar.GetComponent<StarScript>();*/
         starSelected = false;

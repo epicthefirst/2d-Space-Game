@@ -4,9 +4,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using Unity.VisualScripting;
+using UnityEngine.EventSystems;
 
-public class StarScript : MonoBehaviour
+public class StarScript : MonoBehaviour, IPointerClickHandler
 {
+
+    public void OnPointerClick (PointerEventData eventData)
+    {
+        uIManager.InitUI(gameObject);
+        string text = "Start, " + planetTimings.Count + ":";
+        foreach (Tuple<int, int> tu in planetTimings)
+        {
+            text = text + tu.Item1 + ", " + tu.Item2 + ";";
+        }
+        Debug.Log(text);
+    }
+
+
+
+
+
     //ORBITS + PLANETS QUALITY
     //Numbers to mess with
     public static float distanceIncrease = 1.5f;
@@ -262,7 +279,7 @@ public class StarScript : MonoBehaviour
             CarrierList.Remove(carrier);
             CarrierCount -= 1;
 
-            Debug.LogError("Dettached carrier");
+            //Debug.LogError("Dettached carrier");
         }
 
         PolygonRefresh();
@@ -357,24 +374,6 @@ public class StarScript : MonoBehaviour
         this.materialDictionary = materialDictionary;
         PolygonRefresh();
     }
-
-    void OnMouseOver()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-
-
-
-            uIManager.InitUI(gameObject);
-            string text = "Start, " + planetTimings.Count + ":";
-            foreach (Tuple<int, int> tu in planetTimings)
-            {
-                text = text + tu.Item1 + ", " + tu.Item2 + ";";
-            }
-            Debug.Log(text);
-        }
-    }
-
 
 
 
