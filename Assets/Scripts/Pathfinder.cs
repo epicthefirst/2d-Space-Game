@@ -666,6 +666,16 @@ public class Pathfinder : MonoBehaviour
             return thing;
         }
 
+        public List<GameObject> getStarNeighbors(GameObject star)
+        {
+            List<GameObject> neighbors = new List<GameObject>();
+            foreach(Node node in adjacencyList[findStarIndex(star)])
+            {
+                neighbors.Add(node.star);
+            }
+            return neighbors;
+        }
+
 
 
 
