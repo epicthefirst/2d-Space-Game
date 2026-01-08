@@ -430,7 +430,8 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
             GameObject carrierButton = Instantiate(carrierButtonPrefab, new Vector3(0, 0, 0), Quaternion.identity, carrierButtonParent.transform);
             carrierButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -y);
             CarrierButtonScript cBScript = carrierButton.GetComponent<CarrierButtonScript>();
-            cBScript.init(i.GetComponent<ShipController>().Name, i, ownerColourScript.GetMainColour(owner), this, "TestingCarrier");
+            ShipController iScript = i.GetComponent<ShipController>();
+            cBScript.init(iScript.Name, i, ownerColourScript.GetMainColour(owner), this, iScript.Specialist);
             carrierButton.transform.GetChild(3).gameObject.GetComponent<RawImage>().texture = getSpecImage(cBScript.carrierSpecialist);
 
             y += 50;

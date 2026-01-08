@@ -83,6 +83,8 @@ public class ShipController : MonoBehaviour
     {
 
         
+
+
         if (starWaypoints.Count == 0)
         {
             Debug.LogError("This ain't supposed to happen twin");
@@ -115,13 +117,14 @@ public class ShipController : MonoBehaviour
 
 
             isLeavingNextTick = true;
+            gameObject.transform.eulerAngles = new Vector3(0, 0, 270 + (Mathf.Atan2(endStar.transform.position.y - startStar.transform.position.y, endStar.transform.position.x - startStar.transform.position.x) * Mathf.Rad2Deg));
 
-            
             totalTimeLeft = 0;
-
+            GameObject prevObj = startStar;
             foreach (GameObject obj in starWaypoints)
             {
-                totalTimeLeft += Pathfinder.tripCalc(startStar, endStar, speedPerTick);
+                totalTimeLeft += Pathfinder.tripCalc(prevObj, obj, speedPerTick);
+                prevObj = obj;
             }
             Debug.Log(timeLeft);
             Debug.Log(totalTimeLeft); //Fix me

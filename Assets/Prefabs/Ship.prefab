@@ -71,8 +71,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 918367097
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 75f5f34dc1b5347e0b8351032682f224, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -97,4 +97,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8bdbe684754c1314fbfc3a69e4a0c041, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nextTickButton: {fileID: 0}
+  lineDrawer: {fileID: 0}
+  dockedStar: {fileID: 0}
+  Owner: 0
+  ShipCount: 0
+  Name: 
+  hasSpecialist: 0
+  Specialist: 
+  totalTimeLeft: 0
+  totalWaitTimeLeft: 0
+  isLeavingNextTick: 0
+  inTransit: 0
+  starWaypoints: []
