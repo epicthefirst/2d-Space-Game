@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
-using System.Linq;
+using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
 public class RoutePlanner : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class RoutePlanner : MonoBehaviour
     [SerializeField] TMP_Text carrierNameText;
     [SerializeField] TMP_Text shipCountText;
     [SerializeField] TMP_Text ETAText;
+    [SerializeField] RawImage specialistImage;
     [SerializeField] GameObject preFab;
     [SerializeField] UIManager uIManager;
     [SerializeField] Pathfinder pathfinder;
@@ -122,6 +124,7 @@ public class RoutePlanner : MonoBehaviour
         }
 
 
+
         /*        if(tempList == null)
                 {
                     Debug.LogWarning("tempList = null");
@@ -152,6 +155,9 @@ public class RoutePlanner : MonoBehaviour
 
     public void updateUI(List<GameObject> starList)
     {
+        shipCountText.text = carrierScript.ShipCount.ToString();
+        //specialistImage.texture = uIManager.getSpecImage(carrierScript.Specialist);
+        specialistImage.texture = uIManager.getSpecImage("TestingCarrier");
 
         if (lineDrawer.linePathDictionary.TryGetValue(carrierScript, out line))
         {
@@ -165,8 +171,21 @@ public class RoutePlanner : MonoBehaviour
         preFabList.Clear();
         lr.positionCount = starList.Count + 1;
         lr.SetPosition(0, currentStar.transform.position);
+        GameObject tempStar = currentCarrier;
+        Debug.Log(tempStar.transform.position);
+        
+/*        int timeToNextStar = 0;
+        if (starList.Count > 0)
+        {
+            timeToNextStar = Pathfinder.simpleTripCalc(gameObject.transform.position, starList[0].transform.position, carrierScript.speedPerTick);
+            Debug.Log(timeToNextStar);
+        }*/
+
+        int totalTime = 0;
+        
         for (int i = 0; i < starList.Count; i++)
         {
+            Debug.Log(starList[0].transform.position);
             //, new Vector3(0, -80 - (i * 40)), Quaternion.identity
             GameObject obj = Instantiate(preFab, gameObject.transform);
             obj.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, -90 - (i * 40));
@@ -176,12 +195,22 @@ public class RoutePlanner : MonoBehaviour
 
             lr.SetPosition(i + 1, starList[i].transform.position);
 
+
+            totalTime += Pathfinder.tripCalc(tempStar, starList[i], carrierScript.speedPerTick);
+            tempStar = starList[i];
+
+           
+
         }
         gameObject.GetComponent<RectTransform>().sizeDelta = pos;
-
-
-
-
+        if (starList.Count > 0)
+        {
+            ETAText.text = "ETA: Tick " + totalTime /*+ " | " + Pathfinder.tripCalc(starList[starList.Count - 1], starList[starList.Count - 2], carrierScript.speedPerTick)*/;
+        }
+        else
+        {
+            ETAText.text = "ETA: N/A ";
+        }
 
 
     }

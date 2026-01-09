@@ -21,11 +21,17 @@ public class Pathfinder : MonoBehaviour
         int time = Mathf.CeilToInt(distance / speedPerTick);
         return time;
     }
-/*
-    public void calculateMainGraph()
+    public static int simpleTripCalc(Vector2 start, Vector2 end, int speedPerTick)
     {
+        float distance = Vector2.Distance(start, end);
+        int time = Mathf.CeilToInt(distance / speedPerTick);
+        return time;
+    }
+    /*
+        public void calculateMainGraph()
+        {
 
-    }*/
+        }*/
 
     public static List<GameObject> dumbedListCalculator(List<GridObject> gridList, GameObject startStar, GameObject endstar)
     {

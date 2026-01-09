@@ -1352,7 +1352,7 @@ GameObject:
   m_Component:
   - component: {fileID: 206277307}
   - component: {fileID: 206277309}
-  - component: {fileID: 206277308}
+  - component: {fileID: 206277310}
   m_Layer: 5
   m_Name: ShipImage
   m_TagString: Untagged
@@ -1380,7 +1380,15 @@ RectTransform:
   m_AnchoredPosition: {x: 17.5, y: -18}
   m_SizeDelta: {x: 36, y: 35}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &206277308
+--- !u!222 &206277309
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 206277306}
+  m_CullTransparentMesh: 1
+--- !u!114 &206277310
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1389,7 +1397,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 206277306}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
@@ -1400,24 +1408,13 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &206277309
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 206277306}
-  m_CullTransparentMesh: 1
+  m_Texture: {fileID: 0}
+  m_UVRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
 --- !u!1 &226103145
 GameObject:
   m_ObjectHideFlags: 0
@@ -8952,8 +8949,9 @@ MonoBehaviour:
   saveButton: {fileID: 1417931331}
   saveAndEditButton: {fileID: 1067711919}
   carrierNameText: {fileID: 0}
-  shipCountText: {fileID: 0}
-  ETAText: {fileID: 0}
+  shipCountText: {fileID: 1309564795}
+  ETAText: {fileID: 667990958}
+  specialistImage: {fileID: 206277310}
   preFab: {fileID: 3724516933365884384, guid: cc2f4e3bb78d16b4e919669675a51c59, type: 3}
   uIManager: {fileID: 1387152735}
   pathfinder: {fileID: 696977113}
