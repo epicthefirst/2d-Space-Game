@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem.XR;
 using UnityEngine.UI;
 using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
@@ -51,6 +52,7 @@ public class RoutePlanner : MonoBehaviour
     public void newTickClear(object sender, CycleEvent e)
     {
         clear();
+        Debug.Log("Clearing...");
     }
     public void init(GameObject carrier, GameObject currentStar)
     {
@@ -86,7 +88,6 @@ public class RoutePlanner : MonoBehaviour
         /*        gridObjects = pathfinder.calculateGridSquaresTree(1024, 4, uIManager.starList);*/
         graph = mapGeneration.graphFullSpeed;
 
-        lineDrawer.removeCarrierPath(carrierScript);
     }
     public void addStar(GameObject star)
     {
@@ -158,8 +159,8 @@ public class RoutePlanner : MonoBehaviour
         shipCountText.text = carrierScript.ShipCount.ToString();
         //specialistImage.texture = uIManager.getSpecImage(carrierScript.Specialist);
         specialistImage.texture = uIManager.getSpecImage("TestingCarrier");
-
-        if (lineDrawer.linePathDictionary.TryGetValue(carrierScript, out line))
+        line = carrierScript.linePath;
+        if (line != null)
         {
             line.SetActive(false);
         }
@@ -278,17 +279,19 @@ public class RoutePlanner : MonoBehaviour
             Debug.Log(tempList.Count);
             Debug.Log(currentCarrier.GetComponent<ShipController>().GetWaypoints().Count);
         }
-        Destroy(tempPath);
+        
 
-        currentCarrier.GetComponent<ShipController>().SetNewWaypoints(tempList);
-        lineDrawer.updateCarrier(carrierScript);
-        lineDrawer.linePathDictionary[carrierScript].SetActive(true);
+        carrierScript.SetNewWaypoints(tempList);
+        //lineDrawer.updateCarrier(carrierScript);
+        //lineDrawer.linePathDictionary[carrierScript].SetActive(true);
+
+        carrierScript.updateLine();
         if (tempList.Count > 0)
         {
             currentCarrier.GetComponent<ShipController>().ResetWaiting();
             currentCarrier.GetComponent<ShipController>().StartJourney();
         }
-
+        Destroy(tempPath);
         clear();
     }
 }

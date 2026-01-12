@@ -1,8 +1,10 @@
 
-using UnityEngine;
-using TMPro;
-using UnityEngine.UI;
 using System.Collections.Generic;
+using System.Linq;
+using TMPro;
+using UnityEngine;
+using UnityEngine.InputSystem.XR;
+using UnityEngine.UI;
 
 
 
@@ -41,6 +43,8 @@ public class ShipController : MonoBehaviour
 
     public bool isLeavingNextTick;
     public bool inTransit;
+
+    public GameObject linePath;
 
     //RoutePlanner
 
@@ -236,6 +240,28 @@ public class ShipController : MonoBehaviour
 
 
         lineDrawer.updateCarrier(this);
+    }
+    public void updateLine()
+    {
+        List<Vector2> pointList = new List<Vector2>();
+        pointList.Add(gameObject.transform.position);
+        foreach (GameObject obj in starWaypoints)
+        {
+            pointList.Add(obj.transform.position);
+        }
+        LineRenderer lr = new LineRenderer();
+        if (linePath != null)
+        {
+            lr = linePath.GetComponent<LineRenderer>();
+        }
+        
+        pointList = pointList.Distinct().ToList();
+
+        lr.positionCount = pointList.Count;
+        for (int i = 0; i < pointList.Count; i++)
+        {
+            lr.SetPosition(i, pointList[i]);
+        }
     }
     //void LeavingTick()
     //{
