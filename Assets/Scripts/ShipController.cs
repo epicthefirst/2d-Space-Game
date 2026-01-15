@@ -10,7 +10,6 @@ using UnityEngine.UI;
 
 public class ShipController : MonoBehaviour
 {
-    public DrawLine lineDrawer;
     private GameObject startStar;
     private GameObject endStar;
     public GameObject dockedStar;
@@ -45,6 +44,7 @@ public class ShipController : MonoBehaviour
     public bool inTransit;
 
     public GameObject linePath;
+    public Material dottedLineMaterial;
 
     //RoutePlanner
 
@@ -54,7 +54,6 @@ public class ShipController : MonoBehaviour
     public void Init(string name, Button nextTickButton, GameObject startStar, int shipShipCountAdd, int carrierCount, PlayerScript ownerScript, DrawLine drawline)
     {
         Name = name;
-        lineDrawer = drawline;
         this.ownerScript = ownerScript;
         startStarScript = startStar.GetComponent<StarScript>();
         ShipCount += shipShipCountAdd;
@@ -187,7 +186,7 @@ public class ShipController : MonoBehaviour
             tempVectorList.Add(new Vector2(waypoint.transform.position.x, waypoint.transform.position.y));
         }*/
         
-        lineDrawer.addCarrierPath(this);
+        updateLine();
         Debug.Log("Updated star waypoints for: "+this +", with a length of " + starWaypoints.Count);
     }
     public List<GameObject> GetWaypoints()
@@ -219,7 +218,7 @@ public class ShipController : MonoBehaviour
         if (timeLeft <= 0) 
         {
             gameObject.transform.position = endStar.transform.position;
-            lineDrawer.updateCarrier(this);
+            updateLine();
 
             nextTickButton.onClick.RemoveListener(NewTick);
             
@@ -239,29 +238,58 @@ public class ShipController : MonoBehaviour
         Debug.Log(gameObject.transform.position + "/"+ timeLeft);
 
 
-        lineDrawer.updateCarrier(this);
+        updateLine();
     }
     public void updateLine()
     {
-        List<Vector2> pointList = new List<Vector2>();
-        pointList.Add(gameObject.transform.position);
-        foreach (GameObject obj in starWaypoints)
         {
-            pointList.Add(obj.transform.position);
-        }
-        LineRenderer lr = new LineRenderer();
-        if (linePath != null)
-        {
-            lr = linePath.GetComponent<LineRenderer>();
-        }
-        
-        pointList = pointList.Distinct().ToList();
+            List<Vector2> pointList = new List<Vector2>();
+            pointList.Add(gameObject.transform.position);
+            foreach (GameObject obj in starWaypoints)
+            {
+                pointList.Add(obj.transform.position);
+            }
+            pointList = pointList.Distinct().ToList();
+            if (linePath != null)
+            {
+                LineRenderer lr = linePath.GetComponent<LineRenderer>();
 
-        lr.positionCount = pointList.Count;
+                
+
+                lr.positionCount = pointList.Count;
+                for (int i = 0; i < pointList.Count; i++)
+                {
+                    lr.SetPosition(i, pointList[i]);
+                }
+            }
+            else
+            {
+                linePath = drawLinePath(pointList);
+            }
+        }
+    }
+
+    public GameObject drawLinePath(List<Vector2> pointList)
+    {
+        GameObject dottedPath = new GameObject("dottedPath");
+        LineRenderer lineMaker = dottedPath.AddComponent<LineRenderer>();
+        lineMaker.material = dottedLineMaterial;
+        lineMaker.material.mainTextureScale = new Vector2(1.0f, 1.0f);
+        lineMaker.startWidth = 1;
+        lineMaker.endWidth = 1;
+
+        lineMaker.textureMode = LineTextureMode.Tile;
+        lineMaker.material.mainTexture.wrapMode = TextureWrapMode.Repeat;
+        lineMaker.numCornerVertices = 1;
+
+        lineMaker.positionCount = pointList.Count;
+
         for (int i = 0; i < pointList.Count; i++)
         {
-            lr.SetPosition(i, pointList[i]);
+            lineMaker.SetPosition(i, pointList[i]);
         }
+        Debug.Log("Made path");
+        return dottedPath;
     }
     //void LeavingTick()
     //{
@@ -302,7 +330,7 @@ public class ShipController : MonoBehaviour
         }
         else
         {
-            lineDrawer.removeCarrierPath(this);
+            linePath.SetActive(false);
         }
     }
     void SlingshotAtStar()

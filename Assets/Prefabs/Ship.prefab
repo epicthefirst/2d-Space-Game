@@ -97,8 +97,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8bdbe684754c1314fbfc3a69e4a0c041, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lineDrawer: {fileID: 0}
   dockedStar: {fileID: 0}
+  speedPerTick: 10
   Owner: 0
   ShipCount: 0
   Name: 
@@ -108,4 +108,6 @@ MonoBehaviour:
   totalWaitTimeLeft: 0
   isLeavingNextTick: 0
   inTransit: 0
+  linePath: {fileID: 0}
+  dottedLineMaterial: {fileID: 2100000, guid: fd33dbb6b497b7f46890665a8f02c17b, type: 2}
   starWaypoints: []

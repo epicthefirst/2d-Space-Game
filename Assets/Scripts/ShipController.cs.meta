@@ -3,7 +3,11 @@ guid: 8bdbe684754c1314fbfc3a69e4a0c041
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - lineDrawer: {instanceID: 0}
+  - dockedStar: {instanceID: 0}
+  - linePath: {instanceID: 0}
+  - dottedLineMaterial: {fileID: 2100000, guid: fd33dbb6b497b7f46890665a8f02c17b, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

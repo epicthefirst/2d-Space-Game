@@ -343,17 +343,27 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
             
             starSelected = false;
         }
-/*        if (Input.GetMouseButtonDown(0))
+
+
+        if (Input.GetKeyDown(KeyCode.K))
         {
-            Debug.Log("Yurr");
-            RaycastHit2D ray = Physics2D.Raycast(new Vector2(mainCamera.ScreenToWorldPoint(Input.mousePosition).x, mainCamera.ScreenToWorldPoint(Input.mousePosition).y), Vector2.zero, 0f);
-            if (ray & !isOnUI)
+            ScreenCapture.CaptureScreenshot("screenshot.png", 2);
+            Debug.Log("A screenshot was taken!");
+        }
+
+
+
+    /*        if (Input.GetMouseButtonDown(0))
             {
-                Debug.LogWarning(ray.point.ToSafeString());
-                InitUI(ray.transform.gameObject);
-            }
-        }*/
-    }
+                Debug.Log("Yurr");
+                RaycastHit2D ray = Physics2D.Raycast(new Vector2(mainCamera.ScreenToWorldPoint(Input.mousePosition).x, mainCamera.ScreenToWorldPoint(Input.mousePosition).y), Vector2.zero, 0f);
+                if (ray & !isOnUI)
+                {
+                    Debug.LogWarning(ray.point.ToSafeString());
+                    InitUI(ray.transform.gameObject);
+                }
+            }*/
+}
     private void BuyEconomy()
     {
         if (playerMoney >= econPrice)
