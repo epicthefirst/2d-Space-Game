@@ -7,11 +7,22 @@ public class GameInformation : MonoBehaviour
     public int playerCount;
     public List<PlayerClass> playerList = new List<PlayerClass>();
 
+    public int tickCounter = 0;
+    public int playerMoney = 500;
+    public int cycleLength = 20; // Change this in the future
+    public int carrierCost = 25; //This too
+
+    public int baseIncomePerCycle = 250;
+
+    public GameObject shipPrefab;
+
+
 
     public void addPlayer(PlayerClass player)
     {
         if (playerList.Contains(player))
         {
+            Debug.LogError("Already in list");
             return;
         }
         else
@@ -26,6 +37,7 @@ public class GameInformation : MonoBehaviour
         public string name;
         public string description;
 
+        public PlayerScript playerScript;
         public Color primaryColour;
         public Color secondaryColour;
         public Material primaryMaterial;
@@ -34,9 +46,10 @@ public class GameInformation : MonoBehaviour
 
 
 
-        public PlayerClass(string name, Color primaryColour, Color secondaryColour, Material primaryMaterial, Material secondaryMaterial)
+        public PlayerClass(string name, PlayerScript playerScript, Color primaryColour, Color secondaryColour, Material primaryMaterial, Material secondaryMaterial)
         {
             this.name = name;
+            this.playerScript = playerScript;
             this.primaryColour = primaryColour;
             this.secondaryColour = secondaryColour;
             this.primaryMaterial = primaryMaterial;

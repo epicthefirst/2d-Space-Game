@@ -10,23 +10,31 @@ public class EnemyBotBehavior : MonoBehaviour
     public UIManager uIManager;
     public MapGeneration mapGenerationScript;
     public Pathfinder pathfinderScript;
+    public GameInformation gameInformation;
+    public int carrierNameIncrement;
 
 
     private List<GameObject> ownedStars = new List<GameObject>();
     private Pathfinder.Graph knownGraph;
-    public void init(GameInformation.PlayerClass bot, List<GameObject> ownedStars)
+    private System.Random random;
+    private int money;
+    public void init(GameInformation.PlayerClass bot, List<GameObject> ownedStars, System.Random random, GameInformation gameInformation)
     {
+        this.gameInformation = gameInformation;
+        this.random = random;
         this.bot = bot;
         this.ownedStars = ownedStars;
-
+        money = bot.playerScript.playerMoney;
         uIManager.NewTick += newTick;
         
     }
 
     public void newTick(object sender, CycleEvent e)
     {
-        
-        checkToExpand();
+        if (money > gameInformation.carrierCost)
+        {
+            checkToExpand();
+        }
     }
 
     public void checkToExpand()
@@ -37,15 +45,33 @@ public class EnemyBotBehavior : MonoBehaviour
             if (star.GetComponent<StarScript>().GarrisonCount >= 100)
             {
                 tempList = mapGenerationScript.graphFullSpeed.getStarNeighbors(star).Except(ownedStars).ToList();
-                tempList.Sort();
 
+                GameObject chosenStar = tempList[random.Next(0, tempList.Count - 1)];
+
+                if(money <= gameInformation.carrierCost)
+                {
+                    money -= gameInformation.carrierCost;
+                    GameObject c = Instantiate(gameInformation.shipPrefab, star.transform.position, Quaternion.identity);
+                    c.transform.parent = star.transform;
+                    ShipController shipController = c.GetComponent<ShipController>();
+
+                    star.GetComponent<StarScript>().AttachCarrier(c);
+                    shipController.dockedStar = star;
+
+                    shipController.Init(carrierNameGenerator(), nextTickButton, currentStar, inputedShipCount, carrierCount, playerScript, lineDrawer);
+                }
 
             }
-            tempList.AddRange(mapGenerationScript.graphFullSpeed.getStarNeighbors(star));
         }
         tempList = tempList.Distinct().ToList().Except(ownedStars).ToList();
 
 /*        mapGenerationScript.graphFullSpeed*/
+    }
+
+    public string carrierNameGenerator()
+    {
+        carrierNameIncrement++;
+        return bot.name + " " + carrierNameIncrement.ToString();
     }
 
 }

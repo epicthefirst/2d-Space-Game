@@ -72,16 +72,6 @@ public class ShipController : MonoBehaviour
         startStarScript.ReduceShipCount(shipShipCountAdd);
 /*        startStarScript.AttachCarrier(gameObject);*/
     }
-    public void SendToStar(GameObject endStar)
-    {
-        this.endStar = endStar;
-
-        timeLeft = Pathfinder.tripCalc(startStar, endStar, speedPerTick);
-        nextTickButton.onClick.AddListener(NewTick);
-        isLeavingNextTick = true;
-
-        Debug.Log(time);
-    }
     public void StartJourney()
     {
 
@@ -131,7 +121,6 @@ public class ShipController : MonoBehaviour
             }
             Debug.Log(timeLeft);
             Debug.Log(totalTimeLeft); //Fix me
-
             nextTickButton.onClick.AddListener(NewTick);
 
         }

@@ -17,9 +17,12 @@ public class PlayerScript : MonoBehaviour
     private List<GameObject> playerCarrierList = new List<GameObject>();
     private List<GameObject> playerStarList = new List<GameObject>();
 
+    public int playerMoney = 500;
+
+
 
     public int cycleCount = 0;
-    private List<GameObject> playerStars = new List<GameObject>();
+    public List<GameObject> playerStars = new List<GameObject>();
     public int NewCycle(int cycleCount)
     {
         this.cycleCount = cycleCount;
