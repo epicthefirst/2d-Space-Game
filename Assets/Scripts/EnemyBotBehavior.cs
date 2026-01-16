@@ -25,11 +25,11 @@ public class EnemyBotBehavior : MonoBehaviour
         this.bot = bot;
         this.ownedStars = ownedStars;
         money = bot.playerScript.playerMoney;
-        uIManager.NewTick += newTick;
+        CycleEventManager.OnTick += newTick;
         
     }
 
-    public void newTick(object sender, CycleEvent e)
+    public void newTick(object sender, NewTickEvent e)
     {
         if (money > gameInformation.carrierCost)
         {
@@ -58,7 +58,7 @@ public class EnemyBotBehavior : MonoBehaviour
                     star.GetComponent<StarScript>().AttachCarrier(c);
                     shipController.dockedStar = star;
 
-                    shipController.Init(carrierNameGenerator(), nextTickButton, currentStar, inputedShipCount, carrierCount, playerScript, lineDrawer);
+                    //shipController.Init(carrierNameGenerator(), nextTickButton, currentStar, inputedShipCount, carrierCount, playerScript, lineDrawer);
                 }
 
             }

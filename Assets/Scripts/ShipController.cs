@@ -23,7 +23,6 @@ public class ShipController : MonoBehaviour
     private float moveX;
     private float moveY;
     public int Owner;
-    private Button nextTickButton;
     private StarScript startStarScript;
 
     private PlayerScript ownerScript;
@@ -51,13 +50,12 @@ public class ShipController : MonoBehaviour
     //In order of going to visit
     public List<GameObject> starWaypoints;
 
-    public void Init(string name, Button nextTickButton, GameObject startStar, int shipShipCountAdd, int carrierCount, PlayerScript ownerScript, DrawLine drawline)
+    public void Init(string name, GameObject startStar, int shipShipCountAdd, int carrierCount, PlayerScript ownerScript, DrawLine drawline)
     {
         Name = name;
         this.ownerScript = ownerScript;
         startStarScript = startStar.GetComponent<StarScript>();
         ShipCount += shipShipCountAdd;
-        this.nextTickButton = nextTickButton;
         gameObject.GetComponent<Renderer>().enabled = false;
         Owner = startStarScript.Owner;
         this.startStar = startStar;
@@ -121,7 +119,7 @@ public class ShipController : MonoBehaviour
             }
             Debug.Log(timeLeft);
             Debug.Log(totalTimeLeft); //Fix me
-            nextTickButton.onClick.AddListener(NewTick);
+            CycleEventManager.OnTick += NewTick;
 
         }
     }
@@ -133,14 +131,14 @@ public class ShipController : MonoBehaviour
         }
         dockedStar = endStar;
         totalWaitTimeLeft = length;
-        nextTickButton.onClick.AddListener(WaitTick);
+        CycleEventManager.OnTick += WaitTick;
     }
     public void ResetWaiting()
     {
-        nextTickButton.onClick.RemoveListener(WaitTick);
+        CycleEventManager.OnTick -= WaitTick;
         totalTimeLeft = 0;
     }
-    public void WaitTick()
+    public void WaitTick(object sender, NewTickEvent e)
     {
         startStar = starWaypoints[0];
         starWaypoints.RemoveAt(0);
@@ -150,7 +148,7 @@ public class ShipController : MonoBehaviour
         {
 
 
-            nextTickButton.onClick.RemoveListener(WaitTick);
+            CycleEventManager.OnTick -= WaitTick;
 
             if (starWaypoints.Count > 0)
             {
@@ -184,8 +182,7 @@ public class ShipController : MonoBehaviour
         CopyList.AddRange(starWaypoints);
         return CopyList;
     }
-    void NewTick()
-    {
+    private void NewTick(object sender, NewTickEvent e) { 
         if (isLeavingNextTick)
         {
             gameObject.transform.parent = null;
@@ -209,7 +206,7 @@ public class ShipController : MonoBehaviour
             gameObject.transform.position = endStar.transform.position;
             updateLine();
 
-            nextTickButton.onClick.RemoveListener(NewTick);
+            CycleEventManager.OnTick -= NewTick;
             
             if (wantToSlingshot)
             {

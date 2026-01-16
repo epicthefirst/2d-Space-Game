@@ -49,7 +49,7 @@ public class RoutePlanner : MonoBehaviour
         originalSizeDelta = gameObject.GetComponent<RectTransform>().sizeDelta;
         gameObject.SetActive(false);
     }
-    public void newTickClear(object sender, CycleEvent e)
+    public void newTickClear(object sender, NewTickEvent e)
     {
         clear();
         Debug.Log("Clearing...");
@@ -58,7 +58,7 @@ public class RoutePlanner : MonoBehaviour
     {
 
 
-        uIManager.NewTick += newTickClear;
+        CycleEventManager.OnTick += newTickClear;
         carrierScript = carrier.GetComponent<ShipController>();
 
 

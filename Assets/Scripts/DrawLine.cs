@@ -78,7 +78,7 @@ public class DrawLine : MonoBehaviour
     {
         linePathDictionary.Remove(controller);
     }
-    private void thisNewTick(object sender, CycleEvent e)
+    private void thisNewTick(object sender, NewTickEvent e)
     {
         /*        foreach (ShipController thing in linePathDictionary.Keys)
                 {

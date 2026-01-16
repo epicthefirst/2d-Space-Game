@@ -119,7 +119,7 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
     private void WakeUp()
     {
         if (!isAwake){
-            uIManager.NewTick += thisNewTick;
+            CycleEventManager.OnTick += thisNewTick;
         }
         isAwake = true;
     }
@@ -131,7 +131,7 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
 
         uIManager = canvas.GetComponent<UIManager>();
 
-        uIManager.NewTick += thisNewTick;
+        CycleEventManager.OnTick += thisNewTick;
 
         /*Debug.Log(gameObject.transform.position);*/
 
@@ -207,7 +207,7 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
         starNameDisplay.fontSize = 12;
         Refresh();
     }
-    private void thisNewTick(object sender, CycleEvent e)
+    private void thisNewTick(object sender, NewTickEvent e)
     {
         if (IndustryCount != 0)
         {

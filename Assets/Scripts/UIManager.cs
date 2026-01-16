@@ -7,12 +7,12 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class CycleEvent : EventArgs
-{
-    public int CurrentCycle { get; set; }
-    public int CurrentTick { get; set; }
-    public int TickPerCycle { get; set; }
-}
+//public class CycleEvent : EventArgs
+//{
+//    public int CurrentCycle { get; set; }
+//    public int CurrentTick { get; set; }
+//    public int TickPerCycle { get; set; }
+//}
 
 public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHandler*/
 {
@@ -149,9 +149,6 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
     Pathfinder.Graph graph;
     [SerializeField] Pathfinder pathfinder;
 
-    //Events
-    public event EventHandler<CycleEvent> NewTick;
-    CycleEvent cycleEvent = new();
 
 
     //Change this to add new specialists
@@ -166,7 +163,6 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
 
     void Start()
     {
-        cycleEvent.TickPerCycle = cycleLength;
         setDictionaries();
         //shipInputButton.onClick.AddListener(WhenInputConfirmed);
         nextTickButton.onClick.AddListener(OnTickButtonPress);
@@ -410,23 +406,14 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
         }
         RefreshUI();
     }
-    void OnTickButtonPress()
+    public void OnTickButtonPress()
     {
-
-        tickCounter++;
-        Debug.Log("New tick");
-        if (tickCounter % 20 == 0)
-        {
-            cycleCount++;
-            playerMoney += baseIncomePerCycle + (playerScript.NewCycle(cycleCount) * 10);
-
-        };
-        cycleEvent.CurrentCycle = cycleCount;
-        cycleEvent.CurrentTick = tickCounter;
-        NewTick.Invoke(this, cycleEvent);
+        CycleEventManager.NewTick();
+        tickCounter = CycleEventManager.CurrentTick;
         RefreshUI();
         ClearUI();
     }
+
 
     void carrierButtons()
     {
@@ -545,7 +532,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
             currentStar.GetComponent<StarScript>().AttachCarrier(c);
             shipController.dockedStar = currentStar;
 
-            shipController.Init(carrierNameGenerator(), nextTickButton, currentStar, inputedShipCount, carrierCount, playerScript, lineDrawer);
+            shipController.Init(carrierNameGenerator(), currentStar, inputedShipCount, carrierCount, playerScript, lineDrawer);
             carrierButtons();
             promptUI.init(c);
             carrierButtonPressed(c);
