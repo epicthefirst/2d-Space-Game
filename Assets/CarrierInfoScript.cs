@@ -25,7 +25,7 @@ public class CarrierInfoScript : MonoBehaviour
         carrierDestinationText.text = "Destination: " + (destination == null ? "None" : destination.name);
         specialistsText.text = "Specialist: "+ linkedController.Specialist;
         weaponStrengthText.text = "Weapons: " + 67.ToString();
-        ownerText.text = "Owner: " + linkedController.Owner.ToString();
+        ownerText.text = "Owner: " + linkedController.owner.name.ToString();
     }
     public void refresh()
     {
@@ -35,7 +35,7 @@ public class CarrierInfoScript : MonoBehaviour
         carrierDestinationText.text = "Destination: " + (destination == null ? "None" : destination.name);
         specialistsText.text = "Specialist: " + linkedController.Specialist;
         weaponStrengthText.text = "Weapons: " + 67.ToString();
-        ownerText.text = "Owner: " + linkedController.Owner.ToString();
+        ownerText.text = "Owner: " + linkedController.owner.name.ToString();
     }
 
 

@@ -22,10 +22,9 @@ public class ShipController : MonoBehaviour
     private Vector2 currentPosition;
     private float moveX;
     private float moveY;
-    public int Owner;
     private StarScript startStarScript;
 
-    private GameInformation.PlayerClass owner;
+    public GameInformation.PlayerClass owner;
     private int slingshotMultCount;
     //Expires on x tick
     private bool wantToSlingshot;
@@ -57,7 +56,7 @@ public class ShipController : MonoBehaviour
         startStarScript = startStar.GetComponent<StarScript>();
         ShipCount += shipShipCountAdd;
         gameObject.GetComponent<Renderer>().enabled = false;
-        Owner = startStarScript.Owner;
+        owner = startStarScript.owner;
         this.startStar = startStar;
 
         //Debug.Log(ownerScript);
@@ -315,7 +314,7 @@ public class ShipController : MonoBehaviour
         
         startStar = dockedStar;
         StarScript starScript = dockedStar.GetComponent<StarScript>();
-        starScript.ShipInbound(ShipCount, Owner, gameObject);
+        starScript.ShipInbound(ShipCount, owner, gameObject);
         gameObject.transform.parent = dockedStar.transform;
         
         if (starWaypoints.Count > 0)

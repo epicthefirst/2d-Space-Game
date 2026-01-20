@@ -18,7 +18,7 @@ public class GameInformation : MonoBehaviour
 
 
 
-    public void addPlayer(PlayerClass player)
+    public void AddPlayer(PlayerClass player)
     {
         if (playerList.Contains(player))
         {
@@ -29,6 +29,20 @@ public class GameInformation : MonoBehaviour
         {
             playerList.Add(player);
         }
+    }
+    public PlayerClass GetPlayerByID(int playerNumberID)
+    {
+        return playerList[playerNumberID];
+    }
+    public PlayerClass GetPlayerByName(string name)
+    {
+        foreach (PlayerClass player in playerList)
+        {
+            if (player.name.Equals(name)){
+                return player;
+            }
+        }
+        return null;
     }
 
 

@@ -24,7 +24,7 @@ public class EnemyBotBehavior : MonoBehaviour
         this.random = random;
         this.bot = bot;
         this.ownedStars = ownedStars;
-        money = bot.playerScript.playerMoney;
+        money = gameInformation.playerMoney;
         CycleEventManager.OnTick += newTick;
         
     }

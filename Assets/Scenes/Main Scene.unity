@@ -3416,6 +3416,7 @@ GameObject:
   - component: {fileID: 696977113}
   - component: {fileID: 696977112}
   - component: {fileID: 696977114}
+  - component: {fileID: 696977115}
   m_Layer: 0
   m_Name: GalaxyCenter
   m_TagString: Untagged
@@ -3897,8 +3898,10 @@ MonoBehaviour:
   canvasObject: {fileID: 1387152730}
   capital: {fileID: 238825475}
   uiManager: {fileID: 1387152735}
-  playerScript: {fileID: 238825482}
   storage: {fileID: 81660326}
+  gameInformation: {fileID: 696977115}
+  ownerColourScript: {fileID: 696977112}
+  playerScript: {fileID: 238825482}
 --- !u!4 &696977110
 Transform:
   m_ObjectHideFlags: 0
@@ -3973,6 +3976,25 @@ MonoBehaviour:
   dottedLineMaterial: {fileID: 2100000, guid: fd33dbb6b497b7f46890665a8f02c17b, type: 2}
   transparentDottedLineMaterial: {fileID: 2100000, guid: 602f1618016f1dc4685203524e9df2d2, type: 2}
   uIManager: {fileID: 1387152735}
+--- !u!114 &696977115
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 696977108}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ca15703b65b5294cb3cbd001829463f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerCount: 0
+  tickCounter: 0
+  playerMoney: 500
+  cycleLength: 20
+  carrierCost: 25
+  baseIncomePerCycle: 250
+  shipPrefab: {fileID: 0}
 --- !u!1 &713276554
 GameObject:
   m_ObjectHideFlags: 0
@@ -7219,7 +7241,6 @@ MonoBehaviour:
   buyIndustryButton: {fileID: 1994881931}
   buyScienceButton: {fileID: 13569670}
   carrierMenuBlueButton: {fileID: 1532690707}
-  playerScript: {fileID: 238825482}
   lineDrawer: {fileID: 696977114}
   carrierText: {fileID: 332686970}
   carrierList: {fileID: 47316025}

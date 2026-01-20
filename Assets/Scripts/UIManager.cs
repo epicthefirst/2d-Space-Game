@@ -70,7 +70,6 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
     [SerializeField] Button buyScienceButton;
     [SerializeField] Button carrierMenuBlueButton;
 
-    [SerializeField] PlayerScript playerScript;
     [SerializeField] DrawLine lineDrawer;
 
     [SerializeField] TMP_Text carrierText;
@@ -103,7 +102,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
 
 
 
-    private int owner;
+    private GameInformation.PlayerClass owner;
     private int econPrice;
     private int industryPrice;
     private int sciencePrice;
@@ -178,7 +177,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
         tickText.text = "Tick: "+ tickCounter;
         ClearUI();
 
-        playerScript.playerClass = new GameInformation.PlayerClass("Player", false, playerScript, null, ownerColourScript.GetPalette(owner)[1].color, ownerColourScript.GetPalette(owner)[0].color, ownerColourScript.GetPalette(owner)[1], ownerColourScript.GetPalette(owner)[0]);
+        
     }
 
     public Texture2D getSpecImage(String specialistName)
@@ -197,24 +196,25 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
         {
             CStarScript.ReCountPlanets();
             CStarScript.Refresh();
-            switch (owner)
+            if (owner != null)
             {
-                case 0:
-                    //unowned
-                    break;
-                case 1:
-                    //player
+                switch (owner.isBot)
+                {
+                    case false:
+                        //player
 
-                    carrierList.gameObject.SetActive(true);
-                    carrierText.text = "Carriers: " + CStarScript.CarrierCount;
-                    break;
-                case 2:
-                    //enemy
-                    carrierList.gameObject.SetActive(true);
-                    carrierText.text = "Carriers: " + CStarScript.CarrierCount;
-                    //add a lil something here later
-                    break;
+                        carrierList.gameObject.SetActive(true);
+                        carrierText.text = "Carriers: " + CStarScript.CarrierCount;
+                        break;
+                    case true:
+                        //enemy
+                        carrierList.gameObject.SetActive(true);
+                        carrierText.text = "Carriers: " + CStarScript.CarrierCount;
+                        //add a lil something here later
+                        break;
+                }
             }
+
             panel.color = CStarScript.materials[1].color;
             panel.gameObject.SetActive(true);
             panel2.gameObject.SetActive(true);
@@ -304,24 +304,29 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
         currentStar = star;
         CStarScript = star.GetComponent<StarScript>();
         this.orbitList = CStarScript.planetList;
-        this.owner = CStarScript.Owner;
+        this.owner = CStarScript.owner;
         Debug.Log(CStarScript.EconCount);
-        switch (owner)
+        if (owner != null)
         {
-            case 0:
-                ownerText.text = "Unowned";
-                break;
-            case 1:
-                ownerText.text = "Owner: You";
-                createCarrierButton.gameObject.SetActive(true);
-                buyEconButton.gameObject.SetActive(true);
-                buyIndustryButton.gameObject.SetActive(true);
-                buyScienceButton.gameObject.SetActive(true);
-                
-                break;
-            case 2:
-                ownerText.text = "Owner: Enemy";
-                break;
+            switch (owner.isBot)
+            {
+                case false:
+                    //player
+                    ownerText.text = "Owner: You";
+                    createCarrierButton.gameObject.SetActive(true);
+                    buyEconButton.gameObject.SetActive(true);
+                    buyIndustryButton.gameObject.SetActive(true);
+                    buyScienceButton.gameObject.SetActive(true);
+                    break;
+                case true:
+                    //enemy
+                    ownerText.text = "Owner: Enemy";
+                    break;
+            }
+        }
+        else
+        {
+            ownerText.text = "Unowned";
         }
         RefreshUI();
         Destroy(circleObject);
@@ -412,6 +417,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
     {
         CycleEventManager.NewTick();
         tickCounter = CycleEventManager.CurrentTick;
+
         RefreshUI();
         ClearUI();
     }
@@ -430,7 +436,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
             carrierButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -y);
             CarrierButtonScript cBScript = carrierButton.GetComponent<CarrierButtonScript>();
             ShipController iScript = i.GetComponent<ShipController>();
-            cBScript.init(iScript.Name, i, ownerColourScript.GetMainColour(owner), this, iScript.Specialist);
+            cBScript.init(iScript.Name, i, owner.primaryColour, this, iScript.Specialist);
             carrierButton.transform.GetChild(3).gameObject.GetComponent<RawImage>().texture = getSpecImage(cBScript.carrierSpecialist);
 
             y += 50;
@@ -534,7 +540,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
             currentStar.GetComponent<StarScript>().AttachCarrier(c);
             shipController.dockedStar = currentStar;
 
-            shipController.Init(carrierNameGenerator(), currentStar, inputedShipCount, playerScript.playerClass);
+            shipController.Init(carrierNameGenerator(), currentStar, inputedShipCount, owner);
             carrierButtons();
             promptUI.init(c);
             carrierButtonPressed(c);

@@ -39,7 +39,7 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
     public GameObject canvas;
     private TextMeshPro ships;
     private GameObject go;
-    public int Owner = 0;
+    public GameInformation.PlayerClass owner;
     private int shipCountDisplay = 0;
     public int GarrisonCount = 0;
     public int CarrierShipTally;
@@ -58,6 +58,7 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
     public StarData star;
     private int tick;
     private int cycle;
+    [SerializeField] GameInformation gameInformation;
 
     public LineRenderer orbitMaker;
     public GameObject insidePolygon;
@@ -88,10 +89,10 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
     public Vector3[] array = new Vector3[10];
 
 
-    public void Initialize(int Id, string Name, List<int> planetList, List<Tuple<int,int>> PlanetTimings, int Range, int Owner, GameObject canvas, int GarrisonCount, GameObject[] planetArray, int qualityMultiplier, Dictionary<int, int> slingshotWindowDurations)
+    public void Initialize(int Id, string Name, List<int> planetList, List<Tuple<int,int>> PlanetTimings, int Range, GameInformation.PlayerClass owner, GameObject canvas, int GarrisonCount, GameObject[] planetArray, int qualityMultiplier, Dictionary<int, int> slingshotWindowDurations)
     {
 
-        this.Owner = Owner;
+        this.owner = owner;
         this.selfId = Id;
         this.planetTimings = PlanetTimings;
         this.Name = Name;
@@ -102,20 +103,12 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
         this.planetArray = planetArray;
         this.qualityMultiplier = qualityMultiplier;
         this.slingshotWindowDurations = slingshotWindowDurations;
+
+        materials = new Material[] {owner.primaryMaterial, owner.secondaryMaterial};
         
     }
 
-    //Add to this if need be
-    public void UpdateStarData(StarData starData)
-    {
-        Debug.Log("Received" + starData.EconCount);
-        Owner = starData.Owner;
-        EconCount = starData.EconCount;
-        IndustryCount = starData.IndustryCount;
-        ScienceCount = starData.ScienceCount;
-        //if (GarrisonCount != starData.ShipCount) { Debug.Log("The GarrisonCount != to new shipCount, this shouldn't happen"); }
-        Refresh();
-    }
+
     private void WakeUp()
     {
         if (!isAwake){
@@ -220,21 +213,22 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
 
 
 
-    public void ShipInbound(int shipShipCount, int shipOwner, GameObject carrier)
+    public void ShipInbound(int shipShipCount, GameInformation.PlayerClass shipOwner, GameObject carrier)
     {
         WakeUp();
         //0 = unowned, 1 = player owned, 2 = enemy owned
-        if (shipOwner == Owner)
+        if (shipOwner == owner)
         {
 
             AttachCarrier(carrier);
             Refresh();
         }
-        else if (Owner == 0)
+        else if (owner == null)
         {
-            Owner = shipOwner;
+            owner = shipOwner;
             //canvas.GetComponent<UIManager>().playerStars.Add(gameObject);
             //Come back to this
+            owner.playerScript.AddStar(gameObject);
             AttachCarrier(carrier);
             Refresh();
         }
@@ -243,7 +237,7 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
             if (shipShipCount > GarrisonCount + CarrierShipTally)
             {
                 //WORK ON THIS LATER
-                Owner = shipOwner;
+                owner = shipOwner;
                 carrier.GetComponent<ShipController>().ShipCount -= GarrisonCount;
                 GarrisonCount = 0;
                 EconCount = 0;
@@ -329,12 +323,14 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
         {
             shipText.text = shipCountDisplay.ToString() + (CarrierCount == 0 ? null : "/" + CarrierCount)+ (maneuverCarrierList.Count == 0 ? null : "!" + maneuverCarrierList.Count);
         }
-        if (Owner != 0)
+        if (owner != null)
         {
             econText.text = EconCount.ToString();
             industryText.text = IndustryCount.ToString();
             scienceText.text = ScienceCount.ToString();
         }
+
+        materials = new Material[] { owner.primaryMaterial, owner.secondaryMaterial };
     }
     public void ReCountPlanets()
     {
@@ -363,9 +359,16 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
     }
     void PolygonRefresh()
     {
-        materials = materialDictionary[Owner];
-        insidePolygon.GetComponent<MeshRenderer>().material = materials[0];
-        borderPolygon.GetComponent<MeshRenderer>().material = materials[1];
+        if (owner == null)
+        {
+            insidePolygon.GetComponent<MeshRenderer>().material = materialDictionary[0][0];
+            borderPolygon.GetComponent<MeshRenderer>().material = materialDictionary[0][1];
+        }
+        else
+        {
+            insidePolygon.GetComponent<MeshRenderer>().material = owner.primaryMaterial;
+            borderPolygon.GetComponent<MeshRenderer>().material = owner.secondaryMaterial;
+        }
     }
     public void SendPolygon(GameObject insidePolygon, GameObject borderPolygon, Dictionary<int, Material[]> materialDictionary)
     {

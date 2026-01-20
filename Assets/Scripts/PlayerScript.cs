@@ -24,6 +24,31 @@ public class PlayerScript : MonoBehaviour
 
     public int cycleCount = 0;
     public List<GameObject> playerStars = new List<GameObject>();
+
+    public void AddStar(GameObject star)
+    {
+        if (playerStars.Contains(star) != true)
+        {
+            playerStars.Add(star);
+            Debug.Log("Added star");
+        }
+        else
+        {
+            Debug.LogError("Not supposed to happen");
+        }
+        
+    }
+    public void RemoveStar(GameObject star)
+    {
+        if (playerStars.Contains (star) == true)
+        {
+            playerStars.Remove(star);
+        }
+        else
+        {
+            Debug.LogError("Not supposed to happen either");
+        }
+    }
     public int NewCycle(int cycleCount)
     {
         this.cycleCount = cycleCount;
@@ -50,14 +75,6 @@ public class PlayerScript : MonoBehaviour
     public void removeCarrier(GameObject carrierRemove)
     {
         playerCarrierList.Remove(carrierRemove);
-    }
-    public void addStar(GameObject newStar)
-    {
-        playerStarList.Add(newStar);
-    }
-    public void removeStar(GameObject starRemove)
-    {
-        playerStarList.Remove(starRemove);
     }
     public void test()
     {

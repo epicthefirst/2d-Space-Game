@@ -88,20 +88,40 @@ public class MapGeneration : MonoBehaviour
     public GameObject capital;
     private List<int> positiveOrNegative = new List<int>() { -1, 1 };
     public UIManager uiManager;
-    public PlayerScript playerScript;
+    
     public RingData[][] arrayOfRings;
     private RingData[] tempArray = new RingData[3];
     public GameObject storage;
 
     GameObject[] planetArray = new GameObject[3];
+    [SerializeField] GameInformation gameInformation;
+    [SerializeField] OwnerColourScript ownerColourScript;
+    private GameInformation.PlayerClass botClass;
+
+    private EnemyBotBehavior bot1 = new EnemyBotBehavior();
+    public PlayerScript playerScript;
 
 
     public Pathfinder.Graph graphFullSpeed;
 
+    public void DefinePlayers()
+    {
+        playerScript.playerClass = new GameInformation.PlayerClass("Player", false, playerScript, null, ownerColourScript.GetPalette(1)[1].color, ownerColourScript.GetPalette(1)[0].color, ownerColourScript.GetPalette(1)[1], ownerColourScript.GetPalette(1)[0]);
+        gameInformation.AddPlayer(playerScript.playerClass);
+        //Bots
+        botClass = new GameInformation.PlayerClass("Zerg", true, null, bot1, ownerColourScript.GetPalette(2)[1].color, ownerColourScript.GetPalette(2)[0].color, ownerColourScript.GetPalette(2)[1], ownerColourScript.GetPalette(2)[0]);
+        
+        gameInformation.AddPlayer(botClass);
+    }
 
     // Start is called before the first frame update
     void Start()
     {
+        DefinePlayers();
+
+
+
+
         arrayOfRings = new RingData[numberOfCircles - 1][];
 
         
@@ -223,6 +243,17 @@ public class MapGeneration : MonoBehaviour
 
 
         computeGraphs();
+
+
+
+
+
+
+
+
+        
+
+
     }
 
 
@@ -287,7 +318,7 @@ public class MapGeneration : MonoBehaviour
         dictionary.Add(capital, 1);
         
         StarScript capitalScript = capital.AddComponent<StarScript>();
-        capitalScript.Initialize(-1, "Capital", capitalList, slingshotPeriodCalculator(capitalList.Count), range, 1, canvasObject, 100, planetArray, qualityMultiplier, slingshotWindowDurations);
+        capitalScript.Initialize(-1, "Capital", capitalList, slingshotPeriodCalculator(capitalList.Count), range, playerScript.playerClass, canvasObject, 100, planetArray, qualityMultiplier, slingshotWindowDurations);
         capitalScript.EconCount = 9;
         capitalScript.IndustryCount = 5;
         capitalScript.ScienceCount = 2;
@@ -371,13 +402,14 @@ public class MapGeneration : MonoBehaviour
 
         if (enemyCapital.Contains(totalStarCount))
         {
-            starScript.Initialize(totalStarCount, starNameMethod(totalStarCount), capitalList, slingshotPeriodCalculator(capitalList.Count), range, 2, canvasObject, 100, planetArray, qualityMultiplier, slingshotWindowDurations);
+            starScript.Initialize(totalStarCount, starNameMethod(totalStarCount), capitalList, slingshotPeriodCalculator(capitalList.Count), range, botClass, canvasObject, 100, planetArray, qualityMultiplier, slingshotWindowDurations);
             starScript.isAwake = true;
+            bot1.init(botClass, new List<GameObject>() { starSpawn }, random, gameInformation);
             dictionary.Add(starSpawn, 2);
         }
         else
         {
-            starScript.Initialize(totalStarCount, starNameMethod(totalStarCount), planetList, slingshotPeriodCalculator(planetAmount), range, 0, canvasObject, 0, planetArray, qualityMultiplier, slingshotWindowDurations);
+            starScript.Initialize(totalStarCount, starNameMethod(totalStarCount), planetList, slingshotPeriodCalculator(planetAmount), range, null, canvasObject, 0, planetArray, qualityMultiplier, slingshotWindowDurations);
             dictionary.Add(starSpawn, 0);
         }
         //Debug.Log(k + "/" + i);

@@ -18,6 +18,10 @@ public class VoronoiDiagram : MonoBehaviour
 
         foreach (KeyValuePair<GameObject, int> pair in dictionary)
         {
+            if(pair.Key == null)
+            {
+                Debug.LogError("BAD");
+            }
             starList.Add(pair.Key);
             pointList.Add(pair.Key.transform.position);
         }
