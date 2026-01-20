@@ -25,7 +25,7 @@ public class ShipController : MonoBehaviour
     public int Owner;
     private StarScript startStarScript;
 
-    private PlayerScript ownerScript;
+    private GameInformation.PlayerClass owner;
     private int slingshotMultCount;
     //Expires on x tick
     private bool wantToSlingshot;
@@ -50,10 +50,10 @@ public class ShipController : MonoBehaviour
     //In order of going to visit
     public List<GameObject> starWaypoints;
 
-    public void Init(string name, GameObject startStar, int shipShipCountAdd, int carrierCount, PlayerScript ownerScript, DrawLine drawline)
+    public void Init(string name, GameObject startStar, int shipShipCountAdd, GameInformation.PlayerClass playerClass)
     {
         Name = name;
-        this.ownerScript = ownerScript;
+        this.owner = playerClass;
         startStarScript = startStar.GetComponent<StarScript>();
         ShipCount += shipShipCountAdd;
         gameObject.GetComponent<Renderer>().enabled = false;
@@ -63,7 +63,7 @@ public class ShipController : MonoBehaviour
         //Debug.Log(ownerScript);
         //Debug.Log(carrierData.shipCount + carrierData.name + carrierData.hasSpecialist);
         //ownerScript.test();
-        ownerScript.newCarrier(gameObject);
+        owner.playerScript.newCarrier(gameObject);
 
 
         
@@ -137,6 +137,11 @@ public class ShipController : MonoBehaviour
     {
         CycleEventManager.OnTick -= WaitTick;
         totalTimeLeft = 0;
+    }
+    public void StopListening()
+    {
+        CycleEventManager.OnTick -= WaitTick;
+        CycleEventManager.OnTick -= NewTick;
     }
     public void WaitTick(object sender, NewTickEvent e)
     {
@@ -235,7 +240,6 @@ public class ShipController : MonoBehaviour
             {
                 pointList.Add(obj.transform.position);
             }
-            pointList = pointList.Distinct().ToList();
             if (linePath != null)
             {
                 LineRenderer lr = linePath.GetComponent<LineRenderer>();
@@ -252,6 +256,12 @@ public class ShipController : MonoBehaviour
             {
                 linePath = drawLinePath(pointList);
             }
+
+        }
+
+        if (starWaypoints.Count == 0)
+        {
+            StopListening();
         }
     }
 
@@ -296,6 +306,7 @@ public class ShipController : MonoBehaviour
         dockedStar = endStar;
         inTransit = false;
 
+        
         starWaypoints.RemoveAt(0);
         endStar = null;
 

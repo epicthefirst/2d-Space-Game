@@ -37,7 +37,11 @@ public class GameInformation : MonoBehaviour
         public string name;
         public string description;
 
+        //Playerscript or botscript
         public PlayerScript playerScript;
+        public EnemyBotBehavior botScript;
+        public bool isBot;
+
         public Color primaryColour;
         public Color secondaryColour;
         public Material primaryMaterial;
@@ -46,10 +50,21 @@ public class GameInformation : MonoBehaviour
 
 
 
-        public PlayerClass(string name, PlayerScript playerScript, Color primaryColour, Color secondaryColour, Material primaryMaterial, Material secondaryMaterial)
+
+        public PlayerClass(string name, bool isBot, PlayerScript playerScript, EnemyBotBehavior enemyBotBehavior, Color primaryColour, Color secondaryColour, Material primaryMaterial, Material secondaryMaterial)
         {
             this.name = name;
-            this.playerScript = playerScript;
+            this.isBot = isBot;
+            if (isBot)
+            {
+                this.botScript = enemyBotBehavior;
+                Debug.Log("Clanker made");
+            }
+            else
+            {
+                this.playerScript = playerScript;
+            }
+                
             this.primaryColour = primaryColour;
             this.secondaryColour = secondaryColour;
             this.primaryMaterial = primaryMaterial;

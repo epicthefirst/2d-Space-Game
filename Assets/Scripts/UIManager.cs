@@ -177,6 +177,8 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
         moneyText.text = "Credits: " + playerMoney;
         tickText.text = "Tick: "+ tickCounter;
         ClearUI();
+
+        playerScript.playerClass = new GameInformation.PlayerClass("Player", false, playerScript, null, ownerColourScript.GetPalette(owner)[1].color, ownerColourScript.GetPalette(owner)[0].color, ownerColourScript.GetPalette(owner)[1], ownerColourScript.GetPalette(owner)[0]);
     }
 
     public Texture2D getSpecImage(String specialistName)
@@ -532,7 +534,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
             currentStar.GetComponent<StarScript>().AttachCarrier(c);
             shipController.dockedStar = currentStar;
 
-            shipController.Init(carrierNameGenerator(), currentStar, inputedShipCount, carrierCount, playerScript, lineDrawer);
+            shipController.Init(carrierNameGenerator(), currentStar, inputedShipCount, playerScript.playerClass);
             carrierButtons();
             promptUI.init(c);
             carrierButtonPressed(c);

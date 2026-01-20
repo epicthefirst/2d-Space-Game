@@ -16,6 +16,7 @@ public class PlayerScript : MonoBehaviour
     private int playerRangeLevel;
     private List<GameObject> playerCarrierList = new List<GameObject>();
     private List<GameObject> playerStarList = new List<GameObject>();
+    public GameInformation.PlayerClass playerClass;
 
     public int playerMoney = 500;
 

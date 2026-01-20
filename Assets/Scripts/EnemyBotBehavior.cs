@@ -46,6 +46,11 @@ public class EnemyBotBehavior : MonoBehaviour
             {
                 tempList = mapGenerationScript.graphFullSpeed.getStarNeighbors(star).Except(ownedStars).ToList();
 
+                if(tempList.Count == 0)
+                {
+                    tempList = mapGenerationScript.graphFullSpeed.getStarNeighbors(star);
+                }
+
                 GameObject chosenStar = tempList[random.Next(0, tempList.Count - 1)];
 
                 if(money <= gameInformation.carrierCost)
@@ -58,12 +63,15 @@ public class EnemyBotBehavior : MonoBehaviour
                     star.GetComponent<StarScript>().AttachCarrier(c);
                     shipController.dockedStar = star;
 
-                    //shipController.Init(carrierNameGenerator(), nextTickButton, currentStar, inputedShipCount, carrierCount, playerScript, lineDrawer);
+                    shipController.Init(carrierNameGenerator(), star, 100, bot);
+                    List<GameObject> temp = shipController.GetWaypoints();
+                    temp.Add(chosenStar);
+                    shipController.SetNewWaypoints(temp);
+                    shipController.StartJourney();
                 }
 
             }
         }
-        tempList = tempList.Distinct().ToList().Except(ownedStars).ToList();
 
 /*        mapGenerationScript.graphFullSpeed*/
     }
