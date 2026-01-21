@@ -100,6 +100,7 @@ public class MapGeneration : MonoBehaviour
 
     private EnemyBotBehavior bot1 = new EnemyBotBehavior();
     public PlayerScript playerScript;
+    public PlayerScript unownedScript;
 
 
     public Pathfinder.Graph graphFullSpeed;
@@ -119,6 +120,37 @@ public class MapGeneration : MonoBehaviour
     {
         DefinePlayers();
 
+        Material defaultMaterial = new Material(Shader.Find("Sprites/Default"));
+
+        GameObject terrestrial = new GameObject("Terrestrial_Planet");
+        MeshRenderer terrestrialMR = terrestrial.AddComponent<MeshRenderer>();
+        terrestrialMR.material = defaultMaterial;
+        terrestrialMR.material.color = Color.gray;
+        MeshFilter terrestrialMF = terrestrial.AddComponent<MeshFilter>();
+        terrestrialMF.mesh = polyMesh(0.4f, qualityMultiplier * 8);
+        planetArray[0] = terrestrial;
+        terrestrial.transform.parent = storage.transform;
+        terrestrial.SetActive(false);
+
+        GameObject gas = new GameObject("Gas_giant_Planet");
+        MeshRenderer gasMR = gas.AddComponent<MeshRenderer>();
+        gasMR.material = defaultMaterial;
+        gasMR.material.color = Color.red;
+        MeshFilter gasMF = gas.AddComponent<MeshFilter>();
+        gasMF.mesh = polyMesh(0.6f, qualityMultiplier * 10);
+        planetArray[1] = gas;
+        gas.transform.parent = storage.transform;
+        gas.SetActive(false);
+
+        GameObject habitable = new GameObject("Habitable_Planet");
+        MeshRenderer habitableMR = habitable.AddComponent<MeshRenderer>();
+        habitableMR.material = defaultMaterial;
+        habitableMR.material.color = Color.green;
+        MeshFilter habitableMF = habitable.AddComponent<MeshFilter>();
+        habitableMF.mesh = polyMesh(0.4f, qualityMultiplier * 12);
+        planetArray[2] = habitable;
+        habitable.transform.parent = storage.transform;
+        habitable.SetActive(false);
 
 
 
@@ -186,37 +218,7 @@ public class MapGeneration : MonoBehaviour
         voronoiDiagram.Init(dictionary);
 
 
-        Material defaultMaterial = new Material(Shader.Find("Sprites/Default"));
 
-        GameObject terrestrial = new GameObject("Terrestrial_Planet");
-        MeshRenderer terrestrialMR = terrestrial.AddComponent<MeshRenderer>();
-        terrestrialMR.material = defaultMaterial;
-        terrestrialMR.material.color = Color.gray;
-        MeshFilter terrestrialMF = terrestrial.AddComponent<MeshFilter>();
-        terrestrialMF.mesh = polyMesh(0.4f, qualityMultiplier * 8);
-        planetArray[0] = terrestrial;
-        terrestrial.transform.parent = storage.transform;
-        terrestrial.SetActive(false);
-
-        GameObject gas = new GameObject("Gas_giant_Planet");
-        MeshRenderer gasMR = gas.AddComponent<MeshRenderer>();
-        gasMR.material = defaultMaterial;
-        gasMR.material.color = Color.red;
-        MeshFilter gasMF = gas.AddComponent<MeshFilter>();
-        gasMF.mesh = polyMesh(0.6f, qualityMultiplier * 10);
-        planetArray[1] = gas;
-        gas.transform.parent = storage.transform;
-        gas.SetActive(false);
-
-        GameObject habitable = new GameObject("Habitable_Planet");
-        MeshRenderer habitableMR = habitable.AddComponent<MeshRenderer>();
-        habitableMR.material = defaultMaterial;
-        habitableMR.material.color = Color.green;
-        MeshFilter habitableMF = habitable.AddComponent<MeshFilter>();
-        habitableMF.mesh = polyMesh(0.4f, qualityMultiplier * 12);
-        planetArray[2] = habitable;
-        habitable.transform.parent = storage.transform;
-        habitable.SetActive(false);
 
 
 
@@ -318,6 +320,11 @@ public class MapGeneration : MonoBehaviour
         dictionary.Add(capital, 1);
         
         StarScript capitalScript = capital.AddComponent<StarScript>();
+        if (playerScript != null)
+        {
+            Debug.Log("All good");
+        }
+        Debug.Log(planetArray.Length);
         capitalScript.Initialize(-1, "Capital", capitalList, slingshotPeriodCalculator(capitalList.Count), range, playerScript.playerClass, canvasObject, 100, planetArray, qualityMultiplier, slingshotWindowDurations);
         capitalScript.EconCount = 9;
         capitalScript.IndustryCount = 5;
@@ -409,7 +416,7 @@ public class MapGeneration : MonoBehaviour
         }
         else
         {
-            starScript.Initialize(totalStarCount, starNameMethod(totalStarCount), planetList, slingshotPeriodCalculator(planetAmount), range, null, canvasObject, 0, planetArray, qualityMultiplier, slingshotWindowDurations);
+            starScript.Initialize(totalStarCount, starNameMethod(totalStarCount), planetList, slingshotPeriodCalculator(planetAmount), range, unownedScript.playerClass, canvasObject, 0, planetArray, qualityMultiplier, slingshotWindowDurations);
             dictionary.Add(starSpawn, 0);
         }
         //Debug.Log(k + "/" + i);

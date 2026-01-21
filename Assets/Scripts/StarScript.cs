@@ -104,7 +104,13 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
         this.qualityMultiplier = qualityMultiplier;
         this.slingshotWindowDurations = slingshotWindowDurations;
 
+
+        if(owner ==  null)
+        {
+            materials = new Material[] { ownerColo, owner.secondaryMaterial };
+        }
         materials = new Material[] {owner.primaryMaterial, owner.secondaryMaterial};
+
         
     }
 
@@ -493,6 +499,7 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
             {
                 case 0:
                     //Terrestrial
+                    Debug.Log(planetArray[0]);
                     planet = Instantiate(planetArray[0], gameObject.transform, false);
                     break;
                 case 1:
