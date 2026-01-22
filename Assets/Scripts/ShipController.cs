@@ -58,14 +58,17 @@ public class ShipController : MonoBehaviour
         gameObject.GetComponent<Renderer>().enabled = false;
         owner = startStarScript.owner;
         this.startStar = startStar;
+        /*        FIX ME LATER VERY IMPORTANT       */
+        //if (owner == null)
+        //{
+        //    Debug.LogError("Owner");
+        //}
 
-        //Debug.Log(ownerScript);
-        //Debug.Log(carrierData.shipCount + carrierData.name + carrierData.hasSpecialist);
-        //ownerScript.test();
-        owner.playerScript.newCarrier(gameObject);
+        //owner.playerScript.newCarrier(gameObject);
 
 
-        
+
+
         startStarScript.ReduceShipCount(shipShipCountAdd);
 /*        startStarScript.AttachCarrier(gameObject);*/
     }

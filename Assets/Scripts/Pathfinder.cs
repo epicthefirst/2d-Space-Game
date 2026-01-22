@@ -677,10 +677,12 @@ public class Pathfinder : MonoBehaviour
             List<GameObject> neighbors = new List<GameObject>();
             foreach(Node node in adjacencyList[findStarIndex(star)])
             {
-                neighbors.Add(node.star);
+                neighbors.Add(starList[node.vertex]);
             }
             return neighbors;
         }
+
+        
 
 
 

@@ -3900,8 +3900,9 @@ MonoBehaviour:
   uiManager: {fileID: 1387152735}
   storage: {fileID: 81660326}
   gameInformation: {fileID: 696977115}
-  ownerColourScript: {fileID: 696977112}
   playerScript: {fileID: 238825482}
+  unownedScript: {fileID: 0}
+  colourScript: {fileID: 0}
 --- !u!4 &696977110
 Transform:
   m_ObjectHideFlags: 0
@@ -3929,7 +3930,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6368db3c1a2684346bf07dd410419a14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ownerColourScript: {fileID: 696977112}
 --- !u!114 &696977112
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3994,7 +3994,7 @@ MonoBehaviour:
   cycleLength: 20
   carrierCost: 25
   baseIncomePerCycle: 250
-  shipPrefab: {fileID: 0}
+  shipPrefab: {fileID: 9128021471243550003, guid: e229612396a7f4f49844889ea895d47a, type: 3}
 --- !u!1 &713276554
 GameObject:
   m_ObjectHideFlags: 0
@@ -7216,7 +7216,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mapGeneration: {fileID: 696977109}
-  ownerColourScript: {fileID: 696977112}
   mainCamera: {fileID: 772932031}
   panel: {fileID: 1200829895}
   panel2: {fileID: 1996141596}

@@ -105,12 +105,14 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
         this.slingshotWindowDurations = slingshotWindowDurations;
 
 
-        if(owner ==  null)
+        if (owner == null)
         {
-            materials = new Material[] { ownerColo, owner.secondaryMaterial };
+            materials = OwnerColourScript.Instance.GetPalette(0);
         }
-        materials = new Material[] {owner.primaryMaterial, owner.secondaryMaterial};
-
+        else
+        {
+            materials = new Material[] { owner.primaryMaterial, owner.secondaryMaterial };
+        }
         
     }
 
@@ -234,7 +236,7 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
             owner = shipOwner;
             //canvas.GetComponent<UIManager>().playerStars.Add(gameObject);
             //Come back to this
-            owner.playerScript.AddStar(gameObject);
+            //owner.playerScript.AddStar(gameObject);
             AttachCarrier(carrier);
             Refresh();
         }
@@ -335,8 +337,14 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
             industryText.text = IndustryCount.ToString();
             scienceText.text = ScienceCount.ToString();
         }
-
-        materials = new Material[] { owner.primaryMaterial, owner.secondaryMaterial };
+        if (owner == null)
+        {
+            materials = OwnerColourScript.Instance.GetPalette(0);
+        }
+        else
+        {
+            materials = new Material[] { owner.primaryMaterial, owner.secondaryMaterial };
+        }
     }
     public void ReCountPlanets()
     {

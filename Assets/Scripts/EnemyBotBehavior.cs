@@ -13,28 +13,33 @@ public class EnemyBotBehavior : MonoBehaviour
     public GameInformation gameInformation;
     public int carrierNameIncrement;
 
+    private List<GameObject> carrierList;
+
 
     private List<GameObject> ownedStars = new List<GameObject>();
     private Pathfinder.Graph knownGraph;
     private System.Random random;
     private int money;
-    public void init(GameInformation.PlayerClass bot, List<GameObject> ownedStars, System.Random random, GameInformation gameInformation)
+    public void init(GameInformation.PlayerClass bot, List<GameObject> ownedStars, System.Random random, GameInformation gameInformation, MapGeneration mapGenerationScript)
     {
         this.gameInformation = gameInformation;
         this.random = random;
         this.bot = bot;
         this.ownedStars = ownedStars;
         money = gameInformation.playerMoney;
+        this.mapGenerationScript = mapGenerationScript;
         CycleEventManager.OnTick += newTick;
         
     }
 
     public void newTick(object sender, NewTickEvent e)
     {
-        if (money > gameInformation.carrierCost)
-        {
-            checkToExpand();
-        }
+        money += 50;
+        checkToExpand();
+        //if (money > gameInformation.carrierCost)
+        //{
+        //    checkToExpand();
+        //}
     }
 
     public void checkToExpand()
@@ -42,9 +47,13 @@ public class EnemyBotBehavior : MonoBehaviour
         List<GameObject> tempList = new List<GameObject>();
         foreach (GameObject star in ownedStars)
         {
+            Debug.LogError("Checked star");
             if (star.GetComponent<StarScript>().GarrisonCount >= 100)
             {
-                tempList = mapGenerationScript.graphFullSpeed.getStarNeighbors(star).Except(ownedStars).ToList();
+                Debug.LogError("Bibble");
+                //tempList = mapGenerationScript.graphFullSpeed.getStarNeighbors(star).Except(ownedStars).ToList();
+                tempList = mapGenerationScript.graphFullSpeed.getStarNeighbors(star);
+                Debug.LogError(tempList.Count);
 
                 if(tempList.Count == 0)
                 {
@@ -52,8 +61,9 @@ public class EnemyBotBehavior : MonoBehaviour
                 }
 
                 GameObject chosenStar = tempList[random.Next(0, tempList.Count - 1)];
+                Debug.LogError(chosenStar.GetComponent<StarScript>().Name);
 
-                if(money <= gameInformation.carrierCost)
+                if(money >= gameInformation.carrierCost)
                 {
                     money -= gameInformation.carrierCost;
                     GameObject c = Instantiate(gameInformation.shipPrefab, star.transform.position, Quaternion.identity);
@@ -81,5 +91,11 @@ public class EnemyBotBehavior : MonoBehaviour
         carrierNameIncrement++;
         return bot.name + " " + carrierNameIncrement.ToString();
     }
+
+    public void addCarrier(GameObject carrier)
+    {
+        carrierList.Add(carrier);
+    }
+
 
 }

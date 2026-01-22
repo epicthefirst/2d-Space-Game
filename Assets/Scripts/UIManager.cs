@@ -34,7 +34,6 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
 
 
     public MapGeneration mapGeneration;
-    public OwnerColourScript ownerColourScript;
 
     [SerializeField] Camera mainCamera;
 

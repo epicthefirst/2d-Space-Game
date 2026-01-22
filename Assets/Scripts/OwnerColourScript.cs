@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class OwnerColourScript : MonoBehaviour
+public sealed class OwnerColourScript : MonoBehaviour
 {
     [SerializeField] Material playerBorder;
     [SerializeField] Material enemyBorder;
@@ -15,9 +16,52 @@ public class OwnerColourScript : MonoBehaviour
     public Material[] unownedArray;
     public Material[] enemyArray;
     private bool hasRan = false;
-    private void init()
+
+    private static OwnerColourScript instance;
+
+
+    public static OwnerColourScript Instance
     {
+        get
+        {
+            if (instance == null)
+            {
+                instance = FindObjectOfType<OwnerColourScript>();
+                if (instance == null)
+                {
+                    Debug.Log("Big ass error here");
+                }
+            }
+            return instance;
+        }
+    }
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            // DontDestroyOnLoad(gameObject);
+        }
+        else if (instance != this)
+        {
+            Destroy(gameObject); // Destroy duplicate instance
+            return;
+        }
+
+        if (!hasRan)
+        {
+            Init();
+        }
+    }
+
+    private void Init()
+    {
+        Debug.LogError("Has ran");
         hasRan = true;
+        if (playerBorder == null)
+        {
+            Debug.LogError("Bad");
+        }
         playerMaterial = new Material(playerBorder);
         playerMaterial.color = new Color(playerBorder.color.r / 2, playerBorder.color.g / 2, playerBorder.color.b / 2);
         playerMaterial.renderQueue = playerBorder.renderQueue + 50;
@@ -39,26 +83,14 @@ public class OwnerColourScript : MonoBehaviour
     }
     public Dictionary<int, Material[]> GetMaterialDictionary()
     {
-        if (!hasRan)
-        {
-            init();
-        }
         return materialDictionary;
     }
     public Color GetMainColour(int owner)
     {
-        if (!hasRan)
-        {
-            init();
-        }
         return materialDictionary[owner][1].color;
     }
     public Material[] GetPalette(int owner)
     {
-        if (!hasRan)
-        {
-            init();
-        }
         return materialDictionary[owner];
     }
 }

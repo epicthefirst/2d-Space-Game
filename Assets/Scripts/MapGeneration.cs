@@ -95,7 +95,6 @@ public class MapGeneration : MonoBehaviour
 
     GameObject[] planetArray = new GameObject[3];
     [SerializeField] GameInformation gameInformation;
-    [SerializeField] OwnerColourScript ownerColourScript;
     private GameInformation.PlayerClass botClass;
 
     private EnemyBotBehavior bot1 = new EnemyBotBehavior();
@@ -105,12 +104,18 @@ public class MapGeneration : MonoBehaviour
 
     public Pathfinder.Graph graphFullSpeed;
 
+    public OwnerColourScript colourScript;
+
     public void DefinePlayers()
     {
-        playerScript.playerClass = new GameInformation.PlayerClass("Player", false, playerScript, null, ownerColourScript.GetPalette(1)[1].color, ownerColourScript.GetPalette(1)[0].color, ownerColourScript.GetPalette(1)[1], ownerColourScript.GetPalette(1)[0]);
+        colourScript = OwnerColourScript.Instance;
+
+        playerScript.playerClass = new GameInformation.PlayerClass("Player", false, playerScript, null, colourScript.GetPalette(1)[0].color, colourScript.GetPalette(1)[1].color, colourScript.GetPalette(1)[0], colourScript.GetPalette(1)[1]);
         gameInformation.AddPlayer(playerScript.playerClass);
+
+
         //Bots
-        botClass = new GameInformation.PlayerClass("Zerg", true, null, bot1, ownerColourScript.GetPalette(2)[1].color, ownerColourScript.GetPalette(2)[0].color, ownerColourScript.GetPalette(2)[1], ownerColourScript.GetPalette(2)[0]);
+        botClass = new GameInformation.PlayerClass("Zerg", true, null, bot1, colourScript.GetPalette(2)[0].color, colourScript.GetPalette(2)[1].color, colourScript.GetPalette(2)[0], colourScript.GetPalette(2)[1]);
         
         gameInformation.AddPlayer(botClass);
     }
@@ -410,13 +415,16 @@ public class MapGeneration : MonoBehaviour
         if (enemyCapital.Contains(totalStarCount))
         {
             starScript.Initialize(totalStarCount, starNameMethod(totalStarCount), capitalList, slingshotPeriodCalculator(capitalList.Count), range, botClass, canvasObject, 100, planetArray, qualityMultiplier, slingshotWindowDurations);
+            starScript.EconCount = 9;
+            starScript.IndustryCount = 5;
+            starScript.ScienceCount = 2;
             starScript.isAwake = true;
-            bot1.init(botClass, new List<GameObject>() { starSpawn }, random, gameInformation);
+            bot1.init(botClass, new List<GameObject>() { starSpawn }, random, gameInformation, this);
             dictionary.Add(starSpawn, 2);
         }
         else
         {
-            starScript.Initialize(totalStarCount, starNameMethod(totalStarCount), planetList, slingshotPeriodCalculator(planetAmount), range, unownedScript.playerClass, canvasObject, 0, planetArray, qualityMultiplier, slingshotWindowDurations);
+            starScript.Initialize(totalStarCount, starNameMethod(totalStarCount), planetList, slingshotPeriodCalculator(planetAmount), range, null, canvasObject, 0, planetArray, qualityMultiplier, slingshotWindowDurations);
             dictionary.Add(starSpawn, 0);
         }
         //Debug.Log(k + "/" + i);

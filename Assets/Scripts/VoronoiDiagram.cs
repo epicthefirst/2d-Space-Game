@@ -7,12 +7,11 @@ using UnityEngine.UIElements;
 public class VoronoiDiagram : MonoBehaviour
 {
     private int counter = 0;
-    [SerializeField] OwnerColourScript ownerColourScript;
     public Dictionary<int, Material[]> materialDictionary;
     
     public void Init(Dictionary<GameObject, int> dictionary)
     {
-        materialDictionary = ownerColourScript.GetMaterialDictionary();
+        materialDictionary = OwnerColourScript.Instance.GetMaterialDictionary();
         List<GameObject> starList = new List<GameObject>();
         List<Vector2> pointList = new List<Vector2>();
 

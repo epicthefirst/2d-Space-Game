@@ -84,6 +84,20 @@ public class GameInformation : MonoBehaviour
             this.primaryMaterial = primaryMaterial;
             this.secondaryMaterial = secondaryMaterial;
 
+
+
+        }
+
+        public void AddCarrierToOwner(GameObject carrier)
+        {
+            if (!isBot)
+            {
+                playerScript.newCarrier(carrier);
+            }
+            else
+            {
+                botScript.addCarrier(carrier);
+            }
         }
 
     }
