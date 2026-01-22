@@ -238,6 +238,13 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
             //Come back to this
             //owner.playerScript.AddStar(gameObject);
             AttachCarrier(carrier);
+            if (owner != null)
+            {
+                if (!owner.isBot)
+                {
+                    owner.playerScript.AddStar(gameObject);
+                }
+            }
             Refresh();
         }
         else
@@ -253,6 +260,10 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
                 ScienceCount = 0;
                 AttachCarrier(carrier);
                 //canvas.GetComponent<UIManager>().playerStars.Add(gameObject);
+                if (owner != null)
+                {
+                    owner.playerScript.AddStar(gameObject);
+                }
                 // Do some stuff here
                 Refresh();
             }

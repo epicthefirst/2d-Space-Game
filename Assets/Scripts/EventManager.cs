@@ -45,7 +45,7 @@ public static class CycleEventManager
     public static void NewCycle()
     {
         _cycleCounter++;
-        OnTick?.Invoke(null, new NewTickEvent
+        OnCycle?.Invoke(null, new NewCycleEvent
         {
             CurrentCycle = _cycleCounter,
             TicksPerCycle = TICKS_PER_CYCLE

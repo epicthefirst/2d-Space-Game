@@ -108,7 +108,6 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
     private int playerRange;
 
     public int tickCounter = 0;
-    public int playerMoney = 500;
     public int cycleLength = 20; // Change this in the future
     public int carrierCost = 25; //This too
 
@@ -147,6 +146,8 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
     Pathfinder.Graph graph;
     [SerializeField] Pathfinder pathfinder;
 
+    public GameInformation.PlayerClass player;
+
 
 
     //Change this to add new specialists
@@ -171,12 +172,25 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
         buyIndustryButton.onClick.AddListener(BuyIndustry);
         buyScienceButton.onClick.AddListener(BuyScience);
 
+        player = mapGeneration.playerScript.playerClass;
+
         seedText.text = "Seed: "+mapGeneration.seed;
-        moneyText.text = "Credits: " + playerMoney;
+        moneyText.text = "Credits: " + player.playerScript.playerMoney;
         tickText.text = "Tick: "+ tickCounter;
         ClearUI();
 
         
+
+        CycleEventManager.OnCycle += NewCycle;
+        
+    }
+
+    public void NewCycle(object sender, NewCycleEvent e)
+    {
+        Debug.LogWarning("New cycle");
+        Debug.LogWarning(e.CurrentCycle);
+        player.playerScript.NewCycle(e.CurrentCycle);
+        RefreshUI();
     }
 
     public Texture2D getSpecImage(String specialistName)
@@ -261,7 +275,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
         }
 
         seedText.text = "Seed: " + mapGeneration.seed;
-        moneyText.text = "Credits: " + playerMoney;
+        moneyText.text = "Credits: " + player.playerScript.playerMoney;
         tickText.text = "Tick: " + tickCounter;
         
         
@@ -368,11 +382,10 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
 }
     private void BuyEconomy()
     {
-        if (playerMoney >= econPrice)
+        if (player.playerScript.playerMoney >= econPrice)
         {
-            playerMoney -= econPrice;
+            player.playerScript.playerMoney -= econPrice;
             CStarScript.EconCount += 1;
-            Debug.Log(CStarScript.EconCount);
         }
         else
         {
@@ -384,9 +397,9 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
     }
     private void BuyIndustry()
     {
-        if (playerMoney >= industryPrice)
+        if (player.playerScript.playerMoney >= industryPrice)
         {
-            playerMoney -= industryPrice;
+            player.playerScript.playerMoney -= industryPrice;
             CStarScript.IndustryCount += 1;
         }
         else
@@ -399,9 +412,9 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
     }
     private void BuyScience()
     {
-        if (playerMoney >= sciencePrice)
+        if (player.playerScript.playerMoney >= sciencePrice)
         {
-            playerMoney -= sciencePrice;
+            player.playerScript.playerMoney -= sciencePrice;
             CStarScript.ScienceCount += 1;
         }
         else
@@ -435,7 +448,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
             carrierButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -y);
             CarrierButtonScript cBScript = carrierButton.GetComponent<CarrierButtonScript>();
             ShipController iScript = i.GetComponent<ShipController>();
-            cBScript.init(iScript.Name, i, owner.primaryColour, this, iScript.Specialist);
+            cBScript.init(iScript.Name, i, player.primaryColour, this, iScript.Specialist);
             carrierButton.transform.GetChild(3).gameObject.GetComponent<RawImage>().texture = getSpecImage(cBScript.carrierSpecialist);
 
             y += 50;
@@ -528,9 +541,9 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
     }
     void OnCreateCarrierPress()
     {   
-        if (playerMoney >= carrierCost)
+        if (player.playerScript.playerMoney >= carrierCost)
         {
-            playerMoney -= carrierCost;
+            player.playerScript.playerMoney -= carrierCost;
             //If the user selects the initial star
             GameObject c = GameObject.Instantiate(shipPrefab, currentStar.transform.position, Quaternion.identity) as GameObject;
             c.transform.parent = currentStar.transform;
@@ -539,7 +552,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
             currentStar.GetComponent<StarScript>().AttachCarrier(c);
             shipController.dockedStar = currentStar;
 
-            shipController.Init(carrierNameGenerator(), currentStar, inputedShipCount, owner);
+            shipController.Init(carrierNameGenerator(), currentStar, inputedShipCount, player);
             carrierButtons();
             promptUI.init(c);
             carrierButtonPressed(c);
@@ -550,6 +563,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
         }
         else
         {
+            promptUI.postMessage("It costs " + carrierCost + "$ to do that");
             Debug.Log("It costs " + carrierCost + "$ to do that");
         }
 

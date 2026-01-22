@@ -65,6 +65,7 @@ public class PlayerScript : MonoBehaviour
         Debug.Log("New econCount" + totalPlayerEconCount);
         Debug.Log("New industryCount" + totalPlayerIndustryCount);
         Debug.Log("New scienceCount" + totalPlayerScienceCount);
+        playerMoney += totalPlayerEconCount * 10 + 250;
         return totalPlayerEconCount;
     }
 

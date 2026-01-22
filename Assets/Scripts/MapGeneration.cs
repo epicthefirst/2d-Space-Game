@@ -339,6 +339,8 @@ public class MapGeneration : MonoBehaviour
         capitalScript.isAwake = true;
 
         starList.Add(capital);
+
+        playerScript.AddStar(capital);
     }
 
     //Makes the star pattern
