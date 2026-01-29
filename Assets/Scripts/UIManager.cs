@@ -271,7 +271,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
             scienceIndicator.text = CStarScript.ScienceCount.ToString();
 
 
-            postitionText.text = "Position: " + currentStar.transform.position;
+            postitionText.text = "Position: " + new Vector2(currentStar.transform.position.x, currentStar.transform.position.y);
         }
 
         seedText.text = "Seed: " + mapGeneration.seed;

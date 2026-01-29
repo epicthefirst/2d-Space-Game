@@ -238,19 +238,18 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
             //Come back to this
             //owner.playerScript.AddStar(gameObject);
             AttachCarrier(carrier);
-            if (owner != null)
-            {
-                if (!owner.isBot)
-                {
-                    owner.playerScript.AddStar(gameObject);
-                }
-            }
+            owner.AddStarToOwner(gameObject);
             Refresh();
         }
         else
         {
             if (shipShipCount > GarrisonCount + CarrierShipTally)
             {
+                GarrisonCount = 0;
+                foreach (GameObject c in CarrierList)
+                {
+                    c.GetComponent<ShipController>().DestroyCarrier();
+                }
                 //WORK ON THIS LATER
                 owner = shipOwner;
                 carrier.GetComponent<ShipController>().ShipCount -= GarrisonCount;
@@ -260,10 +259,8 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
                 ScienceCount = 0;
                 AttachCarrier(carrier);
                 //canvas.GetComponent<UIManager>().playerStars.Add(gameObject);
-                if (owner != null)
-                {
-                    owner.playerScript.AddStar(gameObject);
-                }
+
+                owner.AddStarToOwner(gameObject);
                 // Do some stuff here
                 Refresh();
             }

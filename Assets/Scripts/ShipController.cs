@@ -58,6 +58,9 @@ public class ShipController : MonoBehaviour
         gameObject.GetComponent<Renderer>().enabled = false;
         owner = startStarScript.owner;
         this.startStar = startStar;
+
+
+
         /*        FIX ME LATER VERY IMPORTANT       */
         //if (owner == null)
         //{
@@ -67,8 +70,8 @@ public class ShipController : MonoBehaviour
         //owner.playerScript.newCarrier(gameObject);
 
 
-
-
+        Debug.Log(gameObject);
+        owner.AddCarrierToOwner(gameObject);
         startStarScript.ReduceShipCount(shipShipCountAdd);
 /*        startStarScript.AttachCarrier(gameObject);*/
     }
@@ -348,5 +351,14 @@ public class ShipController : MonoBehaviour
             Debug.LogWarning("Slingshot failed, please check this");
             ArrivedAtStar();
         }
+    }
+
+
+
+
+    public void DestroyCarrier()
+    {
+        owner.RemoveCarrierFromOwner(gameObject);
+        Destroy(gameObject);
     }
 }

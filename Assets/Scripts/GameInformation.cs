@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class GameInformation : MonoBehaviour
@@ -97,6 +98,28 @@ public class GameInformation : MonoBehaviour
             else
             {
                 botScript.addCarrier(carrier);
+            }
+        }
+        public void RemoveCarrierFromOwner(GameObject carrier)
+        {
+            if (!isBot)
+            {
+                playerScript.removeCarrier(carrier);
+            }
+            else
+            {
+                botScript.removeCarrier(carrier);
+            }
+        }
+        public void AddStarToOwner(GameObject star)
+        {
+            if (!isBot)
+            {
+                playerScript.AddStar(star);
+            }
+            else
+            {
+                botScript.addStar(star);
             }
         }
 

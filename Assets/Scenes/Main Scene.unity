@@ -3436,7 +3436,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb1e4dcd2d74c544b8b70679c38c21b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numberOfCircles: 5
+  numberOfCircles: 12
   offset: 60
   minRandOffset: 10
   maxRandOffset: 15
@@ -7254,7 +7254,6 @@ MonoBehaviour:
   StarInfo: {fileID: 1429329851}
   CarrierInfo: {fileID: 133686182}
   tickCounter: 0
-  playerMoney: 500
   cycleLength: 20
   carrierCost: 25
   baseIncomePerCycle: 250
@@ -9933,8 +9932,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 400, y: 0.000030517578}
-  m_SizeDelta: {x: 200, y: 50}
+  m_AnchoredPosition: {x: 550, y: 0.000030517578}
+  m_SizeDelta: {x: 500, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1922238961
 MonoBehaviour:

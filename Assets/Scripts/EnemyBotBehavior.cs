@@ -13,7 +13,7 @@ public class EnemyBotBehavior : MonoBehaviour
     public GameInformation gameInformation;
     public int carrierNameIncrement;
 
-    private List<GameObject> carrierList;
+    private List<GameObject> carrierList = new List<GameObject>();
 
 
     private List<GameObject> ownedStars = new List<GameObject>();
@@ -47,24 +47,26 @@ public class EnemyBotBehavior : MonoBehaviour
         List<GameObject> tempList = new List<GameObject>();
         foreach (GameObject star in ownedStars)
         {
+            StarScript starScript = star.GetComponent<StarScript>();
             Debug.LogError("Checked star");
-            if (star.GetComponent<StarScript>().GarrisonCount >= 100)
+            if (starScript.CarrierShipTally + starScript.GarrisonCount >= 100)
             {
-                Debug.LogError("Bibble");
-                //tempList = mapGenerationScript.graphFullSpeed.getStarNeighbors(star).Except(ownedStars).ToList();
-                tempList = mapGenerationScript.graphFullSpeed.getStarNeighbors(star);
-                Debug.LogError(tempList.Count);
-
-                if(tempList.Count == 0)
+                if (starScript.GarrisonCount >= 100 && money >= gameInformation.carrierCost)
                 {
+                    Debug.LogError("Passed check");
+
+                    //tempList = mapGenerationScript.graphFullSpeed.getStarNeighbors(star).Except(ownedStars).ToList();
                     tempList = mapGenerationScript.graphFullSpeed.getStarNeighbors(star);
-                }
 
-                GameObject chosenStar = tempList[random.Next(0, tempList.Count - 1)];
-                Debug.LogError(chosenStar.GetComponent<StarScript>().Name);
+                    if (tempList.Count == 0)
+                    {
+                        tempList = mapGenerationScript.graphFullSpeed.getStarNeighbors(star);
+                    }
 
-                if(money >= gameInformation.carrierCost)
-                {
+                    GameObject chosenStar = tempList[random.Next(0, tempList.Count - 1)];
+
+
+
                     money -= gameInformation.carrierCost;
                     GameObject c = Instantiate(gameInformation.shipPrefab, star.transform.position, Quaternion.identity);
                     c.transform.parent = star.transform;
@@ -79,7 +81,32 @@ public class EnemyBotBehavior : MonoBehaviour
                     shipController.SetNewWaypoints(temp);
                     shipController.StartJourney();
                 }
+                else if (star.GetComponent<StarScript>().CarrierCount > 0)
+                {
+                    //tempList = mapGenerationScript.graphFullSpeed.getStarNeighbors(star).Except(ownedStars).ToList();
+                    tempList = mapGenerationScript.graphFullSpeed.getStarNeighbors(star);
 
+                    if (tempList.Count == 0)
+                    {
+                        tempList = mapGenerationScript.graphFullSpeed.getStarNeighbors(star);
+                    }
+
+                    GameObject chosenStar = tempList[random.Next(0, tempList.Count - 1)];
+
+                    ShipController sc = star.GetComponent<StarScript>().CarrierList[0].GetComponent<ShipController>();
+
+                    sc.Init(carrierNameGenerator(), star, 100, bot);
+                    List<GameObject> temp = sc.GetWaypoints();
+                    temp.Add(chosenStar);
+                    sc.SetNewWaypoints(temp);
+                    sc.StartJourney();
+
+
+                }
+                else
+                {
+                    Debug.LogError("BAD STUFF HERE");
+                }
             }
         }
 
@@ -94,8 +121,35 @@ public class EnemyBotBehavior : MonoBehaviour
 
     public void addCarrier(GameObject carrier)
     {
-        carrierList.Add(carrier);
+        if(!carrierList.Contains(carrier))
+        {
+            carrierList.Add(carrier);
+        }
+        else
+        {
+            Debug.LogError("Bad");
+        }
+        
     }
-
+    public void removeCarrier(GameObject carrier)
+    {
+        carrierList.Remove(carrier);
+    }
+    public void addStar(GameObject star)
+    {
+        if (!ownedStars.Contains(star))
+        {
+            ownedStars.Add(star);
+        }
+        else
+        {
+            Debug.LogError("BAD");
+        }
+        
+    }
+    public void removeStar(GameObject star)
+    {
+        ownedStars.Remove(star);
+    }
 
 }
