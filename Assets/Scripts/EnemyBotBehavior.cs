@@ -49,6 +49,7 @@ public class EnemyBotBehavior : MonoBehaviour
         {
             StarScript starScript = star.GetComponent<StarScript>();
             Debug.LogError("Checked star");
+            starScript.Refresh();
             if (starScript.CarrierShipTally + starScript.GarrisonCount >= 100)
             {
                 if (starScript.GarrisonCount >= 100 && money >= gameInformation.carrierCost)

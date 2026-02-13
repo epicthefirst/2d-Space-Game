@@ -88,9 +88,11 @@ public class GameInformation : MonoBehaviour
 
 
         }
-
+        int test = 0;
         public void AddCarrierToOwner(GameObject carrier)
         {
+            test++;
+            Debug.LogError(test);   
             if (!isBot)
             {
                 playerScript.newCarrier(carrier);

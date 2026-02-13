@@ -56,16 +56,16 @@ public class ShipController : MonoBehaviour
         startStarScript = startStar.GetComponent<StarScript>();
         ShipCount += shipShipCountAdd;
         gameObject.GetComponent<Renderer>().enabled = false;
-        owner = startStarScript.owner;
+        //owner = startStarScript.owner;
         this.startStar = startStar;
 
 
 
         /*        FIX ME LATER VERY IMPORTANT       */
-        //if (owner == null)
-        //{
-        //    Debug.LogError("Owner");
-        //}
+        if (owner == null)
+        {
+            Debug.LogError("Owner");
+        }
 
         //owner.playerScript.newCarrier(gameObject);
 
@@ -213,6 +213,14 @@ public class ShipController : MonoBehaviour
 
         if (timeLeft <= 0) 
         {
+            if (gameObject == null)
+            {
+                Debug.LogError("bad");
+            }
+            if (endStar == null)
+            {
+                Debug.LogError("Extra bad");
+            }
             gameObject.transform.position = endStar.transform.position;
             updateLine();
 
