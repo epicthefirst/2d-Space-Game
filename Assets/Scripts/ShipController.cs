@@ -51,6 +51,7 @@ public class ShipController : MonoBehaviour
 
     public void Init(string name, GameObject startStar, int shipShipCountAdd, GameInformation.PlayerClass playerClass)
     {
+        Debug.LogWarning("INIT IS RUNNING, BEWARE");
         Name = name;
         this.owner = playerClass;
         startStarScript = startStar.GetComponent<StarScript>();
@@ -220,6 +221,7 @@ public class ShipController : MonoBehaviour
             if (endStar == null)
             {
                 Debug.LogError("Extra bad");
+                Debug.LogError(name);
             }
             gameObject.transform.position = endStar.transform.position;
             updateLine();

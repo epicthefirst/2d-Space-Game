@@ -28,22 +28,28 @@ public class EnemyBotBehavior : MonoBehaviour
         this.ownedStars = ownedStars;
         money = gameInformation.playerMoney;
         this.mapGenerationScript = mapGenerationScript;
+        CycleEventManager.OnPreTick += preTick;
         CycleEventManager.OnTick += newTick;
-        
+
     }
 
-    public void newTick(object sender, NewTickEvent e)
+    public void preTick(object sender, PreTickEvent e)
     {
-        money += 50;
+        
         checkToExpand();
         //if (money > gameInformation.carrierCost)
         //{
         //    checkToExpand();
         //}
     }
+    public void newTick(object sender, NewTickEvent e)
+    {
+        money += 50;
+    }
 
     public void checkToExpand()
     {
+        Debug.LogError("Amount of stars in emprie: " + ownedStars.Count);
         List<GameObject> tempList = new List<GameObject>();
         foreach (GameObject star in ownedStars)
         {
@@ -96,7 +102,6 @@ public class EnemyBotBehavior : MonoBehaviour
 
                     ShipController sc = star.GetComponent<StarScript>().CarrierList[0].GetComponent<ShipController>();
 
-                    sc.Init(carrierNameGenerator(), star, 100, bot);
                     List<GameObject> temp = sc.GetWaypoints();
                     temp.Add(chosenStar);
                     sc.SetNewWaypoints(temp);

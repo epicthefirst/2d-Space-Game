@@ -7,6 +7,12 @@ public class NewTickEvent : EventArgs
     public int CurrentCycle { get; set; }
     public int TicksPerCycle { get; set; }
 }
+public class PreTickEvent : EventArgs
+{
+    public int CurrentTick { get; set; }
+    public int CurrentCycle { get; set; }
+    public int TicksPerCycle { get; set; }
+}
 public class NewCycleEvent : EventArgs
 {
     public int CurrentCycle { get; set; }
@@ -16,6 +22,7 @@ public class NewCycleEvent : EventArgs
 public static class CycleEventManager
 {
     public static event EventHandler<NewTickEvent> OnTick;
+    public static event EventHandler<PreTickEvent> OnPreTick;
     public static event EventHandler<NewCycleEvent> OnCycle;
 
     private const int TICKS_PER_CYCLE = 20;
@@ -28,6 +35,7 @@ public static class CycleEventManager
 
     public static void NewTick()
     {
+        PreTick();
         _tickCounter++;
 
         if (_tickCounter % TICKS_PER_CYCLE == 0)
@@ -36,6 +44,22 @@ public static class CycleEventManager
         }
 
         OnTick?.Invoke(null, new NewTickEvent
+        {
+            CurrentTick = _tickCounter,
+            CurrentCycle = _cycleCounter,
+            TicksPerCycle = TICKS_PER_CYCLE
+        });
+    }
+    private static void PreTick()
+    {
+        _tickCounter++;
+
+        if (_tickCounter % TICKS_PER_CYCLE == 0)
+        {
+            NewCycle();
+        }
+
+        OnPreTick?.Invoke(null, new PreTickEvent
         {
             CurrentTick = _tickCounter,
             CurrentCycle = _cycleCounter,
