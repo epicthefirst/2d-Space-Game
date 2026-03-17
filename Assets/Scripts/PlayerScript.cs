@@ -17,12 +17,14 @@ public class PlayerScript : MonoBehaviour
     private List<GameObject> playerCarrierList = new List<GameObject>();
     private List<GameObject> playerStarList = new List<GameObject>();
     public GameInformation.PlayerClass playerClass;
+    public GameInformation gameInformation;
 
     public int playerMoney = 500;
 
 
 
     public int cycleCount = 0;
+    public int tickCount = 0;
     public List<GameObject> playerStars = new List<GameObject>();
 
     public void AddStar(GameObject star)
@@ -53,7 +55,6 @@ public class PlayerScript : MonoBehaviour
     {
         this.cycleCount = cycleCount;
         Debug.Log("Cycle:" + cycleCount);
-        Debug.Log("Previous econCount" + totalPlayerEconCount);
         totalPlayerEconCount = 0;
         foreach (GameObject s in playerStars)
         {
@@ -65,7 +66,25 @@ public class PlayerScript : MonoBehaviour
         Debug.Log("New econCount" + totalPlayerEconCount);
         Debug.Log("New industryCount" + totalPlayerIndustryCount);
         Debug.Log("New scienceCount" + totalPlayerScienceCount);
-        playerMoney += totalPlayerEconCount * 10 + 250;
+        playerMoney += totalPlayerEconCount * gameInformation.cycleLength;
+        return totalPlayerEconCount;
+    }
+    public int NewTick(int tickCount)
+    {
+        this.tickCount = tickCount;
+        Debug.Log("Tick:" + tickCount);
+        totalPlayerEconCount = 0;
+        foreach (GameObject s in playerStars)
+        {
+            StarScript ss = s.GetComponent<StarScript>();
+            totalPlayerEconCount += ss.EconCount;
+            totalPlayerIndustryCount += ss.IndustryCount;
+            totalPlayerScienceCount += ss.ScienceCount;
+        }
+        Debug.Log("New econCount" + totalPlayerEconCount);
+        Debug.Log("New industryCount" + totalPlayerIndustryCount);
+        Debug.Log("New scienceCount" + totalPlayerScienceCount);
+        playerMoney += totalPlayerEconCount;
         return totalPlayerEconCount;
     }
 

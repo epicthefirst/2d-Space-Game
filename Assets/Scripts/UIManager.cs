@@ -17,6 +17,8 @@ using UnityEngine.EventSystems;
 public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHandler*/
 {
 
+    int randomCounter = 0;
+
 
 /*    //Detect if the Cursor starts to pass over the GameObject
     public void OnPointerEnter(PointerEventData pointerEventData)
@@ -108,10 +110,9 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
     private int playerRange;
 
     public int tickCounter = 0;
-    public int cycleLength = 20; // Change this in the future
+    public int cycleLength = 12; // Change this in the future
     public int carrierCost = 25; //This too
 
-    public int baseIncomePerCycle = 250;
     
     public int cycleCount = 0;
     private int carrierCount = 0;
@@ -429,6 +430,8 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
     {
         CycleEventManager.NewTick();
         tickCounter = CycleEventManager.CurrentTick;
+
+        player.playerScript.NewTick(tickCounter);
 
         RefreshUI();
         ClearUI();
@@ -752,6 +755,17 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
         }
         circleMaker.material = new Material(Shader.Find("Sprites/Default"));
         return circleObject;
+    }
+
+    //////////////// TESTING ////////////////
+
+    private void FixedUpdate()
+    {
+        randomCounter++;
+        if (randomCounter % 4 == 0)
+        {
+            OnTickButtonPress();
+        }
     }
 
 

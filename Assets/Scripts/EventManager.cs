@@ -25,7 +25,7 @@ public static class CycleEventManager
     public static event EventHandler<PreTickEvent> OnPreTick;
     public static event EventHandler<NewCycleEvent> OnCycle;
 
-    private const int TICKS_PER_CYCLE = 20;
+    private const int TICKS_PER_CYCLE = 12;
 
     private static int _tickCounter;
     private static int _cycleCounter;
@@ -52,12 +52,6 @@ public static class CycleEventManager
     }
     private static void PreTick()
     {
-        _tickCounter++;
-
-        if (_tickCounter % TICKS_PER_CYCLE == 0)
-        {
-            NewCycle();
-        }
 
         OnPreTick?.Invoke(null, new PreTickEvent
         {

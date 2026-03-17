@@ -10,10 +10,9 @@ public class GameInformation : MonoBehaviour
 
     public int tickCounter = 0;
     public int playerMoney = 500;
-    public int cycleLength = 20; // Change this in the future
+    public int cycleLength = 12; // Change this in the future
     public int carrierCost = 25; //This too
 
-    public int baseIncomePerCycle = 250;
 
     public GameObject shipPrefab;
 

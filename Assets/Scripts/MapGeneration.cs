@@ -111,12 +111,15 @@ public class MapGeneration : MonoBehaviour
         colourScript = OwnerColourScript.Instance;
 
         playerScript.playerClass = new GameInformation.PlayerClass("Player", false, playerScript, null, colourScript.GetPalette(1)[0].color, colourScript.GetPalette(1)[1].color, colourScript.GetPalette(1)[0], colourScript.GetPalette(1)[1]);
+        playerScript.gameInformation = gameInformation;
         gameInformation.AddPlayer(playerScript.playerClass);
+        
 
 
         //Bots
         botClass = new GameInformation.PlayerClass("Zerg", true, null, bot1, colourScript.GetPalette(2)[0].color, colourScript.GetPalette(2)[1].color, colourScript.GetPalette(2)[0], colourScript.GetPalette(2)[1]);
-        
+        //botClass.gameInformation = gameInformation;
+
         gameInformation.AddPlayer(botClass);
     }
 

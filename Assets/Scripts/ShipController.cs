@@ -74,7 +74,8 @@ public class ShipController : MonoBehaviour
         Debug.Log(gameObject);
         owner.AddCarrierToOwner(gameObject);
         startStarScript.ReduceShipCount(shipShipCountAdd);
-/*        startStarScript.AttachCarrier(gameObject);*/
+        /*        startStarScript.AttachCarrier(gameObject);*/
+        updateLine();
     }
     public void StartJourney()
     {
@@ -126,6 +127,7 @@ public class ShipController : MonoBehaviour
             Debug.Log(timeLeft);
             Debug.Log(totalTimeLeft); //Fix me
             CycleEventManager.OnTick += NewTick;
+
 
         }
     }
@@ -278,6 +280,8 @@ public class ShipController : MonoBehaviour
         {
             StopListening();
         }
+
+        linePath.SetActive(true);
     }
 
     public GameObject drawLinePath(List<Vector2> pointList)

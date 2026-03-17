@@ -30,6 +30,7 @@ public class EnemyBotBehavior : MonoBehaviour
         this.mapGenerationScript = mapGenerationScript;
         CycleEventManager.OnPreTick += preTick;
         CycleEventManager.OnTick += newTick;
+        CycleEventManager.OnCycle += newCycle;
 
     }
 
@@ -45,6 +46,15 @@ public class EnemyBotBehavior : MonoBehaviour
     public void newTick(object sender, NewTickEvent e)
     {
         money += 50;
+    }
+    public void newCycle(object sender, NewCycleEvent e)
+    {
+
+    }
+
+    public void buyEconomy()
+    {
+        //Work on me for a full function
     }
 
     public void checkToExpand()
@@ -90,24 +100,38 @@ public class EnemyBotBehavior : MonoBehaviour
                 }
                 else if (star.GetComponent<StarScript>().CarrierCount > 0)
                 {
-                    //tempList = mapGenerationScript.graphFullSpeed.getStarNeighbors(star).Except(ownedStars).ToList();
-                    tempList = mapGenerationScript.graphFullSpeed.getStarNeighbors(star);
-
-                    if (tempList.Count == 0)
+                    List<GameObject> cl = star.GetComponent<StarScript>().CarrierList;
+                    GameObject movedCarrier = null;
+                    for (int i = 0; i < star.GetComponent<StarScript>().CarrierCount; i++)
                     {
-                        tempList = mapGenerationScript.graphFullSpeed.getStarNeighbors(star);
+                        if (cl[i].GetComponent<ShipController>().GetWaypoints().Count == 0)
+                        {
+                            movedCarrier = cl[i];
+                            break;
+                        }
                     }
+                    if (movedCarrier != null)
+                    {
+                        Debug.LogError("Moving preexisting carrier");
+                        //tempList = mapGenerationScript.graphFullSpeed.getStarNeighbors(star).Except(ownedStars).ToList();
+                        tempList = mapGenerationScript.graphFullSpeed.getStarNeighbors(star);
 
-                    GameObject chosenStar = tempList[random.Next(0, tempList.Count - 1)];
+                        if (tempList.Count == 0)
+                        {
+                            tempList = mapGenerationScript.graphFullSpeed.getStarNeighbors(star);
+                        }
 
-                    ShipController sc = star.GetComponent<StarScript>().CarrierList[0].GetComponent<ShipController>();
+                        GameObject chosenStar = tempList[random.Next(0, tempList.Count - 1)];
 
-                    List<GameObject> temp = sc.GetWaypoints();
-                    temp.Add(chosenStar);
-                    sc.SetNewWaypoints(temp);
-                    sc.StartJourney();
+                        ShipController sc = movedCarrier.GetComponent<ShipController>();
+
+                        List<GameObject> temp = sc.GetWaypoints();
+                        temp.Add(chosenStar);
+                        sc.SetNewWaypoints(temp);
+                        sc.StartJourney();
 
 
+                    }
                 }
                 else
                 {
