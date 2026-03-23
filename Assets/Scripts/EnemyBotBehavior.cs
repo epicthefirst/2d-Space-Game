@@ -5,6 +5,11 @@ using UnityEngine;
 
 public class EnemyBotBehavior : MonoBehaviour
 {
+    //Testing
+    int stupidCounter = 0;
+
+
+
     //General Bot Logic
     public GameInformation.PlayerClass bot;
     public UIManager uIManager;
@@ -20,6 +25,11 @@ public class EnemyBotBehavior : MonoBehaviour
     private Pathfinder.Graph knownGraph;
     private System.Random random;
     private int money;
+
+    private Pathfinder.BinaryHeap econCostHeap;
+    private Pathfinder.BinaryHeap industryCostHeap;
+    private Pathfinder.BinaryHeap scienceCostHeap;
+
     public void init(GameInformation.PlayerClass bot, List<GameObject> ownedStars, System.Random random, GameInformation gameInformation, MapGeneration mapGenerationScript)
     {
         this.gameInformation = gameInformation;
@@ -32,12 +42,18 @@ public class EnemyBotBehavior : MonoBehaviour
         CycleEventManager.OnTick += newTick;
         CycleEventManager.OnCycle += newCycle;
 
+
+
     }
 
     public void preTick(object sender, PreTickEvent e)
     {
+        stupidCounter++;
+        if (stupidCounter % 3 == 0)
+        {
+            checkToExpand();
+        }
         
-        checkToExpand();
         //if (money > gameInformation.carrierCost)
         //{
         //    checkToExpand();
@@ -46,16 +62,67 @@ public class EnemyBotBehavior : MonoBehaviour
     public void newTick(object sender, NewTickEvent e)
     {
         money += 50;
+
     }
     public void newCycle(object sender, NewCycleEvent e)
     {
-
+        checkStars();
+        buyInfrastructure();
     }
-
-    public void buyEconomy()
+    public void checkStars()
     {
-        //Work on me for a full function
+        int i = 0;
+        econCostHeap = new Pathfinder.BinaryHeap();
+        industryCostHeap = new Pathfinder.BinaryHeap();
+        scienceCostHeap = new Pathfinder.BinaryHeap();
+
+        foreach (GameObject star in ownedStars)
+        {
+            StarScript s = star.GetComponent<StarScript>();
+            econCostHeap.Insert(i, s.GetEconPrice());
+            industryCostHeap.Insert(i, s.GetIndustryPrice());
+            scienceCostHeap.Insert(i, s.GetSciencePrice());
+            /////////WORK ON ME PLEASE
+            i++;
+        }
     }
+    public void buyInfrastructure()
+    {
+        int allocatedFunds = Mathf.RoundToInt(money / 4);
+
+        buyEcon(allocatedFunds);
+        buyIndustry(allocatedFunds);
+        buyScience(allocatedFunds);
+        
+    }
+    public void buyEcon(int funds)
+    {
+        while (funds > econCostHeap.elements[0].distance)
+        {
+            funds -= econCostHeap.elements[0].distance;
+            money -= econCostHeap.elements[0].distance;
+            ownedStars[econCostHeap.Pop()].GetComponent<StarScript>().EconCount++;
+        }
+    }
+    public void buyIndustry(int funds)
+    {
+        while (funds > industryCostHeap.elements[0].distance)
+        {
+            funds -= industryCostHeap.elements[0].distance;
+            money -= econCostHeap.elements[0].distance;
+            ownedStars[industryCostHeap.Pop()].GetComponent<StarScript>().IndustryCount++;
+        }
+    }
+    public void buyScience(int funds)
+    {
+        while (funds > scienceCostHeap.elements[0].distance)
+        {
+            funds -= scienceCostHeap.elements[0].distance;
+            money -= econCostHeap.elements[0].distance;
+            ownedStars[scienceCostHeap.Pop()].GetComponent<StarScript>().ScienceCount++;
+        }
+    }
+
 
     public void checkToExpand()
     {

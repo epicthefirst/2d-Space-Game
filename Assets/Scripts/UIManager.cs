@@ -233,9 +233,9 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
             panel.gameObject.SetActive(true);
             panel2.gameObject.SetActive(true);
 
-            econPrice = (50 * (CStarScript.EconCount + 1)) / (CStarScript.PlanetaryCount + 1 + CStarScript.HabitableCount * 2);
-            industryPrice = (100 * (CStarScript.IndustryCount + 1)) / (CStarScript.GasCount + 1 + CStarScript.HabitableCount * 2);
-            sciencePrice = (200 * (CStarScript.ScienceCount + 1)) / (1 + CStarScript.HabitableCount * 5);
+            econPrice = CStarScript.GetEconPrice();
+            industryPrice = CStarScript.GetIndustryPrice();
+            sciencePrice = CStarScript.GetSciencePrice();
 
             starNameText.text = "Star: " + CStarScript.Name;
 
@@ -762,7 +762,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
     private void FixedUpdate()
     {
         randomCounter++;
-        if (randomCounter % 4 == 0)
+        if (randomCounter % 8 == 0)
         {
             OnTickButtonPress();
         }

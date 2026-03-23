@@ -594,6 +594,21 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
         }
     }
 
+    public int GetEconPrice()
+    {
+        return (50 * (EconCount + 1)) / (PlanetaryCount + 1 + HabitableCount * 2);
+    }
+
+    public int GetIndustryPrice()
+    {
+        return (100 * (IndustryCount + 1)) / (GasCount + 1 + HabitableCount * 2);
+    }
+    public int GetSciencePrice()
+    {
+        return (200 * (ScienceCount + 1)) / (1 + HabitableCount * 5);
+    }
+    
+
 
 
 }

@@ -286,9 +286,9 @@ public class Pathfinder : MonoBehaviour
             return node;
         }
     }
-    private class BinaryHeap
+    public class BinaryHeap
     {
-        private List<(int node, int distance)> elements = new List<(int, int)>();
+        public List<(int node, int distance)> elements = new List<(int, int)>();
         Comparer<int> compare;
 
         public int Size => elements.Count;
