@@ -188,8 +188,8 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
 
     public void NewCycle(object sender, NewCycleEvent e)
     {
-        Debug.LogWarning("New cycle");
-        Debug.LogWarning(e.CurrentCycle);
+        //Debug.LogWarning("New cycle");
+        //Debug.LogWarning(e.CurrentCycle);
         player.playerScript.NewCycle(e.CurrentCycle);
         RefreshUI();
     }

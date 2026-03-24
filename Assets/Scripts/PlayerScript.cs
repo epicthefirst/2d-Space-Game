@@ -72,7 +72,7 @@ public class PlayerScript : MonoBehaviour
     public int NewTick(int tickCount)
     {
         this.tickCount = tickCount;
-        Debug.Log("Tick:" + tickCount);
+        //Debug.Log("Tick:" + tickCount);
         totalPlayerEconCount = 0;
         foreach (GameObject s in playerStars)
         {
@@ -81,9 +81,9 @@ public class PlayerScript : MonoBehaviour
             totalPlayerIndustryCount += ss.IndustryCount;
             totalPlayerScienceCount += ss.ScienceCount;
         }
-        Debug.Log("New econCount" + totalPlayerEconCount);
-        Debug.Log("New industryCount" + totalPlayerIndustryCount);
-        Debug.Log("New scienceCount" + totalPlayerScienceCount);
+        //Debug.Log("New econCount" + totalPlayerEconCount);
+        //Debug.Log("New industryCount" + totalPlayerIndustryCount);
+        //Debug.Log("New scienceCount" + totalPlayerScienceCount);
         playerMoney += totalPlayerEconCount;
         return totalPlayerEconCount;
     }

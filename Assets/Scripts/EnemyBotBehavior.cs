@@ -43,7 +43,7 @@ public class EnemyBotBehavior : MonoBehaviour
         CycleEventManager.OnCycle += newCycle;
 
 
-
+        checkStars();
     }
 
     public void preTick(object sender, PreTickEvent e)
@@ -62,12 +62,14 @@ public class EnemyBotBehavior : MonoBehaviour
     public void newTick(object sender, NewTickEvent e)
     {
         money += 50;
-
+        money += econCostHeap.Size;
     }
     public void newCycle(object sender, NewCycleEvent e)
     {
         checkStars();
+        money += econCostHeap.Size * 12;
         buyInfrastructure();
+        
     }
     public void checkStars()
     {
@@ -88,8 +90,8 @@ public class EnemyBotBehavior : MonoBehaviour
     }
     public void buyInfrastructure()
     {
-        int allocatedFunds = Mathf.RoundToInt(money / 4);
-
+        int allocatedFunds = Mathf.RoundToInt(money / 3);
+        Debug.LogWarning(allocatedFunds);
         buyEcon(allocatedFunds);
         buyIndustry(allocatedFunds);
         buyScience(allocatedFunds);
@@ -97,36 +99,48 @@ public class EnemyBotBehavior : MonoBehaviour
     }
     public void buyEcon(int funds)
     {
+        int node = 0;
         while (funds > econCostHeap.elements[0].distance)
         {
             funds -= econCostHeap.elements[0].distance;
             money -= econCostHeap.elements[0].distance;
-            ownedStars[econCostHeap.Pop()].GetComponent<StarScript>().EconCount++;
+            node = econCostHeap.elements[0].node;
+            StarScript poppedStar = ownedStars[econCostHeap.Pop()].GetComponent<StarScript>();
+            poppedStar.EconCount++;
+            econCostHeap.Insert(node, poppedStar.GetEconPrice());
         }
     }
     public void buyIndustry(int funds)
     {
+        int node = 0;
         while (funds > industryCostHeap.elements[0].distance)
         {
             funds -= industryCostHeap.elements[0].distance;
-            money -= econCostHeap.elements[0].distance;
-            ownedStars[industryCostHeap.Pop()].GetComponent<StarScript>().IndustryCount++;
+            money -= industryCostHeap.elements[0].distance;
+            node = industryCostHeap.elements[0].node;
+            StarScript poppedStar = ownedStars[industryCostHeap.Pop()].GetComponent<StarScript>();
+            poppedStar.IndustryCount++;
+            industryCostHeap.Insert(node, poppedStar.GetIndustryPrice());
         }
     }
     public void buyScience(int funds)
     {
+        int node = 0;
         while (funds > scienceCostHeap.elements[0].distance)
         {
             funds -= scienceCostHeap.elements[0].distance;
-            money -= econCostHeap.elements[0].distance;
-            ownedStars[scienceCostHeap.Pop()].GetComponent<StarScript>().ScienceCount++;
+            money -= scienceCostHeap.elements[0].distance;
+            node = scienceCostHeap.elements[0].node;
+            StarScript poppedStar = ownedStars[scienceCostHeap.Pop()].GetComponent<StarScript>();
+            poppedStar.ScienceCount++;
+            scienceCostHeap.Insert(node, poppedStar.GetSciencePrice());
         }
     }
 
 
     public void checkToExpand()
     {
-        Debug.LogError("Amount of stars in emprie: " + ownedStars.Count);
+        //Debug.LogError("Amount of stars in emprie: " + ownedStars.Count);
         List<GameObject> tempList = new List<GameObject>();
         foreach (GameObject star in ownedStars)
         {

@@ -662,9 +662,9 @@ public class Pathfinder : MonoBehaviour
                             }
                         }*/
             int thing = starList.IndexOf(star);
-            Debug.Log(thing);
-            Debug.Log(starList[thing].name);
-            Debug.Log(star.name);
+            //Debug.Log(thing);
+            //Debug.Log(starList[thing].name);
+            //Debug.Log(star.name);
             if (thing == -1)
             {
                 Debug.LogError("FIX ME");

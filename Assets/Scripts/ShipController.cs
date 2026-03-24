@@ -124,8 +124,8 @@ public class ShipController : MonoBehaviour
                 totalTimeLeft += Pathfinder.tripCalc(prevObj, obj, speedPerTick);
                 prevObj = obj;
             }
-            Debug.Log(timeLeft);
-            Debug.Log(totalTimeLeft); //Fix me
+            //Debug.Log(timeLeft);
+            //Debug.Log(totalTimeLeft); //Fix me
             CycleEventManager.OnTick += NewTick;
 
 
@@ -210,7 +210,7 @@ public class ShipController : MonoBehaviour
         }
 
            
-        Debug.Log(timeLeft);
+        //Debug.Log(timeLeft);
         timeLeft--;
         totalTimeLeft--;
 
@@ -243,7 +243,7 @@ public class ShipController : MonoBehaviour
         moveY = endStar.transform.position.y - startStar.transform.position.y;
         Vector2 vector = new Vector2(moveX, moveY);
         gameObject.transform.position += (Vector3)vector / time;
-        Debug.Log(gameObject.transform.position + "/"+ timeLeft);
+        //Debug.Log(gameObject.transform.position + "/"+ timeLeft);
 
 
         updateLine();
