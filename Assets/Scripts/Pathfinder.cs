@@ -293,6 +293,16 @@ public class Pathfinder : MonoBehaviour
 
         public int Size => elements.Count;
 
+        public int FindNode(int node)
+        {
+            int index = elements.FindIndex(e => e.node == node);
+            return index;
+        }
+        public void RemoveNode(int node)
+        {
+            elements.RemoveAt(node);
+        }
+
         public void Insert(int node, int distance)
         {
             

@@ -124,5 +124,17 @@ public class GameInformation : MonoBehaviour
             }
         }
 
+        public void UpdateStarOfOwner(GameObject star)
+        {
+            if (!isBot)
+            {
+///////////////////////////////
+            }
+            else
+            {
+                botScript.updateStar(star);
+            }
+        }
+
     }
 }

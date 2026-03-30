@@ -1678,8 +1678,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee57f7cfe676cf74b90d733fadaa34bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameInformation: {fileID: 0}
   playerMoney: 500
   cycleCount: 0
+  tickCount: 0
   playerStars: []
 --- !u!1 &271126936
 GameObject:
@@ -3993,7 +3995,6 @@ MonoBehaviour:
   playerMoney: 500
   cycleLength: 20
   carrierCost: 25
-  baseIncomePerCycle: 250
   shipPrefab: {fileID: 9128021471243550003, guid: e229612396a7f4f49844889ea895d47a, type: 3}
 --- !u!1 &713276554
 GameObject:
@@ -4454,7 +4455,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cam: {fileID: 772932031}
   maxZoom: 25
-  minZoom: 100
+  minZoom: 1000
   sensitivity: 2
   speed: 50
 --- !u!114 &772932035
@@ -7107,6 +7108,7 @@ GameObject:
   - component: {fileID: 1387152732}
   - component: {fileID: 1387152731}
   - component: {fileID: 1387152735}
+  - component: {fileID: 1387152736}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -7256,7 +7258,6 @@ MonoBehaviour:
   tickCounter: 0
   cycleLength: 20
   carrierCost: 25
-  baseIncomePerCycle: 250
   cycleCount: 0
   shipPrefab: {fileID: 9128021471243550003, guid: e229612396a7f4f49844889ea895d47a, type: 3}
   inputedShipCountTextField: {fileID: 1863125715}
@@ -7264,6 +7265,44 @@ MonoBehaviour:
   isRoutePlannerActive: 0
   starList: []
   pathfinder: {fileID: 696977113}
+--- !u!1839735485 &1387152736
+Tilemap:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1387152730}
+  m_Enabled: 1
+  m_Tiles: {}
+  m_AnimatedTiles: {}
+  m_TileAssetArray: []
+  m_TileSpriteArray: []
+  m_TileMatrixArray: []
+  m_TileColorArray: []
+  m_TileObjectToInstantiateArray: []
+  m_AnimationFrameRate: 1
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Origin: {x: 0, y: 0, z: 0}
+  m_Size: {x: 0, y: 0, z: 1}
+  m_TileAnchor: {x: 0.5, y: 0.5, z: 0}
+  m_TileOrientation: 0
+  m_TileOrientationMatrix:
+    e00: 1
+    e01: 0
+    e02: 0
+    e03: 0
+    e10: 0
+    e11: 1
+    e12: 0
+    e13: 0
+    e20: 0
+    e21: 0
+    e22: 1
+    e23: 0
+    e30: 0
+    e31: 0
+    e32: 0
+    e33: 1
 --- !u!1 &1417931329
 GameObject:
   m_ObjectHideFlags: 0

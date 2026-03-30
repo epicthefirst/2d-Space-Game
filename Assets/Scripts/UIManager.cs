@@ -761,11 +761,16 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
 
     private void FixedUpdate()
     {
-        randomCounter++;
-        if (randomCounter % 8 == 0)
+        if (Input.GetKey(KeyCode.K))
         {
             OnTickButtonPress();
         }
+        
+        //randomCounter++;
+        //if (randomCounter % 8 == 0)
+        //{
+            
+        //}
     }
 
 

@@ -22,6 +22,7 @@ public class EnemyBotBehavior : MonoBehaviour
 
 
     private List<GameObject> ownedStars = new List<GameObject>();
+    private Dictionary<int, StarScript> IdToScript = new Dictionary<int, StarScript>();
     private Pathfinder.Graph knownGraph;
     private System.Random random;
     private int money;
@@ -32,6 +33,10 @@ public class EnemyBotBehavior : MonoBehaviour
 
     public void init(GameInformation.PlayerClass bot, List<GameObject> ownedStars, System.Random random, GameInformation gameInformation, MapGeneration mapGenerationScript)
     {
+        econCostHeap = new Pathfinder.BinaryHeap();
+        industryCostHeap = new Pathfinder.BinaryHeap();
+        scienceCostHeap = new Pathfinder.BinaryHeap();
+
         this.gameInformation = gameInformation;
         this.random = random;
         this.bot = bot;
@@ -43,7 +48,7 @@ public class EnemyBotBehavior : MonoBehaviour
         CycleEventManager.OnCycle += newCycle;
 
 
-        checkStars();
+        
     }
 
     public void preTick(object sender, PreTickEvent e)
@@ -66,14 +71,14 @@ public class EnemyBotBehavior : MonoBehaviour
     }
     public void newCycle(object sender, NewCycleEvent e)
     {
-        checkStars();
+        //checkStars();
         money += econCostHeap.Size * 12;
         buyInfrastructure();
         
     }
     public void checkStars()
     {
-        int i = 0;
+
         econCostHeap = new Pathfinder.BinaryHeap();
         industryCostHeap = new Pathfinder.BinaryHeap();
         scienceCostHeap = new Pathfinder.BinaryHeap();
@@ -81,11 +86,10 @@ public class EnemyBotBehavior : MonoBehaviour
         foreach (GameObject star in ownedStars)
         {
             StarScript s = star.GetComponent<StarScript>();
-            econCostHeap.Insert(i, s.GetEconPrice());
-            industryCostHeap.Insert(i, s.GetIndustryPrice());
-            scienceCostHeap.Insert(i, s.GetSciencePrice());
+            econCostHeap.Insert(s.selfId, s.GetEconPrice());
+            industryCostHeap.Insert(s.selfId, s.GetIndustryPrice());
+            scienceCostHeap.Insert(s.selfId, s.GetSciencePrice());
             /////////WORK ON ME PLEASE
-            i++;
         }
     }
     public void buyInfrastructure()
@@ -105,7 +109,7 @@ public class EnemyBotBehavior : MonoBehaviour
             funds -= econCostHeap.elements[0].distance;
             money -= econCostHeap.elements[0].distance;
             node = econCostHeap.elements[0].node;
-            StarScript poppedStar = ownedStars[econCostHeap.Pop()].GetComponent<StarScript>();
+            StarScript poppedStar = IdToScript[econCostHeap.Pop()];
             poppedStar.EconCount++;
             econCostHeap.Insert(node, poppedStar.GetEconPrice());
         }
@@ -118,7 +122,7 @@ public class EnemyBotBehavior : MonoBehaviour
             funds -= industryCostHeap.elements[0].distance;
             money -= industryCostHeap.elements[0].distance;
             node = industryCostHeap.elements[0].node;
-            StarScript poppedStar = ownedStars[industryCostHeap.Pop()].GetComponent<StarScript>();
+            StarScript poppedStar = IdToScript[industryCostHeap.Pop()];
             poppedStar.IndustryCount++;
             industryCostHeap.Insert(node, poppedStar.GetIndustryPrice());
         }
@@ -131,7 +135,7 @@ public class EnemyBotBehavior : MonoBehaviour
             funds -= scienceCostHeap.elements[0].distance;
             money -= scienceCostHeap.elements[0].distance;
             node = scienceCostHeap.elements[0].node;
-            StarScript poppedStar = ownedStars[scienceCostHeap.Pop()].GetComponent<StarScript>();
+            StarScript poppedStar = IdToScript[scienceCostHeap.Pop()];
             poppedStar.ScienceCount++;
             scienceCostHeap.Insert(node, poppedStar.GetSciencePrice());
         }
@@ -250,13 +254,32 @@ public class EnemyBotBehavior : MonoBehaviour
     {
         if (!ownedStars.Contains(star))
         {
+            StarScript s = star.GetComponent<StarScript>();
+            IdToScript.Add(s.selfId, s);
             ownedStars.Add(star);
+            econCostHeap.Insert(s.selfId, s.GetEconPrice());
+            industryCostHeap.Insert(s.selfId, s.GetIndustryPrice());
+            scienceCostHeap.Insert(s.selfId, s.GetSciencePrice());
         }
         else
         {
-            Debug.LogError("BAD");
+            Debug.LogError("Updating star");
+            updateStar(star);
         }
         
+    }
+    public void updateStar(GameObject star)
+    {
+        StarScript s = star.GetComponent<StarScript>();
+
+        econCostHeap.RemoveNode(econCostHeap.FindNode(s.selfId));
+        industryCostHeap.RemoveNode(industryCostHeap.FindNode(s.selfId));
+        scienceCostHeap.RemoveNode(scienceCostHeap.FindNode(s.selfId));
+
+        econCostHeap.Insert(s.selfId, s.GetEconPrice());
+        industryCostHeap.Insert(s.selfId, s.GetIndustryPrice());
+        scienceCostHeap.Insert(s.selfId, s.GetSciencePrice());
+
     }
     public void removeStar(GameObject star)
     {
