@@ -40,6 +40,7 @@ public class ShipController : MonoBehaviour
 
     public bool isLeavingNextTick;
     public bool inTransit;
+    public bool isLooping = false;
 
     public GameObject linePath;
     public Material dottedLineMaterial;
@@ -80,7 +81,10 @@ public class ShipController : MonoBehaviour
     public void StartJourney()
     {
 
-        
+        if (isLooping)
+        {
+            StartLoop();
+        }
 
 
         if (starWaypoints.Count == 0)
@@ -130,6 +134,14 @@ public class ShipController : MonoBehaviour
 
 
         }
+    }
+    private void StartLoop()
+    {
+
+    }
+    private void ContinueLoop()
+    {
+        
     }
     public void WaitAtStar(int length)
     {
@@ -336,7 +348,13 @@ public class ShipController : MonoBehaviour
         StarScript starScript = dockedStar.GetComponent<StarScript>();
         starScript.ShipInbound(ShipCount, owner, gameObject);
         gameObject.transform.parent = dockedStar.transform;
-        
+
+        if (isLooping)
+        {
+            ContinueLoop();
+            return;
+        }
+
         if (starWaypoints.Count > 0)
         {
             endStar = starWaypoints[0];

@@ -54,7 +54,7 @@ public class EnemyBotBehavior : MonoBehaviour
     public void preTick(object sender, PreTickEvent e)
     {
         stupidCounter++;
-        if (stupidCounter % 3 == 0)
+        if (stupidCounter % 12 == 0)
         {
             checkToExpand();
         }
