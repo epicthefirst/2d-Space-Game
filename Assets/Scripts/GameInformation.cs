@@ -14,6 +14,7 @@ public class GameInformation : MonoBehaviour
     public int carrierCost = 25; //This too
 
 
+
     public GameObject shipPrefab;
 
 

@@ -41,6 +41,7 @@ public class ShipController : MonoBehaviour
     public bool isLeavingNextTick;
     public bool inTransit;
     public bool isLooping = false;
+    public bool idle;
 
     public GameObject linePath;
     public Material dottedLineMaterial;
@@ -80,7 +81,7 @@ public class ShipController : MonoBehaviour
     }
     public void StartJourney()
     {
-
+        idle = false;
         if (isLooping)
         {
             StartLoop();
@@ -145,6 +146,7 @@ public class ShipController : MonoBehaviour
     }
     public void WaitAtStar(int length)
     {
+        idle = false;
         if (length == 0)
         {
             Debug.LogError("Bad");
@@ -157,6 +159,7 @@ public class ShipController : MonoBehaviour
     {
         CycleEventManager.OnTick -= WaitTick;
         totalTimeLeft = 0;
+        idle = true;
     }
     public void StopListening()
     {
@@ -165,6 +168,7 @@ public class ShipController : MonoBehaviour
     }
     public void WaitTick(object sender, NewTickEvent e)
     {
+        idle = false;
         startStar = starWaypoints[0];
         starWaypoints.RemoveAt(0);
 
@@ -364,6 +368,7 @@ public class ShipController : MonoBehaviour
         }
         else
         {
+            idle = true;
             linePath.SetActive(false);
         }
     }

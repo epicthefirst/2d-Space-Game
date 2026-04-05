@@ -761,7 +761,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
 
     private void FixedUpdate()
     {
-        if (Input.GetKey(KeyCode.K))
+        if (Input.GetKey(KeyCode.P))
         {
             OnTickButtonPress();
         }
