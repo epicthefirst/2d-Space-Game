@@ -13,6 +13,12 @@ public class GameInformation : MonoBehaviour
     public int cycleLength = 12; // Change this in the future
     public int carrierCost = 25; //This too
 
+    public int qualityMultiplier = 4;
+    public int numberOfCircles = 5;
+    public double offset = 20d;
+    public int minRandOffset = 1;
+    public int maxRandOffset = 5;
+
 
 
     public GameObject shipPrefab;

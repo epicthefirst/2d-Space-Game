@@ -8,6 +8,7 @@ public class VoronoiDiagram : MonoBehaviour
 {
     private int counter = 0;
     public Dictionary<int, Material[]> materialDictionary;
+    public GameInformation gameInformation;
     
     public void Init(Dictionary<GameObject, int> dictionary)
     {
@@ -24,9 +25,15 @@ public class VoronoiDiagram : MonoBehaviour
             starList.Add(pair.Key);
             pointList.Add(pair.Key.transform.position);
         }
-        VoronatorSharp.Voronator v = new VoronatorSharp.Voronator(pointList);
+
+        //Change me later if doing offset changes
+        Vector2 tempVector = new Vector2(100, 100) * gameInformation.numberOfCircles;
+        
+        VoronatorSharp.Voronator v = new VoronatorSharp.Voronator(pointList, -tempVector, tempVector);
+        
         for (int i = 0; i < pointList.Count; i++)
         {
+            
             List<Vector2> vertices = v.GetClippedPolygon(i);
             GameObject insidePolygon = CreatePolygonMesh(CreateInwardPolygon(vertices, 1f), starList[i], dictionary[starList[i]], true, "insidePolygon");
             GameObject borderPolygon = CreatePolygonMesh(vertices, starList[i], dictionary[starList[i]], false, "borderPolygon");

@@ -13,11 +13,11 @@ using static UnityEditor.PlayerSettings;
 
 public class MapGeneration : MonoBehaviour
 {  //Stuff to mess with (yay!)
-    public static int qualityMultiplier = 4;
-    public int numberOfCircles = 5;
-    public double offset = 20d;
-    [SerializeField] int minRandOffset = 1;
-    [SerializeField] int maxRandOffset = 5;
+    public int qualityMultiplier;
+    public int numberOfCircles;
+    public double offset;
+    public int minRandOffset;
+    public int maxRandOffset;
     [SerializeField] Pathfinder pathfinder;
     public int seed = -2;
     private int range = 75;
@@ -127,6 +127,13 @@ public class MapGeneration : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        int qualityMultiplier = gameInformation.qualityMultiplier;
+        int numberOfCircles = gameInformation.numberOfCircles;
+        double offset = gameInformation.offset;
+        int minRandOffset = gameInformation.minRandOffset;
+        int maxRandOffset = gameInformation.maxRandOffset;
+
+
         DefinePlayers();
 
         Material defaultMaterial = new Material(Shader.Find("Sprites/Default"));
@@ -387,7 +394,7 @@ public class MapGeneration : MonoBehaviour
 
 
     //Makes the stars and the orbits
-    public GameObject addPoint(double starsPerCircle, double distance, int i, int k)
+    public GameObject addPoint(int starsPerCircle, double distance, int i, int k)
     {
 
         Vector2 pos;

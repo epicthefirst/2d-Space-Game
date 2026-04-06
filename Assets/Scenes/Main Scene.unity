@@ -3438,7 +3438,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb1e4dcd2d74c544b8b70679c38c21b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numberOfCircles: 12
+  qualityMultiplier: 4
+  numberOfCircles: 5
   offset: 60
   minRandOffset: 10
   maxRandOffset: 15
@@ -3933,6 +3934,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6368db3c1a2684346bf07dd410419a14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameInformation: {fileID: 696977115}
 --- !u!114 &696977112
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3994,8 +3996,13 @@ MonoBehaviour:
   playerCount: 0
   tickCounter: 0
   playerMoney: 500
-  cycleLength: 20
+  cycleLength: 12
   carrierCost: 25
+  qualityMultiplier: 4
+  numberOfCircles: 10
+  offset: 60
+  minRandOffset: 1
+  maxRandOffset: 5
   shipPrefab: {fileID: 9128021471243550003, guid: e229612396a7f4f49844889ea895d47a, type: 3}
 --- !u!1 &713276554
 GameObject:
@@ -4457,8 +4464,9 @@ MonoBehaviour:
   cam: {fileID: 772932031}
   maxZoom: 25
   minZoom: 1000
-  sensitivity: 2
-  speed: 50
+  sensitivity: 1
+  defaultSpeed: 10
+  speed: 150
   zoomTarget1: 0
 --- !u!114 &772932035
 MonoBehaviour:

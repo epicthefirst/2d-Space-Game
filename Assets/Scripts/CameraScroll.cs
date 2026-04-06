@@ -9,7 +9,8 @@ public class CameraScroll : MonoBehaviour
     public float maxZoom = 0;
     public float minZoom = 50;
     public float sensitivity = 1;
-    public float speed = 30;
+    public float defaultSpeed = 30;
+    public float speed;
     public float zoomTarget1;
     float targetZoom;
     // Start is called before the first frame update
@@ -21,7 +22,8 @@ public class CameraScroll : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        targetZoom -= Input.mouseScrollDelta.y * sensitivity;
+        speed = cam.orthographicSize * sensitivity;
+        targetZoom -= Input.mouseScrollDelta.y * sensitivity * cam.orthographicSize/25;
         targetZoom = Mathf.Clamp(targetZoom, maxZoom, minZoom);
         float newSize = Mathf.MoveTowards(cam.orthographicSize, targetZoom, speed * Time.deltaTime);
         cam.orthographicSize = newSize;
