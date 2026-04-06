@@ -102,6 +102,19 @@ public class GameInformation : MonoBehaviour
                 botScript.addCarrier(carrier);
             }
         }
+        public void UpdateCarrierOfOwner(GameObject carrier)
+        {
+            //test++;
+            //Debug.LogError(test);   
+            if (!isBot)
+            {
+                return;
+            }
+            else
+            {
+                botScript.updateCarrier(carrier);
+            }
+        }
         public void RemoveCarrierFromOwner(GameObject carrier)
         {
             if (!isBot)

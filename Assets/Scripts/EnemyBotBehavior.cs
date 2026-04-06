@@ -38,10 +38,10 @@ public class EnemyBotBehavior : MonoBehaviour
     private Pathfinder.ObjectBinaryHeap industryCostHeap = new Pathfinder.ObjectBinaryHeap();
     private Pathfinder.ObjectBinaryHeap scienceCostHeap = new Pathfinder.ObjectBinaryHeap();
 
-    public void init(GameInformation.PlayerClass bot, List<GameObject> ownedStars, System.Random random, GameInformation gameInformation, MapGeneration mapGenerationScript)
+    public void init(GameInformation.PlayerClass bot, List<GameObject> ownedStars, System.Random random, GameInformation gameInformation, MapGeneration mapGenerationScript, Pathfinder pathfinder)
     {
         //Change me later, controls bot's vision
-        knownGraph = mapGenerationScript.graphFullSpeed;
+        //knownGraph = mapGenerationScript.graphFullSpeed;
 
 
         this.gameInformation = gameInformation;
@@ -50,23 +50,18 @@ public class EnemyBotBehavior : MonoBehaviour
         this.ownedStars = ownedStars;
         money = gameInformation.playerMoney;
         this.mapGenerationScript = mapGenerationScript;
+        this.pathfinderScript = pathfinder;
         CycleEventManager.OnPreTick += preTick;
         CycleEventManager.OnTick += newTick;
         CycleEventManager.OnCycle += newCycle;
 
 
-        
+        checkStars();
     }
 
     public void preTick(object sender, PreTickEvent e)
     {
-        stupidCounter++;
-        if (stupidCounter % 12 == 0)
-        {
-            checkToExpand();
-        }
-
-        if (targetStars.Count > Mathf.CeilToInt(Mathf.Sqrt(ownedStars.Count)))
+        if (targetStars.Count < Mathf.CeilToInt(Mathf.Sqrt(ownedStars.Count)))
         {
             checkToExpand();
         }
@@ -90,10 +85,11 @@ public class EnemyBotBehavior : MonoBehaviour
     }
     public void checkStars()
     {
-
+        Debug.LogError("Checked stars: " + ownedStars.Count);
         econCostHeap = new Pathfinder.ObjectBinaryHeap();
         industryCostHeap = new Pathfinder.ObjectBinaryHeap();
         scienceCostHeap = new Pathfinder.ObjectBinaryHeap();
+        garrisonHeap = new Pathfinder.ObjectBinaryHeap();
 
         foreach (GameObject star in ownedStars)
         {
@@ -101,11 +97,14 @@ public class EnemyBotBehavior : MonoBehaviour
             econCostHeap.Insert(star, s.GetEconPrice());
             industryCostHeap.Insert(star, s.GetIndustryPrice());
             scienceCostHeap.Insert(star, s.GetSciencePrice());
+
+            garrisonHeap.Insert(star, s.GarrisonCount);
             /////////WORK ON ME PLEASE
         }
     }
     public void buyInfrastructure()
     {
+        Debug.LogWarning(econCostHeap.Size);
         int allocatedFunds = Mathf.RoundToInt(money / 3);
         Debug.LogWarning(allocatedFunds);
         buyEcon(allocatedFunds);
@@ -115,6 +114,7 @@ public class EnemyBotBehavior : MonoBehaviour
     }
     public void buyEcon(int funds)
     {
+        Debug.Log(econCostHeap.Size);
         GameObject node;
         while (funds > econCostHeap.elements[0].value)
         {
@@ -156,16 +156,30 @@ public class EnemyBotBehavior : MonoBehaviour
 
     public void checkToExpand()
     {
-        List<GameObject> tempList = candidateStars.GetRange(0, Mathf.CeilToInt(Mathf.Sqrt(ownedStars.Count)));
+        knownGraph = mapGenerationScript.graphFullSpeed;
+
+        int target = Mathf.CeilToInt(Mathf.Sqrt(ownedStars.Count));
+        if (candidateStars.Count < target)
+        {
+            foreach(GameObject star in ownedStars)
+            {
+                candidateStars.AddRange(knownGraph.getStarNeighbors(star).Except(ownedStars));
+            }
+        }
+        List<GameObject> tempList = candidateStars.GetRange(0, target);
 
         foreach(GameObject star in tempList)
         {
             if (idleCarrierHeap.Size > 0)
             {
+                Debug.LogWarning("Sending carrier");
                 ShipController tempCarrierScript = idleCarrierHeap.Pop().GetComponent<ShipController>();
-                tempCarrierScript.SetNewWaypoints(pathfinderScript.calculate(knownGraph, knownGraph.findStarIndex(tempCarrierScript.dockedStar), knownGraph.findStarIndex(star)));
+                //tempCarrierScript.SetNewWaypoints(pathfinderScript.calculate(knownGraph, knownGraph.findStarIndex(tempCarrierScript.dockedStar), knownGraph.findStarIndex(star)));
+                tempCarrierScript.SetNewWaypoints(pathfinderScript.calculate(knownGraph, knownGraph.findStarIndex(star), knownGraph.findStarIndex(tempCarrierScript.dockedStar)));
+                tempCarrierScript.StartJourney();
             }
-            if(money >= gameInformation.carrierCost && garrisonHeap.elements[0].value > 0)
+            //Fix this part later
+            if(money >= gameInformation.carrierCost && garrisonHeap.elements[0].value > 0 && carrierList.Count <= ownedStars.Count + 5)
             {
                 money -= gameInformation.carrierCost;
                 GameObject poppedStar = garrisonHeap.Pop();
@@ -178,10 +192,16 @@ public class EnemyBotBehavior : MonoBehaviour
                 poppedStarScript.AttachCarrier(c);
                 shipController.dockedStar = poppedStar;
                 shipController.Init(carrierNameGenerator(), poppedStar, poppedStarScript.GarrisonCount, bot);
+
+                Debug.Log(knownGraph.starList.Count);
+                //shipController.SetNewWaypoints(pathfinderScript.calculate(knownGraph, knownGraph.findStarIndex(poppedStar), knownGraph.findStarIndex(star)));
+                shipController.SetNewWaypoints(pathfinderScript.calculate(knownGraph, knownGraph.findStarIndex(star), knownGraph.findStarIndex(poppedStar)));
+                shipController.StartJourney();
+
+                garrisonHeap.Insert(poppedStar, poppedStarScript.GarrisonCount);
             }
             else
             {
-                Debug.LogError("Expansion stopped early");
                 break;
             }
         }
@@ -307,13 +327,14 @@ public class EnemyBotBehavior : MonoBehaviour
     }
     public void updateCarrier(GameObject carrier)
     {
+
         ShipController carrierScript = carrier.GetComponent<ShipController>();
 
         carrierSizeHeap.RemoveNode(carrier);
         carrierSizeHeap.Insert(carrier, carrierScript.ShipCount);
 
         idleCarrierHeap.RemoveNode(carrier);
-        if (carrierScript.idle == true)
+        if (carrierScript.idle)
         {
             idleCarrierHeap.Insert(carrier, carrierScript.ShipCount);
         }
@@ -331,6 +352,7 @@ public class EnemyBotBehavior : MonoBehaviour
     }
     public void addStar(GameObject star)
     {
+        candidateStars.Remove(star);
         if (!ownedStars.Contains(star))
         {
             StarScript s = star.GetComponent<StarScript>();
@@ -348,7 +370,7 @@ public class EnemyBotBehavior : MonoBehaviour
             updateStar(star);
         }
 
-        candidateStars.AddRange(mapGenerationScript.graphFullSpeed.getStarNeighbors(star).Except(ownedStars));
+        candidateStars.AddRange(knownGraph.getStarNeighbors(star).Except(ownedStars));
         
     }
     public void updateStar(GameObject star)
@@ -364,6 +386,8 @@ public class EnemyBotBehavior : MonoBehaviour
         econCostHeap.Insert(star, s.GetEconPrice());
         industryCostHeap.Insert(star, s.GetIndustryPrice());
         scienceCostHeap.Insert(star, s.GetSciencePrice());
+
+        candidateStars.Remove(star);
 
     }
     public void removeStar(GameObject star)

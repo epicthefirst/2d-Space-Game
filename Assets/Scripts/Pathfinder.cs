@@ -381,7 +381,12 @@ public class Pathfinder : MonoBehaviour
         }
         public void RemoveNode(GameObject node)
         {
-            elements.RemoveAt(FindNode(node));
+            int index = FindNode(node);
+            if (index == -1)
+            {
+                return;
+            }
+            elements.RemoveAt(index);
         }
 
         public void Insert(GameObject node, int value)
@@ -443,13 +448,14 @@ public class Pathfinder : MonoBehaviour
             int childL = childR - 1;
 
             if (childL >= Size) return -1;
-            else if (childR < Size && elements[childR].CompareTo(elements[childL]) < 0) return childR;
+            else if (childR < Size && elements[childR].value.CompareTo(elements[childL].value) < 0) return childR;
             else return childL;
         }
     }
 
 
     //Main script, calculates shortest path between 2 points on a given graph.
+    //Also, start and end are switched maybe?
     public List<GameObject> calculate(Graph graph, int start, int end)
     {
         //var watch = System.Diagnostics.Stopwatch.StartNew();

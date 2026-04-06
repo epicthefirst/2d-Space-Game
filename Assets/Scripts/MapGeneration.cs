@@ -18,6 +18,7 @@ public class MapGeneration : MonoBehaviour
     public double offset = 20d;
     [SerializeField] int minRandOffset = 1;
     [SerializeField] int maxRandOffset = 5;
+    [SerializeField] Pathfinder pathfinder;
     public int seed = -2;
     private int range = 75;
     private int[] enemyCapital = { 42 };
@@ -424,7 +425,8 @@ public class MapGeneration : MonoBehaviour
             starScript.IndustryCount = 5;
             starScript.ScienceCount = 2;
             starScript.isAwake = true;
-            bot1.init(botClass, new List<GameObject>() { starSpawn }, random, gameInformation, this);
+            //Need to send list, then on wake calculate candidates
+            bot1.init(botClass, new List<GameObject>() { starSpawn }, random, gameInformation, this, pathfinder);
             dictionary.Add(starSpawn, 2);
         }
         else

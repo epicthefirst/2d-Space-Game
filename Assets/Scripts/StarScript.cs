@@ -214,6 +214,7 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
         {
             GarrisonCount += IndustryCount;
             Refresh();
+            owner.UpdateStarOfOwner(gameObject);
         }
         tick = e.CurrentTick;
         updatePlanets();
@@ -267,12 +268,13 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
             else
             {
                 GarrisonCount -= shipShipCount;
+                carrier.GetComponent<ShipController>().owner.RemoveCarrierFromOwner(carrier);
                 Destroy(carrier);
                 Refresh();
             }
         }
       
-
+        
 
     }
     public void AttachCarrier(GameObject carrier)
@@ -515,7 +517,6 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
             {
                 case 0:
                     //Terrestrial
-                    Debug.Log(planetArray[0]);
                     planet = Instantiate(planetArray[0], gameObject.transform, false);
                     break;
                 case 1:

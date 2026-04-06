@@ -3442,6 +3442,7 @@ MonoBehaviour:
   offset: 60
   minRandOffset: 10
   maxRandOffset: 15
+  pathfinder: {fileID: 696977113}
   seed: 39432
   starNames:
   - Absolutno
@@ -4458,6 +4459,7 @@ MonoBehaviour:
   minZoom: 1000
   sensitivity: 2
   speed: 50
+  zoomTarget1: 0
 --- !u!114 &772932035
 MonoBehaviour:
   m_ObjectHideFlags: 0
