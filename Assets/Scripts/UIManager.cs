@@ -160,6 +160,12 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
         };
     }
 
+    //void Awake()
+    //{
+    //    QualitySettings.vSyncCount = 0;  // VSync must be disabled
+    //    Application.targetFrameRate = 30;
+    //}
+
 
     void Start()
     {

@@ -28,9 +28,5 @@ public class CameraScroll : MonoBehaviour
         float newSize = Mathf.MoveTowards(cam.orthographicSize, targetZoom, speed * Time.deltaTime);
         cam.orthographicSize = newSize;
 
-        if (cam.orthographicSize > zoomTarget1)
-        {
-
-        }
     }
 }
