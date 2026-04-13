@@ -7,7 +7,7 @@ public class EnemyBotBehavior : MonoBehaviour
 {
     //Testing
     int stupidCounter = 0;
-
+    List<string> removedCarrierList = new List<string>();
 
 
     //General Bot Logic
@@ -173,10 +173,21 @@ public class EnemyBotBehavior : MonoBehaviour
             if (idleCarrierHeap.Size > 0)
             {
                 Debug.LogWarning("Sending carrier");
+                if (idleCarrierHeap.elements[0].node == null)
+                {
+                    Debug.LogError("Carrier going to star: " + star.GetComponent<StarScript>().Name + " from size " + idleCarrierHeap.elements[0].value +" at tick: "+CycleEventManager.CurrentTick+" did an oopsie");
+                    foreach(string obj in removedCarrierList)
+                    {
+                        Debug.LogError(obj);
+                    }
+                    
+                }
                 ShipController tempCarrierScript = idleCarrierHeap.Pop().GetComponent<ShipController>();
                 //tempCarrierScript.SetNewWaypoints(pathfinderScript.calculate(knownGraph, knownGraph.findStarIndex(tempCarrierScript.dockedStar), knownGraph.findStarIndex(star)));
                 tempCarrierScript.SetNewWaypoints(pathfinderScript.calculate(knownGraph, knownGraph.findStarIndex(star), knownGraph.findStarIndex(tempCarrierScript.dockedStar)));
                 tempCarrierScript.StartJourney();
+
+                candidateStars.Remove(star);
             }
             //Fix this part later
             if(money >= gameInformation.carrierCost && garrisonHeap.elements[0].value > 0 && carrierList.Count <= ownedStars.Count + 5)
@@ -199,6 +210,8 @@ public class EnemyBotBehavior : MonoBehaviour
                 shipController.StartJourney();
 
                 garrisonHeap.Insert(poppedStar, poppedStarScript.GarrisonCount);
+
+                candidateStars.Remove(star);
             }
             else
             {
@@ -338,13 +351,13 @@ public class EnemyBotBehavior : MonoBehaviour
         {
             idleCarrierHeap.Insert(carrier, carrierScript.ShipCount);
         }
-        else
-        {
-            idleCarrierHeap.RemoveNode(carrier);
-        }
     }
     public void removeCarrier(GameObject carrier)
     {
+        removedCarrierList.Add(carrier.name);
+        Debug.LogError(carrier.GetComponent<ShipController>().owner.name);
+        Debug.LogError(carrier.GetComponent<ShipController>().dockedStar);
+
         carrierList.Remove(carrier);
         carrierSizeHeap.RemoveNode(carrier);
 

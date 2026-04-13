@@ -386,7 +386,23 @@ public class Pathfinder : MonoBehaviour
             {
                 return;
             }
-            elements.RemoveAt(index);
+
+            SwapAt(index, Size - 1);
+
+            elements.RemoveAt(Size - 1);
+
+            while (index < Size)
+            {
+                int childIndex = MinChildIndex(index);
+
+                if (childIndex >= 0 && elements[childIndex].value.CompareTo(elements[index].value) < 0)
+                {
+                    SwapAt(index, childIndex);
+                    index = childIndex;
+                }
+                else break;
+            }
+
         }
 
         public void Insert(GameObject node, int value)
