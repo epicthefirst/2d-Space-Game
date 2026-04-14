@@ -10,6 +10,13 @@ using UnityEngine.UI;
 
 public class ShipController : MonoBehaviour
 {
+    //Testing
+
+    public bool isDead;
+
+    //Real stuff
+
+
     private GameObject startStar;
     private GameObject endStar;
     public GameObject dockedStar;
@@ -131,7 +138,10 @@ public class ShipController : MonoBehaviour
             }
             //Debug.Log(timeLeft);
             //Debug.Log(totalTimeLeft); //Fix me
-            CycleEventManager.OnTick += NewTick;
+            if (!isDead)
+            {
+                CycleEventManager.OnTick += NewTick;
+            }
 
 
         }
@@ -211,7 +221,11 @@ public class ShipController : MonoBehaviour
         CopyList.AddRange(starWaypoints);
         return CopyList;
     }
-    private void NewTick(object sender, NewTickEvent e) { 
+    private void NewTick(object sender, NewTickEvent e) {
+        if (isDead)
+        {
+            Debug.LogError("This is very very bad");
+        }
         if (isLeavingNextTick)
         {
             gameObject.transform.parent = null;
@@ -402,6 +416,9 @@ public class ShipController : MonoBehaviour
     public void DestroyCarrier()
     {
         owner.RemoveCarrierFromOwner(gameObject);
+        StopListening();
+        isDead = false;
         Destroy(gameObject);
+        Destroy(this);
     }
 }

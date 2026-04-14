@@ -354,7 +354,10 @@ public class EnemyBotBehavior : MonoBehaviour
     }
     public void removeCarrier(GameObject carrier)
     {
-        removedCarrierList.Add(carrier.name);
+        Debug.LogError("Removed carrier stationed at star: "+ carrier.GetComponent<ShipController>().dockedStar);
+
+
+        removedCarrierList.Add(carrier.GetComponent<ShipController>().idle.ToString());
         Debug.LogError(carrier.GetComponent<ShipController>().owner.name);
         Debug.LogError(carrier.GetComponent<ShipController>().dockedStar);
 

@@ -382,25 +382,64 @@ public class Pathfinder : MonoBehaviour
         public void RemoveNode(GameObject node)
         {
             int index = FindNode(node);
+
             if (index == -1)
             {
                 return;
             }
 
-            SwapAt(index, Size - 1);
+            if (index == Size - 1)
+            {
+                elements.RemoveAt(index);
+                return;
+            }
 
+            elements[index] = elements[Size - 1];
+            
             elements.RemoveAt(Size - 1);
 
-            while (index < Size)
-            {
-                int childIndex = MinChildIndex(index);
+            //while (index < Size)
+            //{
+            //    int childIndex = MinChildIndex(index);
 
-                if (childIndex >= 0 && elements[childIndex].value.CompareTo(elements[index].value) < 0)
+            //    if (childIndex >= 0 && elements[childIndex].value.CompareTo(elements[index].value) < 0)
+            //    {
+            //        SwapAt(index, childIndex);
+            //        index = childIndex;
+            //    }
+            //    else break;
+            //}
+
+            int parent = (index + 1) / 2 - 1;
+
+
+            if(index > 0 && elements[index].value < elements[parent].value)
+            {
+                while (index > 0)
                 {
-                    SwapAt(index, childIndex);
-                    index = childIndex;
+                    parent = (index + 1) / 2 - 1;
+
+                    if (elements[index].value < elements[parent].value)
+                    {
+                        SwapAt(index, parent);
+                        index = parent;
+                    }
+                    else break;
                 }
-                else break;
+            }
+            else
+            {
+                while (index < Size)
+                {
+                    int childIndex = MinChildIndex(index);
+
+                    if (childIndex >= 0 && elements[childIndex].value < elements[index].value)
+                    {
+                        SwapAt(index, childIndex);
+                        index = childIndex;
+                    }
+                    else break;
+                }
             }
 
         }
