@@ -508,6 +508,147 @@ public class Pathfinder : MonoBehaviour
         }
     }
 
+    public class ObjectMaxBinaryHeap
+    {
+        public List<(GameObject node, int value)> elements = new List<(GameObject, int)>();
+        Comparer<int> compare;
+
+        public int Size => elements.Count;
+
+        public int FindNode(GameObject node)
+        {
+            int index = elements.FindIndex(e => e.node == node);
+            return index;
+        }
+        public void RemoveNode(GameObject node)
+        {
+            int index = FindNode(node);
+
+            if (index == -1)
+            {
+                return;
+            }
+
+            if (index == Size - 1)
+            {
+                elements.RemoveAt(index);
+                return;
+            }
+
+            elements[index] = elements[Size - 1];
+
+            elements.RemoveAt(Size - 1);
+
+            //while (index < Size)
+            //{
+            //    int childIndex = MinChildIndex(index);
+
+            //    if (childIndex >= 0 && elements[childIndex].value.CompareTo(elements[index].value) < 0)
+            //    {
+            //        SwapAt(index, childIndex);
+            //        index = childIndex;
+            //    }
+            //    else break;
+            //}
+
+            int parent = (index + 1) / 2 - 1;
+
+
+            if (index > 0 && elements[index].value < elements[parent].value)
+            {
+                while (index > 0)
+                {
+                    parent = (index + 1) / 2 - 1;
+
+                    if (elements[index].value < elements[parent].value)
+                    {
+                        SwapAt(index, parent);
+                        index = parent;
+                    }
+                    else break;
+                }
+            }
+            else
+            {
+                while (index < Size)
+                {
+                    int childIndex = MinChildIndex(index);
+
+                    if (childIndex >= 0 && elements[childIndex].value < elements[index].value)
+                    {
+                        SwapAt(index, childIndex);
+                        index = childIndex;
+                    }
+                    else break;
+                }
+            }
+
+        }
+
+        public void Insert(GameObject node, int value)
+        {
+
+            elements.Add((node, value));
+            int index = Size - 1;
+
+            while (index > 0)
+            {
+
+                int parent = (index + 1) / 2 - 1;
+
+                if (elements[index].value.CompareTo(elements[parent].value) < 0)
+                {
+                    SwapAt(index, parent);
+                    index = parent;
+                }
+                else break;
+            }
+
+
+
+        }
+
+        public GameObject Pop()
+        {
+            GameObject nodeReturn = elements[0].node;
+            int index = 0;
+
+            SwapAt(0, Size - 1);
+            elements.RemoveAt(Size - 1);
+
+            while (index < Size)
+            {
+                int childIndex = MinChildIndex(index);
+
+                if (childIndex >= 0 && elements[childIndex].value.CompareTo(elements[index].value) < 0)
+                {
+                    SwapAt(index, childIndex);
+                    index = childIndex;
+                }
+                else break;
+            }
+
+
+            return nodeReturn;
+
+        }
+        void SwapAt(int i, int j)
+        {
+            var temp = elements[i];
+            elements[i] = elements[j];
+            elements[j] = temp;
+        }
+        int MinChildIndex(int i)
+        {
+            int childR = (i + 1) * 2;
+            int childL = childR - 1;
+
+            if (childL >= Size) return -1;
+            else if (childR < Size && elements[childR].value.CompareTo(elements[childL].value) < 0) return childR;
+            else return childL;
+        }
+    }
+
 
     //Main script, calculates shortest path between 2 points on a given graph.
     //Also, start and end are switched maybe?

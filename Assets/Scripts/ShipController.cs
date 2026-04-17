@@ -385,7 +385,7 @@ public class ShipController : MonoBehaviour
             idle = true;
             linePath.SetActive(false);
 
-            Debug.LogError("Idle");
+            //Debug.LogError("Idle");
 
             
         }
@@ -418,7 +418,8 @@ public class ShipController : MonoBehaviour
         owner.RemoveCarrierFromOwner(gameObject);
         StopListening();
         isDead = false;
-        Destroy(gameObject);
         Destroy(this);
+        Destroy(gameObject);
+        
     }
 }

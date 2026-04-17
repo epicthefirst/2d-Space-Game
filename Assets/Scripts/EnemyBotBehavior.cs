@@ -136,7 +136,7 @@ public class EnemyBotBehavior : MonoBehaviour
             node = industryCostHeap.elements[0].node;
             StarScript poppedStarScript = industryCostHeap.Pop().GetComponent<StarScript>();
             poppedStarScript.IndustryCount++;
-            econCostHeap.Insert(node, poppedStarScript.GetIndustryPrice());
+            industryCostHeap.Insert(node, poppedStarScript.GetIndustryPrice());
         }
     }
     public void buyScience(int funds)
@@ -149,7 +149,7 @@ public class EnemyBotBehavior : MonoBehaviour
             node = scienceCostHeap.elements[0].node;
             StarScript poppedStarScript = scienceCostHeap.Pop().GetComponent<StarScript>();
             poppedStarScript.ScienceCount++;
-            econCostHeap.Insert(node, poppedStarScript.GetSciencePrice());
+            scienceCostHeap.Insert(node, poppedStarScript.GetSciencePrice());
         }
     }
 
@@ -357,7 +357,7 @@ public class EnemyBotBehavior : MonoBehaviour
         Debug.LogError("Removed carrier stationed at star: "+ carrier.GetComponent<ShipController>().dockedStar);
 
 
-        removedCarrierList.Add(carrier.GetComponent<ShipController>().idle.ToString());
+        //removedCarrierList.Add(carrier.GetComponent<ShipController>().idle.ToString());
         Debug.LogError(carrier.GetComponent<ShipController>().owner.name);
         Debug.LogError(carrier.GetComponent<ShipController>().dockedStar);
 
@@ -365,6 +365,8 @@ public class EnemyBotBehavior : MonoBehaviour
         carrierSizeHeap.RemoveNode(carrier);
 
         idleCarrierHeap.RemoveNode(carrier);
+
+        removedCarrierList.Add(idleCarrierHeap.elements.Count.ToString());
     }
     public void addStar(GameObject star)
     {
