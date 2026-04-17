@@ -214,6 +214,7 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
         {
             GarrisonCount += IndustryCount;
             Refresh();
+            Debug.LogError(gameObject);
             owner.UpdateStarOfOwner(gameObject);
         }
         tick = e.CurrentTick;

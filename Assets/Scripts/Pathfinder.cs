@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,6 +13,8 @@ public class Pathfinder : MonoBehaviour
     public GameObject blueCircleDot;
     private List<GridObject> gridObjects;
     public Graph mainGraph;
+
+    
 
 
     //Output time in ticks to destination. Also used as weight
@@ -71,8 +74,8 @@ public class Pathfinder : MonoBehaviour
                     Instantiate(endstar, v4, Quaternion.identity, null);*/
         GameObject lrsquaredebugthingy = new GameObject();
         LineRenderer lr = lrsquaredebugthingy.AddComponent<LineRenderer>();
-        lr.startColor = Color.blue;
-        lr.endColor = Color.red;
+        lr.startColor = UnityEngine.Color.blue;
+        lr.endColor = UnityEngine.Color.red;
         lr.startWidth = 1;
         lr.endWidth = 1;
         lr.positionCount = 4;
@@ -512,6 +515,7 @@ public class Pathfinder : MonoBehaviour
     {
         public List<(GameObject node, int value)> elements = new List<(GameObject, int)>();
         Comparer<int> compare;
+        public int counter;
 
         public int Size => elements.Count;
 
@@ -523,6 +527,8 @@ public class Pathfinder : MonoBehaviour
         public void RemoveNode(GameObject node)
         {
             int index = FindNode(node);
+            Debug.Log("Index: " + index + " ! " + node.GetComponent<ShipController>().Name);
+            Debug.Log("Node: " + node + " ! "  + node.GetComponent<ShipController>().Name);
 
             if (index == -1)
             {
@@ -534,54 +540,54 @@ public class Pathfinder : MonoBehaviour
                 elements.RemoveAt(index);
                 return;
             }
-
-            elements[index] = elements[Size - 1];
+            SwapAt(index, Size - 1);
+            //elements[index] = elements[Size - 1];
 
             elements.RemoveAt(Size - 1);
 
-            //while (index < Size)
+            while (index < Size)
+            {
+                int childIndex = MaxChildIndex(index);
+
+                if (childIndex >= 0 && elements[childIndex].value.CompareTo(elements[index].value) > 0)
+                {
+                    SwapAt(index, childIndex);
+                    index = childIndex;
+                }
+                else break;
+            }
+
+            //int parent = (index + 1) / 2 - 1;
+
+
+            //if (index > 0 && elements[index].value > elements[parent].value)
             //{
-            //    int childIndex = MinChildIndex(index);
-
-            //    if (childIndex >= 0 && elements[childIndex].value.CompareTo(elements[index].value) < 0)
+            //    while (index > 0)
             //    {
-            //        SwapAt(index, childIndex);
-            //        index = childIndex;
+            //        parent = (index + 1) / 2 - 1;
+
+            //        if (elements[index].value > elements[parent].value)
+            //        {
+            //            SwapAt(index, parent);
+            //            index = parent;
+            //        }
+            //        else break;
             //    }
-            //    else break;
             //}
+            //else
+            //{
+            //    while (index < Size)
+            //    {
+            //        int childIndex = MaxChildIndex(index);
 
-            int parent = (index + 1) / 2 - 1;
-
-
-            if (index > 0 && elements[index].value < elements[parent].value)
-            {
-                while (index > 0)
-                {
-                    parent = (index + 1) / 2 - 1;
-
-                    if (elements[index].value < elements[parent].value)
-                    {
-                        SwapAt(index, parent);
-                        index = parent;
-                    }
-                    else break;
-                }
-            }
-            else
-            {
-                while (index < Size)
-                {
-                    int childIndex = MinChildIndex(index);
-
-                    if (childIndex >= 0 && elements[childIndex].value < elements[index].value)
-                    {
-                        SwapAt(index, childIndex);
-                        index = childIndex;
-                    }
-                    else break;
-                }
-            }
+            //        if (childIndex >= 0 && elements[childIndex].value > elements[index].value)
+            //        {
+            //            SwapAt(index, childIndex);
+            //            index = childIndex;
+            //        }
+            //        else break;
+            //    }
+            //}
 
         }
 
@@ -596,7 +602,7 @@ public class Pathfinder : MonoBehaviour
 
                 int parent = (index + 1) / 2 - 1;
 
-                if (elements[index].value.CompareTo(elements[parent].value) < 0)
+                if (elements[index].value.CompareTo(elements[parent].value) > 0)
                 {
                     SwapAt(index, parent);
                     index = parent;
@@ -610,7 +616,22 @@ public class Pathfinder : MonoBehaviour
 
         public GameObject Pop()
         {
+            Debug.LogError(elements[0].value);
+
+            //while(elements[0].node == null)
+            //{
+            //    counter++;
+            //    Debug.LogError("Counter: " + counter);
+            //    RemoveNode(elements[0].node);
+            //    if(Size == 0)
+            //    {
+            //        return null;
+            //    }
+            //}
+
             GameObject nodeReturn = elements[0].node;
+
+
             int index = 0;
 
             SwapAt(0, Size - 1);
@@ -618,9 +639,9 @@ public class Pathfinder : MonoBehaviour
 
             while (index < Size)
             {
-                int childIndex = MinChildIndex(index);
+                int childIndex = MaxChildIndex(index);
 
-                if (childIndex >= 0 && elements[childIndex].value.CompareTo(elements[index].value) < 0)
+                if (childIndex >= 0 && elements[childIndex].value.CompareTo(elements[index].value) > 0)
                 {
                     SwapAt(index, childIndex);
                     index = childIndex;
@@ -628,7 +649,7 @@ public class Pathfinder : MonoBehaviour
                 else break;
             }
 
-
+            
             return nodeReturn;
 
         }
@@ -638,13 +659,13 @@ public class Pathfinder : MonoBehaviour
             elements[i] = elements[j];
             elements[j] = temp;
         }
-        int MinChildIndex(int i)
+        int MaxChildIndex(int i)
         {
             int childR = (i + 1) * 2;
             int childL = childR - 1;
 
             if (childL >= Size) return -1;
-            else if (childR < Size && elements[childR].value.CompareTo(elements[childL].value) < 0) return childR;
+            else if (childR < Size && elements[childR].value.CompareTo(elements[childL].value) > 0) return childR;
             else return childL;
         }
     }

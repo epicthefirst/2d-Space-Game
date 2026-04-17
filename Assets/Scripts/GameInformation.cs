@@ -152,7 +152,7 @@ public class GameInformation : MonoBehaviour
             }
             else
             {
-                botScript.updateStar(star);
+                botScript.addStar(star);
             }
         }
 

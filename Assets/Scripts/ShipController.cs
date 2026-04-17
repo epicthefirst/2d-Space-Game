@@ -225,6 +225,8 @@ public class ShipController : MonoBehaviour
         if (isDead)
         {
             Debug.LogError("This is very very bad");
+            StopListening();
+            return;
         }
         if (isLeavingNextTick)
         {
@@ -417,9 +419,13 @@ public class ShipController : MonoBehaviour
     {
         owner.RemoveCarrierFromOwner(gameObject);
         StopListening();
-        isDead = false;
-        Destroy(this);
+        isDead = true;
+        Debug.LogWarning("I have died");
+        DestroyImmediate(this);
         Destroy(gameObject);
+
+        Debug.LogWarning("I have died 2");
+        
         
     }
 }

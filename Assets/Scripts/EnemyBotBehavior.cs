@@ -19,8 +19,8 @@ public class EnemyBotBehavior : MonoBehaviour
     public int carrierNameIncrement;
 
     private List<GameObject> carrierList = new List<GameObject>();
-    private Pathfinder.ObjectBinaryHeap carrierSizeHeap = new Pathfinder.ObjectBinaryHeap();
-    private Pathfinder.ObjectBinaryHeap idleCarrierHeap = new Pathfinder.ObjectBinaryHeap();
+    private Pathfinder.ObjectMaxBinaryHeap carrierSizeHeap = new Pathfinder.ObjectMaxBinaryHeap();
+    private Pathfinder.ObjectMaxBinaryHeap idleCarrierHeap = new Pathfinder.ObjectMaxBinaryHeap();
 
 
     private List<GameObject> ownedStars = new List<GameObject>();
@@ -33,7 +33,7 @@ public class EnemyBotBehavior : MonoBehaviour
     private System.Random random;
     private int money;
 
-    private Pathfinder.ObjectBinaryHeap garrisonHeap = new Pathfinder.ObjectBinaryHeap();
+    private Pathfinder.ObjectMaxBinaryHeap garrisonHeap = new Pathfinder.ObjectMaxBinaryHeap();
     private Pathfinder.ObjectBinaryHeap econCostHeap = new Pathfinder.ObjectBinaryHeap();
     private Pathfinder.ObjectBinaryHeap industryCostHeap = new Pathfinder.ObjectBinaryHeap();
     private Pathfinder.ObjectBinaryHeap scienceCostHeap = new Pathfinder.ObjectBinaryHeap();
@@ -89,7 +89,7 @@ public class EnemyBotBehavior : MonoBehaviour
         econCostHeap = new Pathfinder.ObjectBinaryHeap();
         industryCostHeap = new Pathfinder.ObjectBinaryHeap();
         scienceCostHeap = new Pathfinder.ObjectBinaryHeap();
-        garrisonHeap = new Pathfinder.ObjectBinaryHeap();
+        garrisonHeap = new Pathfinder.ObjectMaxBinaryHeap();
 
         foreach (GameObject star in ownedStars)
         {
