@@ -19,8 +19,8 @@ public class EnemyBotBehavior : MonoBehaviour
     public int carrierNameIncrement;
 
     private List<GameObject> carrierList = new List<GameObject>();
-    private Pathfinder.ObjectMaxBinaryHeap carrierSizeHeap = new Pathfinder.ObjectMaxBinaryHeap();
-    private Pathfinder.ObjectMaxBinaryHeap idleCarrierHeap = new Pathfinder.ObjectMaxBinaryHeap();
+    private Pathfinder.MaxObjBinaryHeap carrierSizeHeap = new Pathfinder.MaxObjBinaryHeap(1024); //Change later
+    private Pathfinder.MaxObjBinaryHeap idleCarrierHeap = new Pathfinder.MaxObjBinaryHeap(1024); //Change later
 
 
     private List<GameObject> ownedStars = new List<GameObject>();
@@ -33,10 +33,10 @@ public class EnemyBotBehavior : MonoBehaviour
     private System.Random random;
     private int money;
 
-    private Pathfinder.ObjectMaxBinaryHeap garrisonHeap = new Pathfinder.ObjectMaxBinaryHeap();
-    private Pathfinder.ObjectBinaryHeap econCostHeap = new Pathfinder.ObjectBinaryHeap();
-    private Pathfinder.ObjectBinaryHeap industryCostHeap = new Pathfinder.ObjectBinaryHeap();
-    private Pathfinder.ObjectBinaryHeap scienceCostHeap = new Pathfinder.ObjectBinaryHeap();
+    private Pathfinder.MaxObjBinaryHeap garrisonHeap = new Pathfinder.MaxObjBinaryHeap(1024);
+    private Pathfinder.MinObjBinaryHeap econCostHeap = new Pathfinder.MinObjBinaryHeap(1024); //Change later
+    private Pathfinder.MinObjBinaryHeap industryCostHeap = new Pathfinder.MinObjBinaryHeap(1024); //Change later
+    private Pathfinder.MinObjBinaryHeap scienceCostHeap = new Pathfinder.MinObjBinaryHeap(1024); //Change later
 
     public void init(GameInformation.PlayerClass bot, List<GameObject> ownedStars, System.Random random, GameInformation gameInformation, MapGeneration mapGenerationScript, Pathfinder pathfinder)
     {
@@ -74,22 +74,22 @@ public class EnemyBotBehavior : MonoBehaviour
     public void newTick(object sender, NewTickEvent e)
     {
         money += 50;
-        money += econCostHeap.Size;
+        money += econCostHeap.Size();
     }
     public void newCycle(object sender, NewCycleEvent e)
     {
         //checkStars();
-        money += econCostHeap.Size * 12;
+        money += econCostHeap.Size() * 12;
         buyInfrastructure();
         
     }
     public void checkStars()
     {
         Debug.LogError("Checked stars: " + ownedStars.Count);
-        econCostHeap = new Pathfinder.ObjectBinaryHeap();
-        industryCostHeap = new Pathfinder.ObjectBinaryHeap();
-        scienceCostHeap = new Pathfinder.ObjectBinaryHeap();
-        garrisonHeap = new Pathfinder.ObjectMaxBinaryHeap();
+        econCostHeap = new Pathfinder.MinObjBinaryHeap(1024); //Change me later
+        industryCostHeap = new Pathfinder.MinObjBinaryHeap(1024); //Change me later
+        scienceCostHeap = new Pathfinder.MinObjBinaryHeap(1024); //Change me later
+        garrisonHeap = new Pathfinder.MaxObjBinaryHeap(1024);
 
         foreach (GameObject star in ownedStars)
         {
@@ -104,7 +104,7 @@ public class EnemyBotBehavior : MonoBehaviour
     }
     public void buyInfrastructure()
     {
-        Debug.LogWarning(econCostHeap.Size);
+        Debug.LogWarning(econCostHeap.Size());
         int allocatedFunds = Mathf.RoundToInt(money / 3);
         Debug.LogWarning(allocatedFunds);
         buyEcon(allocatedFunds);
@@ -114,14 +114,14 @@ public class EnemyBotBehavior : MonoBehaviour
     }
     public void buyEcon(int funds)
     {
-        Debug.Log(econCostHeap.Size);
+        Debug.Log(econCostHeap.Size());
         GameObject node;
-        while (funds > econCostHeap.elements[0].value)
+        while (funds > econCostHeap.Root().value)
         {
-            funds -= econCostHeap.elements[0].value;
-            money -= econCostHeap.elements[0].value;
-            node = econCostHeap.elements[0].node;
-            StarScript poppedStarScript = econCostHeap.Pop().GetComponent<StarScript>();
+            funds -= econCostHeap.Root().value;
+            money -= econCostHeap.Root().value;
+            node = econCostHeap.Root().node;
+            StarScript poppedStarScript = econCostHeap.ExtractRoot().node.GetComponent<StarScript>();
             poppedStarScript.EconCount++;
             econCostHeap.Insert(node, poppedStarScript.GetEconPrice());
         }
@@ -129,12 +129,12 @@ public class EnemyBotBehavior : MonoBehaviour
     public void buyIndustry(int funds)
     {
         GameObject node;
-        while (funds > industryCostHeap.elements[0].value)
+        while (funds > industryCostHeap.Root().value)
         {
-            funds -= industryCostHeap.elements[0].value;
-            money -= industryCostHeap.elements[0].value;
-            node = industryCostHeap.elements[0].node;
-            StarScript poppedStarScript = industryCostHeap.Pop().GetComponent<StarScript>();
+            funds -= industryCostHeap.Root().value;
+            money -= industryCostHeap.Root().value;
+            node = industryCostHeap.Root().node;
+            StarScript poppedStarScript = industryCostHeap.ExtractRoot().node.GetComponent<StarScript>();
             poppedStarScript.IndustryCount++;
             industryCostHeap.Insert(node, poppedStarScript.GetIndustryPrice());
         }
@@ -142,12 +142,12 @@ public class EnemyBotBehavior : MonoBehaviour
     public void buyScience(int funds)
     {
         GameObject node;
-        while (funds > scienceCostHeap.elements[0].value)
+        while (funds > scienceCostHeap.Root().value)
         {
-            funds -= scienceCostHeap.elements[0].value;
-            money -= scienceCostHeap.elements[0].value;
-            node = scienceCostHeap.elements[0].node;
-            StarScript poppedStarScript = scienceCostHeap.Pop().GetComponent<StarScript>();
+            funds -= scienceCostHeap.Root().value;
+            money -= scienceCostHeap.Root().value;
+            node = scienceCostHeap.Root().node;
+            StarScript poppedStarScript = scienceCostHeap.ExtractRoot().node.GetComponent<StarScript>();
             poppedStarScript.ScienceCount++;
             scienceCostHeap.Insert(node, poppedStarScript.GetSciencePrice());
         }
@@ -170,30 +170,40 @@ public class EnemyBotBehavior : MonoBehaviour
 
         foreach(GameObject star in tempList)
         {
-            if (idleCarrierHeap.Size > 0)
+            if (idleCarrierHeap.Size() > 0)
             {
                 Debug.LogWarning("Sending carrier");
-                if (idleCarrierHeap.elements[0].node == null)
+                if (idleCarrierHeap.Root().node == null)
                 {
-                    Debug.LogError("Carrier going to star: " + star.GetComponent<StarScript>().Name + " from size " + idleCarrierHeap.elements[0].value +" at tick: "+CycleEventManager.CurrentTick+" did an oopsie");
+                    Debug.LogError("Carrier going to star: " + star.GetComponent<StarScript>().Name + " from size " + idleCarrierHeap.Root().value +" at tick: "+CycleEventManager.CurrentTick+" did an oopsie");
                     foreach(string obj in removedCarrierList)
                     {
                         Debug.LogError(obj);
                     }
                     
                 }
-                ShipController tempCarrierScript = idleCarrierHeap.Pop().GetComponent<ShipController>();
+                Debug.LogError(idleCarrierHeap.Size());
+                ShipController tempCarrierScript = idleCarrierHeap.ExtractRoot().node.GetComponent<ShipController>();
                 //tempCarrierScript.SetNewWaypoints(pathfinderScript.calculate(knownGraph, knownGraph.findStarIndex(tempCarrierScript.dockedStar), knownGraph.findStarIndex(star)));
+                if(star == tempCarrierScript.dockedStar)
+                {
+                    Debug.LogError("Booo");
+                    if (candidateStars.Contains(tempCarrierScript.dockedStar))
+                    {
+                        Debug.LogError("ihtiuhwqeiuf    34i");
+                    }
+                }
+
                 tempCarrierScript.SetNewWaypoints(pathfinderScript.calculate(knownGraph, knownGraph.findStarIndex(star), knownGraph.findStarIndex(tempCarrierScript.dockedStar)));
                 tempCarrierScript.StartJourney();
 
                 candidateStars.Remove(star);
             }
             //Fix this part later
-            if(money >= gameInformation.carrierCost && garrisonHeap.elements[0].value > 0 && carrierList.Count <= ownedStars.Count + 5)
+            else if(money >= gameInformation.carrierCost && garrisonHeap.Root().value > 0 && carrierList.Count <= ownedStars.Count + 5)
             {
                 money -= gameInformation.carrierCost;
-                GameObject poppedStar = garrisonHeap.Pop();
+                GameObject poppedStar = garrisonHeap.Root().node;
                 StarScript poppedStarScript = poppedStar.GetComponent<StarScript>();
 
                 GameObject c = GameObject.Instantiate(gameInformation.shipPrefab, poppedStar.transform.position, Quaternion.identity) as GameObject;
@@ -206,10 +216,14 @@ public class EnemyBotBehavior : MonoBehaviour
 
                 Debug.Log(knownGraph.starList.Count);
                 //shipController.SetNewWaypoints(pathfinderScript.calculate(knownGraph, knownGraph.findStarIndex(poppedStar), knownGraph.findStarIndex(star)));
+                if (star == poppedStar)
+                {
+                    Debug.LogError("Booo");
+                }
                 shipController.SetNewWaypoints(pathfinderScript.calculate(knownGraph, knownGraph.findStarIndex(star), knownGraph.findStarIndex(poppedStar)));
                 shipController.StartJourney();
 
-                garrisonHeap.Insert(poppedStar, poppedStarScript.GarrisonCount);
+                garrisonHeap.ChangeValueOfRoot(poppedStarScript.GarrisonCount);
 
                 candidateStars.Remove(star);
             }
@@ -327,7 +341,7 @@ public class EnemyBotBehavior : MonoBehaviour
             carrierList.Add(carrier);
             carrierSizeHeap.Insert(carrier, carrierScript.ShipCount);
 
-            if(carrierScript.idle == true)
+            if(carrierScript.idle)
             {
                 idleCarrierHeap.Insert(carrier, carrierScript.ShipCount);
             }
@@ -343,14 +357,40 @@ public class EnemyBotBehavior : MonoBehaviour
 
         ShipController carrierScript = carrier.GetComponent<ShipController>();
 
-        carrierSizeHeap.RemoveNode(carrier);
-        carrierSizeHeap.Insert(carrier, carrierScript.ShipCount);
+        //carrierSizeHeap.RemoveNode(carrier);
+        //carrierSizeHeap.Insert(carrier, carrierScript.ShipCount);
 
-        idleCarrierHeap.RemoveNode(carrier);
-        if (carrierScript.idle)
+        carrierSizeHeap.ChangeValueOfObject(carrier, carrierScript.ShipCount);
+
+        //In it already
+        if(carrier == null)
+        {
+            Debug.LogError("Null");
+        }
+        Debug.LogError(idleCarrierHeap.Size());
+        int index = idleCarrierHeap.findKey(carrier);
+        if (index >= 0)
+        {
+            if (carrierScript.idle)
+            {
+                idleCarrierHeap.ChangeValueOfObject(carrier, carrierScript.ShipCount);
+            }
+            else
+            {
+                Debug.LogError(index);
+                idleCarrierHeap.deleteKey(index);
+            }
+        }
+        //Not in it
+        else if (carrierScript.idle)
         {
             idleCarrierHeap.Insert(carrier, carrierScript.ShipCount);
         }
+
+
+
+
+
     }
     public void removeCarrier(GameObject carrier)
     {
@@ -362,14 +402,25 @@ public class EnemyBotBehavior : MonoBehaviour
         Debug.LogError(carrier.GetComponent<ShipController>().dockedStar);
 
         carrierList.Remove(carrier);
-        carrierSizeHeap.RemoveNode(carrier);
+        Debug.LogError(carrierSizeHeap.Size());
+        carrierSizeHeap.deleteKey(carrierSizeHeap.findKey(carrier));
 
-        idleCarrierHeap.RemoveNode(carrier);
+        int key = idleCarrierHeap.findKey(carrier);
+        if (key >= 0)
+        {
+            Debug.LogError(idleCarrierHeap.Size());
+            idleCarrierHeap.deleteKey(key);
+        }
+        
 
-        removedCarrierList.Add(idleCarrierHeap.elements.Count.ToString());
+        //removedCarrierList.Add(idleCarrierHeap.elements.Count.ToString());
     }
     public void addStar(GameObject star)
     {
+        if(star == null)
+        {
+            Debug.LogError("Star is null");
+        }
         candidateStars.Remove(star);
         if (!ownedStars.Contains(star))
         {
@@ -384,7 +435,7 @@ public class EnemyBotBehavior : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Updating star");
+            //Debug.LogError("Updating star");
             updateStar(star);
         }
 
@@ -395,15 +446,23 @@ public class EnemyBotBehavior : MonoBehaviour
     {
         StarScript s = star.GetComponent<StarScript>();
 
-        garrisonHeap.RemoveNode(star);
-        econCostHeap.RemoveNode(star);
-        industryCostHeap.RemoveNode(star);
-        scienceCostHeap.RemoveNode(star);
+        //garrisonHeap.RemoveNode(star);
+        //garrisonHeap.Insert(star, s.GarrisonCount);
 
-        garrisonHeap.Insert(star, s.GarrisonCount);
-        econCostHeap.Insert(star, s.GetEconPrice());
-        industryCostHeap.Insert(star, s.GetIndustryPrice());
-        scienceCostHeap.Insert(star, s.GetSciencePrice());
+        garrisonHeap.ChangeValueOfObject(star, s.GarrisonCount);
+
+        //econCostHeap.deleteKey(econCostHeap.findKey(star));
+        //industryCostHeap.deleteKey(industryCostHeap.findKey(star));
+        //scienceCostHeap.deleteKey(scienceCostHeap.findKey(star));
+
+
+        //econCostHeap.Insert(star, s.GetEconPrice());
+        //industryCostHeap.Insert(star, s.GetIndustryPrice());
+        //scienceCostHeap.Insert(star, s.GetSciencePrice());
+
+        econCostHeap.ChangeValueOfObject(star, s.GetEconPrice());
+        industryCostHeap.ChangeValueOfObject(star, s.GetIndustryPrice());
+        scienceCostHeap.ChangeValueOfObject(star, s.GetSciencePrice());
 
         candidateStars.Remove(star);
 
@@ -413,10 +472,10 @@ public class EnemyBotBehavior : MonoBehaviour
         ownedStars.Remove(star);
         candidateStars.Add(star);
 
-        garrisonHeap.RemoveNode(star);
-        econCostHeap.RemoveNode(star);
-        industryCostHeap.RemoveNode(star);
-        scienceCostHeap.RemoveNode(star);
+        garrisonHeap.deleteKey(garrisonHeap.findKey(star));
+        econCostHeap.deleteKey(econCostHeap.findKey(star));
+        industryCostHeap.deleteKey(industryCostHeap.findKey(star));
+        scienceCostHeap.deleteKey(scienceCostHeap.findKey(star));
     }
 
 }

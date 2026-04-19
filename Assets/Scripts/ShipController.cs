@@ -202,6 +202,10 @@ public class ShipController : MonoBehaviour
 
     public void SetNewWaypoints(List<GameObject> wayPoints)
     {
+        if(wayPoints.Count == 0)
+        {
+            Debug.LogError("Why am I zero?");
+        }
         starWaypoints.Clear();
         starWaypoints.AddRange(wayPoints);
 

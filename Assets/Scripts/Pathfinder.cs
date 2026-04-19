@@ -288,7 +288,7 @@ public class Pathfinder : MonoBehaviour
             elements.RemoveAt(bestIndex);
             return node;
         }
-    }
+    }//Unused
     public class BinaryHeap
     {
         public List<(int node, int distance)> elements = new List<(int, int)>();
@@ -511,6 +511,308 @@ public class Pathfinder : MonoBehaviour
         }
     }
 
+    public class MinObjBinaryHeap
+    {
+        (GameObject obj, int value)[] array;
+        private int size;
+        public MinObjBinaryHeap(int maxSize)
+        {
+            array = new (GameObject, int)[maxSize];
+            size = 0;
+        }
+        public (GameObject node, int value) Root()
+        {
+            return array[0];
+        }
+
+        public (GameObject node, int value) ExtractRoot()
+        {
+
+            if (size == 1)
+            {
+                size--;
+                return array[0];
+            }
+
+            (GameObject, int) root = array[0];
+
+            array[0] = array[size - 1];
+            size--;
+            MinHeapify(0);
+
+            return root;
+        }
+
+
+        public void Insert(GameObject gameObject, int value)
+        {
+            int index = size;
+            array[index] = (gameObject, value);
+            size++;
+
+            int parent = (index - 1) / 2;
+            //If current < parent
+            while (index != 0 && array[index].value < array[parent].value)
+            {
+                SwapAt(index, parent);
+                index = parent;
+            }
+
+        }
+
+        
+
+        void SwapAt(int i, int j)
+        {
+            var temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
+
+        public void MinHeapify(int key)
+        {
+            int l = (2 * key) + 1;
+            int r = (2 * key) + 2;
+
+            int smallest = key;
+            if (l < size &&
+                array[l].value < array[smallest].value)
+            {
+                smallest = l;
+            }
+            if (r < size &&
+                array[r].value < array[smallest].value)
+            {
+                smallest = r;
+            }
+
+            if (smallest != key)
+            {
+                SwapAt(key, smallest);
+                MinHeapify(smallest);
+            }
+        }
+        public void ChangeValueOfObject(GameObject obj, int newValue)
+        {
+            int key = findKey(obj);
+            if (array[key].value == newValue)
+            {
+                return;
+            }
+            if (array[key].value < newValue)
+            {
+                increaseKey(key, newValue);
+            }
+            else
+            {
+                decreaseKey(key, newValue);
+            }
+        }
+        public void ChangeValueOfRoot(int newValue)
+        {
+            if (array[0].value == newValue)
+            {
+                return;
+            }
+            if (array[0].value < newValue)
+            {
+                increaseKey(0, newValue);
+            }
+            else
+            {
+                array[0].value = newValue;
+            }
+        }
+        public int findKey(GameObject obj)
+        {
+            if (size == 0)
+            {
+                return -1;
+            }
+            return Array.FindIndex(array, x => x.obj = obj);
+        }
+        public void deleteKey(int key)
+        {
+            decreaseKey(key, int.MinValue);
+            ExtractRoot();
+        }
+        public void decreaseKey(int key, int newValue)
+        {
+            array[key].value = newValue;
+            int parent = (key - 1) / 2;
+
+            while (key != 0 && array[key].value < array[parent].value)
+            {
+                SwapAt(key, parent);
+                key = parent;
+            }
+        }
+        public void increaseKey(int key, int newValue)
+        {
+            array[key].value = newValue;
+            MinHeapify(key);
+        }
+        public int Size()
+        {
+            return size;
+        }
+    }
+    public class MaxObjBinaryHeap
+    {
+        (GameObject obj, int value)[] array;
+        private int size = 0;
+        public MaxObjBinaryHeap(int maxSize)
+        {
+            array = new (GameObject, int)[maxSize];
+            size = 0;
+        }
+        public (GameObject node, int value) Root()
+        {
+            return array[0];
+        }
+
+        public (GameObject node, int value) ExtractRoot()
+        {
+            if (size <= 0)
+            {
+                Debug.LogError("THIS SHOULD NEVER HAPPEN");
+            }
+            if (size == 1)
+            {
+                Debug.LogError("Last thingy sent");
+                size--;
+                return array[0];
+            }
+
+            (GameObject, int) root = array[0];
+            Debug.LogError(size);
+            array[0] = array[size - 1];
+            
+            size--;
+
+            MaxHeapify(0);
+
+            return root;
+        }
+
+
+        public void Insert(GameObject gameObject, int value)
+        {
+            int index = size;
+            array[index] = (gameObject, value);
+            size++;
+
+            int parent = (index - 1) / 2;
+            //If current < parent
+            while (index != 0 && array[index].value > array[parent].value)
+            {
+                SwapAt(index, parent);
+                index = parent;
+            }
+
+        }
+
+
+
+        void SwapAt(int i, int j)
+        {
+            var temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
+
+        public void MaxHeapify(int key)
+        {
+            int l = (2 * key) + 1;
+            int r = (2 * key) + 2;
+
+            int smallest = key;
+            if (l < size &&
+                array[l].value > array[smallest].value)
+            {
+                smallest = l;
+            }
+            if (r < size &&
+                array[r].value > array[smallest].value)
+            {
+                smallest = r;
+            }
+
+            if (smallest != key)
+            {
+                SwapAt(key, smallest);
+                MaxHeapify(smallest);
+            }
+        }
+        public void ChangeValueOfObject(GameObject obj, int newValue)
+        {
+            int key = findKey(obj);
+            if (array[key].value == newValue)
+            {
+                return;
+            }
+            if (array[key].value < newValue)
+            {
+                increaseKey(key, newValue);
+            }
+            else
+            {
+                decreaseKey(key, newValue);
+            }
+        }
+        public void ChangeValueOfRoot(int newValue)
+        {
+            if (array[0].value == newValue)
+            {
+                return;
+            }
+            if (array[0].value < newValue)
+            {
+                array[0].value = newValue;
+            }
+            else
+            {
+                decreaseKey(0, newValue);
+            }
+        }
+        public int findKey(GameObject obj)
+        {
+            if(size == 0)
+            {
+                return -1;
+            }
+            return Array.FindIndex(array, x => x.obj = obj);
+        }
+        public void deleteKey(int key)
+        {
+            decreaseKey(key, int.MinValue);
+            Debug.LogError(size);
+            ExtractRoot();
+        }
+        public void decreaseKey(int key, int newValue)
+        {
+            array[key].value = newValue;
+            MaxHeapify(key);
+
+        }
+        public void increaseKey(int key, int newValue)
+        {
+            array[key].value = newValue;
+            int parent = (key - 1) / 2;
+
+            while (key != 0 && array[key].value < array[parent].value)
+            {
+                SwapAt(key, parent);
+                key = parent;
+            }
+        }
+        public int Size()
+        {
+            return size;
+        }
+    }
+
+
     public class ObjectMaxBinaryHeap
     {
         public List<(GameObject node, int value)> elements = new List<(GameObject, int)>();
@@ -526,9 +828,13 @@ public class Pathfinder : MonoBehaviour
         }
         public void RemoveNode(GameObject node)
         {
+            if(node == null)
+            {
+                Debug.LogError("Star is null");
+            }
             int index = FindNode(node);
-            Debug.Log("Index: " + index + " ! " + node.GetComponent<ShipController>().Name);
-            Debug.Log("Node: " + node + " ! "  + node.GetComponent<ShipController>().Name);
+            //Debug.Log("Index: " + index + " ! " + node.GetComponent<ShipController>().Name);
+            //Debug.Log("Node: " + node + " ! "  + node.GetComponent<ShipController>().Name);
 
             if (index == -1)
             {
@@ -669,6 +975,7 @@ public class Pathfinder : MonoBehaviour
             else return childL;
         }
     }
+
 
 
     //Main script, calculates shortest path between 2 points on a given graph.
