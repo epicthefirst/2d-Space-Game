@@ -119,6 +119,7 @@ public class ShipController : MonoBehaviour
                     }
                 }
                 Debug.Log("Waiting for " + counter + " ticks");
+                dockedStar = startStar;
                 WaitAtStar(counter);
                 return;
             }
@@ -161,7 +162,6 @@ public class ShipController : MonoBehaviour
         {
             Debug.LogError("Bad");
         }
-        dockedStar = endStar;
         totalWaitTimeLeft = length;
         CycleEventManager.OnTick += WaitTick;
     }
@@ -357,7 +357,8 @@ public class ShipController : MonoBehaviour
         //KEEP IN MIND, MUST NOT BE DISCRIMINATE TO OWNERSHIP
 
         slingshotMultCount = 0;
-        Debug.Log("Arrived at star");
+        //Debug.Log("Arrived at star");
+        //Debug.LogError("Arrived at star at tick: " + CycleEventManager.CurrentTick);
         dockedStar = endStar;
         inTransit = false;
 
@@ -370,6 +371,10 @@ public class ShipController : MonoBehaviour
         
         startStar = dockedStar;
         StarScript starScript = dockedStar.GetComponent<StarScript>();
+        if(starScript == null || gameObject == null || this == null || owner == null)
+        {
+            Debug.LogError("Bad");
+        }
         starScript.ShipInbound(ShipCount, owner, gameObject);
         gameObject.transform.parent = dockedStar.transform;
 
@@ -425,8 +430,9 @@ public class ShipController : MonoBehaviour
         StopListening();
         isDead = true;
         Debug.LogWarning("I have died");
-        DestroyImmediate(this);
+        //DestroyImmediate(this);
         Destroy(gameObject);
+
 
         Debug.LogWarning("I have died 2");
         

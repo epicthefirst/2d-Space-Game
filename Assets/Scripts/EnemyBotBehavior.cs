@@ -163,7 +163,8 @@ public class EnemyBotBehavior : MonoBehaviour
         {
             foreach(GameObject star in ownedStars)
             {
-                candidateStars.AddRange(knownGraph.getStarNeighbors(star).Except(ownedStars));
+                candidateStars.AddRange(knownGraph.getStarNeighbors(star).Except(ownedStars).Except(candidateStars));
+                
             }
         }
         List<GameObject> tempList = candidateStars.GetRange(0, target);
@@ -182,7 +183,7 @@ public class EnemyBotBehavior : MonoBehaviour
                     }
                     
                 }
-                Debug.LogError(idleCarrierHeap.Size());
+                //Debug.LogError(idleCarrierHeap.Size());
                 ShipController tempCarrierScript = idleCarrierHeap.ExtractRoot().node.GetComponent<ShipController>();
                 //tempCarrierScript.SetNewWaypoints(pathfinderScript.calculate(knownGraph, knownGraph.findStarIndex(tempCarrierScript.dockedStar), knownGraph.findStarIndex(star)));
                 if(star == tempCarrierScript.dockedStar)
@@ -190,6 +191,7 @@ public class EnemyBotBehavior : MonoBehaviour
                     Debug.LogError("Booo");
                     if (candidateStars.Contains(tempCarrierScript.dockedStar))
                     {
+                        Debug.LogError(tempCarrierScript.dockedStar.GetComponent<StarScript>().Name);
                         Debug.LogError("ihtiuhwqeiuf    34i");
                     }
                 }
@@ -197,7 +199,7 @@ public class EnemyBotBehavior : MonoBehaviour
                 tempCarrierScript.SetNewWaypoints(pathfinderScript.calculate(knownGraph, knownGraph.findStarIndex(star), knownGraph.findStarIndex(tempCarrierScript.dockedStar)));
                 tempCarrierScript.StartJourney();
 
-                candidateStars.Remove(star);
+                candidateStars.RemoveAll(x => x == star);
             }
             //Fix this part later
             else if(money >= gameInformation.carrierCost && garrisonHeap.Root().value > 0 && carrierList.Count <= ownedStars.Count + 5)
@@ -225,7 +227,7 @@ public class EnemyBotBehavior : MonoBehaviour
 
                 garrisonHeap.ChangeValueOfRoot(poppedStarScript.GarrisonCount);
 
-                candidateStars.Remove(star);
+                candidateStars.RemoveAll(x => x == star);
             }
             else
             {
@@ -367,7 +369,7 @@ public class EnemyBotBehavior : MonoBehaviour
         {
             Debug.LogError("Null");
         }
-        Debug.LogError(idleCarrierHeap.Size());
+        //Debug.LogError(idleCarrierHeap.Size());
         int index = idleCarrierHeap.findKey(carrier);
         if (index >= 0)
         {
@@ -377,7 +379,7 @@ public class EnemyBotBehavior : MonoBehaviour
             }
             else
             {
-                Debug.LogError(index);
+                //Debug.LogError(index);
                 idleCarrierHeap.deleteKey(index);
             }
         }
@@ -403,7 +405,9 @@ public class EnemyBotBehavior : MonoBehaviour
 
         carrierList.Remove(carrier);
         Debug.LogError(carrierSizeHeap.Size());
-        carrierSizeHeap.deleteKey(carrierSizeHeap.findKey(carrier));
+        int q = carrierSizeHeap.findKey(carrier);
+        Debug.LogError(q);
+        carrierSizeHeap.deleteKey(q);
 
         int key = idleCarrierHeap.findKey(carrier);
         if (key >= 0)
@@ -421,7 +425,7 @@ public class EnemyBotBehavior : MonoBehaviour
         {
             Debug.LogError("Star is null");
         }
-        candidateStars.Remove(star);
+        candidateStars.RemoveAll(x => x == star);
         if (!ownedStars.Contains(star))
         {
             StarScript s = star.GetComponent<StarScript>();
@@ -464,7 +468,7 @@ public class EnemyBotBehavior : MonoBehaviour
         industryCostHeap.ChangeValueOfObject(star, s.GetIndustryPrice());
         scienceCostHeap.ChangeValueOfObject(star, s.GetSciencePrice());
 
-        candidateStars.Remove(star);
+        candidateStars.RemoveAll(x => x == star);
 
     }
     public void removeStar(GameObject star)

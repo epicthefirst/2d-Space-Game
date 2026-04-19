@@ -226,7 +226,6 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
     public void ShipInbound(int shipShipCount, GameInformation.PlayerClass shipOwner, GameObject carrier)
     {
         WakeUp();
-        //0 = unowned, 1 = player owned, 2 = enemy owned
         if (shipOwner == owner)
         {
 
@@ -269,6 +268,7 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
             else
             {
                 GarrisonCount -= shipShipCount;
+                Debug.LogError("Destroying carrier");
                 carrier.GetComponent<ShipController>().DestroyCarrier();
                 Refresh();
             }

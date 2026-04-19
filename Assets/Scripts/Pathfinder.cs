@@ -679,13 +679,14 @@ public class Pathfinder : MonoBehaviour
             }
             if (size == 1)
             {
-                Debug.LogError("Last thingy sent");
+                //Debug.LogError("Last thingy sent");
                 size--;
                 return array[0];
             }
 
             (GameObject, int) root = array[0];
-            Debug.LogError(size);
+            //Debug.LogError(size);
+            //Debug.LogError(array[size - 1].obj.GetComponent<StarScript>().Name);
             array[0] = array[size - 1];
             
             size--;
@@ -726,22 +727,22 @@ public class Pathfinder : MonoBehaviour
             int l = (2 * key) + 1;
             int r = (2 * key) + 2;
 
-            int smallest = key;
+            int largest = key;
             if (l < size &&
-                array[l].value > array[smallest].value)
+                array[l].value > array[largest].value)
             {
-                smallest = l;
+                largest = l;
             }
             if (r < size &&
-                array[r].value > array[smallest].value)
+                array[r].value > array[largest].value)
             {
-                smallest = r;
+                largest = r;
             }
 
-            if (smallest != key)
+            if (largest != key)
             {
-                SwapAt(key, smallest);
-                MaxHeapify(smallest);
+                SwapAt(key, largest);
+                MaxHeapify(largest);
             }
         }
         public void ChangeValueOfObject(GameObject obj, int newValue)
@@ -781,12 +782,14 @@ public class Pathfinder : MonoBehaviour
             {
                 return -1;
             }
-            return Array.FindIndex(array, x => x.obj = obj);
+            int m = Array.FindAll(array, x => x.obj == obj).Length;
+            Debug.LogError(m);
+            return Array.FindIndex(array, x => x.obj == obj);
         }
         public void deleteKey(int key)
         {
-            decreaseKey(key, int.MinValue);
-            Debug.LogError(size);
+            increaseKey(key, int.MaxValue);
+            //Debug.LogError(size);
             ExtractRoot();
         }
         public void decreaseKey(int key, int newValue)
@@ -800,7 +803,7 @@ public class Pathfinder : MonoBehaviour
             array[key].value = newValue;
             int parent = (key - 1) / 2;
 
-            while (key != 0 && array[key].value < array[parent].value)
+            while (key != 0 && array[key].value > array[parent].value)
             {
                 SwapAt(key, parent);
                 key = parent;
