@@ -127,7 +127,7 @@ public class MapGeneration : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        int qualityMultiplier = gameInformation.qualityMultiplier;
+        int qualityMultiplier = gameInformation.GetQualityMultiplier();
         int numberOfCircles = gameInformation.numberOfCircles;
         double offset = gameInformation.offset;
         int minRandOffset = gameInformation.minRandOffset;
@@ -143,7 +143,7 @@ public class MapGeneration : MonoBehaviour
         terrestrialMR.material = defaultMaterial;
         terrestrialMR.material.color = Color.gray;
         MeshFilter terrestrialMF = terrestrial.AddComponent<MeshFilter>();
-        terrestrialMF.mesh = polyMesh(0.4f, qualityMultiplier * 8);
+        terrestrialMF.mesh = polyMesh(0.4f, qualityMultiplier * 6);
         planetArray[0] = terrestrial;
         terrestrial.transform.parent = storage.transform;
         terrestrial.SetActive(false);
@@ -153,7 +153,7 @@ public class MapGeneration : MonoBehaviour
         gasMR.material = defaultMaterial;
         gasMR.material.color = Color.red;
         MeshFilter gasMF = gas.AddComponent<MeshFilter>();
-        gasMF.mesh = polyMesh(0.6f, qualityMultiplier * 10);
+        gasMF.mesh = polyMesh(0.6f, qualityMultiplier * 8);
         planetArray[1] = gas;
         gas.transform.parent = storage.transform;
         gas.SetActive(false);
@@ -163,7 +163,7 @@ public class MapGeneration : MonoBehaviour
         habitableMR.material = defaultMaterial;
         habitableMR.material.color = Color.green;
         MeshFilter habitableMF = habitable.AddComponent<MeshFilter>();
-        habitableMF.mesh = polyMesh(0.4f, qualityMultiplier * 12);
+        habitableMF.mesh = polyMesh(0.4f, qualityMultiplier * 8);
         planetArray[2] = habitable;
         habitable.transform.parent = storage.transform;
         habitable.SetActive(false);
@@ -230,6 +230,8 @@ public class MapGeneration : MonoBehaviour
         //    Instantiate(GenerateCircle(bs.position, 10), bs.position, Quaternion.identity);
         //}
 
+        //gameInformation.numberOfStars = starList.Count;
+        //gameInformation.WakeUpPlayers();
         VoronoiDiagram voronoiDiagram = this.GetComponent<VoronoiDiagram>();
         voronoiDiagram.Init(dictionary);
 
@@ -266,8 +268,8 @@ public class MapGeneration : MonoBehaviour
 
 
 
-
-
+        
+        
 
         
 
@@ -341,7 +343,7 @@ public class MapGeneration : MonoBehaviour
             Debug.Log("All good");
         }
         Debug.Log(planetArray.Length);
-        capitalScript.Initialize(-1, "Capital", capitalList, slingshotPeriodCalculator(capitalList.Count), range, playerScript.playerClass, canvasObject, 100, planetArray, qualityMultiplier, slingshotWindowDurations);
+        capitalScript.Initialize(-1, "Capital", capitalList, slingshotPeriodCalculator(capitalList.Count), range, playerScript.playerClass, canvasObject, 100, planetArray, gameInformation.GetQualityMultiplier(), slingshotWindowDurations);
         capitalScript.EconCount = 9;
         capitalScript.IndustryCount = 5;
         capitalScript.ScienceCount = 2;
@@ -427,7 +429,7 @@ public class MapGeneration : MonoBehaviour
 
         if (enemyCapital.Contains(totalStarCount))
         {
-            starScript.Initialize(totalStarCount, starNameMethod(totalStarCount), capitalList, slingshotPeriodCalculator(capitalList.Count), range, botClass, canvasObject, 100, planetArray, qualityMultiplier, slingshotWindowDurations);
+            starScript.Initialize(totalStarCount, starNameMethod(totalStarCount), capitalList, slingshotPeriodCalculator(capitalList.Count), range, botClass, canvasObject, 100, planetArray, gameInformation.GetQualityMultiplier(), slingshotWindowDurations);
             starScript.EconCount = 9;
             starScript.IndustryCount = 5;
             starScript.ScienceCount = 2;
@@ -438,7 +440,7 @@ public class MapGeneration : MonoBehaviour
         }
         else
         {
-            starScript.Initialize(totalStarCount, starNameMethod(totalStarCount), planetList, slingshotPeriodCalculator(planetAmount), range, null, canvasObject, 0, planetArray, qualityMultiplier, slingshotWindowDurations);
+            starScript.Initialize(totalStarCount, starNameMethod(totalStarCount), planetList, slingshotPeriodCalculator(planetAmount), range, null, canvasObject, 0, planetArray, gameInformation.GetQualityMultiplier(), slingshotWindowDurations);
             dictionary.Add(starSpawn, 0);
         }
         //Debug.Log(k + "/" + i);

@@ -120,6 +120,7 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
     private void WakeUp()
     {
         if (!isAwake){
+            CycleEventManager.OnTick -= thisNewTick;
             CycleEventManager.OnTick += thisNewTick;
         }
         isAwake = true;
@@ -132,6 +133,7 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
 
         uIManager = canvas.GetComponent<UIManager>();
 
+        CycleEventManager.OnTick -= thisNewTick;
         CycleEventManager.OnTick += thisNewTick;
 
         /*Debug.Log(gameObject.transform.position);*/

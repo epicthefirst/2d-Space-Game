@@ -3998,7 +3998,7 @@ MonoBehaviour:
   playerMoney: 500
   cycleLength: 12
   carrierCost: 25
-  qualityMultiplier: 4
+  qualityMultiplier: 2
   numberOfCircles: 10
   offset: 60
   minRandOffset: 1

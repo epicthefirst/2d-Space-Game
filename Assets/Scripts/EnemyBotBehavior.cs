@@ -43,6 +43,7 @@ public class EnemyBotBehavior : MonoBehaviour
         //Change me later, controls bot's vision
         //knownGraph = mapGenerationScript.graphFullSpeed;
 
+        
 
         this.gameInformation = gameInformation;
         this.random = random;
@@ -56,12 +57,18 @@ public class EnemyBotBehavior : MonoBehaviour
         CycleEventManager.OnCycle += newCycle;
 
 
+        //checkStars();
+    }
+
+    public void WakeUp()
+    {
         checkStars();
     }
 
     public void preTick(object sender, PreTickEvent e)
     {
-        if (targetStars.Count < Mathf.CeilToInt(Mathf.Sqrt(ownedStars.Count)))
+        stupidCounter++;
+        if (targetStars.Count < Mathf.CeilToInt(Mathf.Sqrt(ownedStars.Count)) && stupidCounter % 10 == 0)
         {
             checkToExpand();
         }

@@ -14,6 +14,7 @@ public class GameInformation : MonoBehaviour
     public int carrierCost = 25; //This too
 
     public int qualityMultiplier = 4;
+    public int numberOfStars;
     public int numberOfCircles = 5;
     public double offset = 20d;
     public int minRandOffset = 1;
@@ -23,7 +24,10 @@ public class GameInformation : MonoBehaviour
 
     public GameObject shipPrefab;
 
-
+    public int GetQualityMultiplier()
+    {
+        return qualityMultiplier;
+    }
 
     public void AddPlayer(PlayerClass player)
     {
@@ -50,6 +54,17 @@ public class GameInformation : MonoBehaviour
             }
         }
         return null;
+    }
+
+    public void WakeUpPlayers()
+    {
+        foreach(PlayerClass player in playerList)
+        {
+            if (player.isBot)
+            {
+                player.botScript.WakeUp();
+            }
+        }
     }
 
 
