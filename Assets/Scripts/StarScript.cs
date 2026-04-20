@@ -268,7 +268,7 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
             else
             {
                 GarrisonCount -= shipShipCount;
-                Debug.LogError("Destroying carrier");
+                //Debug.LogError("Destroying carrier");
                 carrier.GetComponent<ShipController>().DestroyCarrier();
                 Refresh();
             }

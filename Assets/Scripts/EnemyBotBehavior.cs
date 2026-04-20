@@ -176,17 +176,17 @@ public class EnemyBotBehavior : MonoBehaviour
                 Debug.LogWarning("Sending carrier");
                 if (idleCarrierHeap.Root().node == null)
                 {
-                    Debug.LogError("Carrier going to star: " + star.GetComponent<StarScript>().Name + " from size " + idleCarrierHeap.Root().value +" at tick: "+CycleEventManager.CurrentTick+" did an oopsie");
-                    foreach(string obj in removedCarrierList)
+                    Debug.LogError("Carrier going to star: " + star.GetComponent<StarScript>().Name + " from size " + idleCarrierHeap.Root().value + " at tick: " + CycleEventManager.CurrentTick + " did an oopsie");
+                    foreach (string obj in removedCarrierList)
                     {
                         Debug.LogError(obj);
                     }
-                    
+
                 }
                 //Debug.LogError(idleCarrierHeap.Size());
                 ShipController tempCarrierScript = idleCarrierHeap.ExtractRoot().node.GetComponent<ShipController>();
                 //tempCarrierScript.SetNewWaypoints(pathfinderScript.calculate(knownGraph, knownGraph.findStarIndex(tempCarrierScript.dockedStar), knownGraph.findStarIndex(star)));
-                if(star == tempCarrierScript.dockedStar)
+                if (star == tempCarrierScript.dockedStar)
                 {
                     Debug.LogError("Booo");
                     if (candidateStars.Contains(tempCarrierScript.dockedStar))
@@ -202,7 +202,7 @@ public class EnemyBotBehavior : MonoBehaviour
                 candidateStars.RemoveAll(x => x == star);
             }
             //Fix this part later
-            else if(money >= gameInformation.carrierCost && garrisonHeap.Root().value > 0 && carrierList.Count <= ownedStars.Count + 5)
+            else if (money >= gameInformation.carrierCost && garrisonHeap.Root().value > 0 && carrierList.Count <= 2 * Mathf.CeilToInt(Mathf.Sqrt(ownedStars.Count) + 3))
             {
                 money -= gameInformation.carrierCost;
                 GameObject poppedStar = garrisonHeap.Root().node;
@@ -362,7 +362,16 @@ public class EnemyBotBehavior : MonoBehaviour
         //carrierSizeHeap.RemoveNode(carrier);
         //carrierSizeHeap.Insert(carrier, carrierScript.ShipCount);
 
+        int sizeIndex = carrierSizeHeap.findKey(carrier);
+        if (sizeIndex < 0)
+        {
+            Debug.LogWarning("updateCarrier: carrier not in carrierSizeHeap");
+            return;
+        }
+
         carrierSizeHeap.ChangeValueOfObject(carrier, carrierScript.ShipCount);
+
+
 
         //In it already
         if(carrier == null)
@@ -375,7 +384,7 @@ public class EnemyBotBehavior : MonoBehaviour
         {
             if (carrierScript.idle)
             {
-                idleCarrierHeap.ChangeValueOfObject(carrier, carrierScript.ShipCount);
+                idleCarrierHeap.ChangeValueAtIndex(index, carrierScript.ShipCount);
             }
             else
             {
@@ -396,18 +405,25 @@ public class EnemyBotBehavior : MonoBehaviour
     }
     public void removeCarrier(GameObject carrier)
     {
-        Debug.LogError("Removed carrier stationed at star: "+ carrier.GetComponent<ShipController>().dockedStar);
+        //Debug.LogError("Removed carrier stationed at star: "+ carrier.GetComponent<ShipController>().dockedStar);
 
 
         //removedCarrierList.Add(carrier.GetComponent<ShipController>().idle.ToString());
-        Debug.LogError(carrier.GetComponent<ShipController>().owner.name);
-        Debug.LogError(carrier.GetComponent<ShipController>().dockedStar);
+        //Debug.LogError(carrier.GetComponent<ShipController>().owner.name);
+        //Debug.LogError(carrier.GetComponent<ShipController>().dockedStar);
 
         carrierList.Remove(carrier);
-        Debug.LogError(carrierSizeHeap.Size());
+        //Debug.LogError(carrierSizeHeap.Size());
         int q = carrierSizeHeap.findKey(carrier);
-        Debug.LogError(q);
-        carrierSizeHeap.deleteKey(q);
+        if(q != -1)
+        {
+            carrierSizeHeap.deleteKey(q);
+        }
+        else
+        {
+            Debug.LogError("Unnecessary deletion attempt");
+        }
+        
 
         int key = idleCarrierHeap.findKey(carrier);
         if (key >= 0)
@@ -443,7 +459,7 @@ public class EnemyBotBehavior : MonoBehaviour
             updateStar(star);
         }
 
-        candidateStars.AddRange(knownGraph.getStarNeighbors(star).Except(ownedStars));
+        candidateStars.AddRange(knownGraph.getStarNeighbors(star).Except(ownedStars).Except(candidateStars));
         
     }
     public void updateStar(GameObject star)

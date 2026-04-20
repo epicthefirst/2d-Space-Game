@@ -528,15 +528,18 @@ public class Pathfinder : MonoBehaviour
         public (GameObject node, int value) ExtractRoot()
         {
 
-            if (size == 1)
-            {
-                size--;
-                return array[0];
-            }
-
             (GameObject, int) root = array[0];
 
+            if (size == 1)
+            {
+                //Debug.LogError("Last thingy sent");
+                array[0] = default;
+                size--;
+                return root;
+            }
+
             array[0] = array[size - 1];
+            array[size - 1] = default;
             size--;
             MinHeapify(0);
 
@@ -595,6 +598,11 @@ public class Pathfinder : MonoBehaviour
         public void ChangeValueOfObject(GameObject obj, int newValue)
         {
             int key = findKey(obj);
+            if(key == -1)
+            {
+                Debug.LogError("Tried changing a carrier that doesn't exist");
+                return;
+            }
             if (array[key].value == newValue)
             {
                 return;
@@ -607,6 +615,14 @@ public class Pathfinder : MonoBehaviour
             {
                 decreaseKey(key, newValue);
             }
+        }
+        public void ChangeValueAtIndex(int key, int newValue)
+        {
+            if (array[key].value == newValue) return;
+            if (array[key].value < newValue)
+                increaseKey(key, newValue);
+            else
+                decreaseKey(key, newValue);
         }
         public void ChangeValueOfRoot(int newValue)
         {
@@ -625,11 +641,11 @@ public class Pathfinder : MonoBehaviour
         }
         public int findKey(GameObject obj)
         {
-            if (size == 0)
+            for (int i = 0; i < size; i++) // only search active portion
             {
-                return -1;
+                if (array[i].obj == obj) return i;
             }
-            return Array.FindIndex(array, x => x.obj = obj);
+            return -1;
         }
         public void deleteKey(int key)
         {
@@ -677,18 +693,22 @@ public class Pathfinder : MonoBehaviour
             {
                 Debug.LogError("THIS SHOULD NEVER HAPPEN");
             }
+            (GameObject, int) root = array[0];
+
             if (size == 1)
             {
                 //Debug.LogError("Last thingy sent");
+                array[0] = default;
                 size--;
-                return array[0];
+                return root;
             }
 
-            (GameObject, int) root = array[0];
+            
             //Debug.LogError(size);
             //Debug.LogError(array[size - 1].obj.GetComponent<StarScript>().Name);
             array[0] = array[size - 1];
-            
+            array[size - 1] = default;
+
             size--;
 
             MaxHeapify(0);
@@ -748,6 +768,11 @@ public class Pathfinder : MonoBehaviour
         public void ChangeValueOfObject(GameObject obj, int newValue)
         {
             int key = findKey(obj);
+            if (key == -1)
+            {
+                Debug.LogError("Tried changing a carrier that doesn't exist");
+                return;
+            }
             if (array[key].value == newValue)
             {
                 return;
@@ -760,6 +785,15 @@ public class Pathfinder : MonoBehaviour
             {
                 decreaseKey(key, newValue);
             }
+        }
+
+        public void ChangeValueAtIndex(int key, int newValue)
+        {
+            if (array[key].value == newValue) return;
+            if (array[key].value < newValue)
+                increaseKey(key, newValue);
+            else
+                decreaseKey(key, newValue);
         }
         public void ChangeValueOfRoot(int newValue)
         {
@@ -778,13 +812,11 @@ public class Pathfinder : MonoBehaviour
         }
         public int findKey(GameObject obj)
         {
-            if(size == 0)
+            for (int i = 0; i < size; i++) // only search active portion
             {
-                return -1;
+                if (array[i].obj == obj) return i;
             }
-            int m = Array.FindAll(array, x => x.obj == obj).Length;
-            Debug.LogError(m);
-            return Array.FindIndex(array, x => x.obj == obj);
+            return -1;
         }
         public void deleteKey(int key)
         {

@@ -141,6 +141,7 @@ public class ShipController : MonoBehaviour
             //Debug.Log(totalTimeLeft); //Fix me
             if (!isDead)
             {
+                CycleEventManager.OnTick -= NewTick;
                 CycleEventManager.OnTick += NewTick;
             }
 
@@ -377,6 +378,10 @@ public class ShipController : MonoBehaviour
         }
         starScript.ShipInbound(ShipCount, owner, gameObject);
         gameObject.transform.parent = dockedStar.transform;
+
+        if (isDead) return;
+
+
 
         if (isLooping)
         {
