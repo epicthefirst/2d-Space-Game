@@ -155,6 +155,7 @@ public class GameInformation : MonoBehaviour
             }
             else
             {
+                Debug.LogError("Adding star");
                 botScript.addStar(star);
             }
         }

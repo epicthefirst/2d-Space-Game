@@ -164,6 +164,7 @@ public class ShipController : MonoBehaviour
             Debug.LogError("Bad");
         }
         totalWaitTimeLeft = length;
+        CycleEventManager.OnTick -= WaitTick;
         CycleEventManager.OnTick += WaitTick;
     }
     public void ResetWaiting()

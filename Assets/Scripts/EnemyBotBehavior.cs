@@ -38,7 +38,7 @@ public class EnemyBotBehavior : MonoBehaviour
     private Pathfinder.MinObjBinaryHeap industryCostHeap = new Pathfinder.MinObjBinaryHeap(1024); //Change later
     private Pathfinder.MinObjBinaryHeap scienceCostHeap = new Pathfinder.MinObjBinaryHeap(1024); //Change later
 
-    public void init(GameInformation.PlayerClass bot, List<GameObject> ownedStars, System.Random random, GameInformation gameInformation, MapGeneration mapGenerationScript, Pathfinder pathfinder)
+    public void init(GameInformation.PlayerClass bot, List<GameObject> startingStars, System.Random random, GameInformation gameInformation, MapGeneration mapGenerationScript, Pathfinder pathfinder)
     {
         //Change me later, controls bot's vision
         //knownGraph = mapGenerationScript.graphFullSpeed;
@@ -48,15 +48,24 @@ public class EnemyBotBehavior : MonoBehaviour
         this.gameInformation = gameInformation;
         this.random = random;
         this.bot = bot;
-        this.ownedStars = ownedStars;
+
         money = gameInformation.playerMoney;
         this.mapGenerationScript = mapGenerationScript;
+        knownGraph = mapGenerationScript.GetGraphFullSpeed();
         this.pathfinderScript = pathfinder;
         CycleEventManager.OnPreTick += preTick;
         CycleEventManager.OnTick += newTick;
         CycleEventManager.OnCycle += newCycle;
 
-
+        foreach (GameObject star in startingStars)
+        {
+            if(star == null)
+            {
+                Debug.LogError("Baaaaaad");
+                continue;
+            }
+            addStar(star);
+        }
         //checkStars();
     }
 
@@ -68,7 +77,7 @@ public class EnemyBotBehavior : MonoBehaviour
     public void preTick(object sender, PreTickEvent e)
     {
         stupidCounter++;
-        if (targetStars.Count < Mathf.CeilToInt(Mathf.Sqrt(ownedStars.Count)) && stupidCounter % 10 == 0)
+        if (targetStars.Count < Mathf.CeilToInt(Mathf.Sqrt(ownedStars.Count)) && stupidCounter % 1 == 0)
         {
             checkToExpand();
         }
@@ -163,7 +172,7 @@ public class EnemyBotBehavior : MonoBehaviour
 
     public void checkToExpand()
     {
-        knownGraph = mapGenerationScript.graphFullSpeed;
+        
 
         int target = Mathf.CeilToInt(Mathf.Sqrt(ownedStars.Count));
         if (candidateStars.Count < target)
@@ -444,6 +453,7 @@ public class EnemyBotBehavior : MonoBehaviour
     }
     public void addStar(GameObject star)
     {
+        
         if(star == null)
         {
             Debug.LogError("Star is null");
@@ -465,6 +475,15 @@ public class EnemyBotBehavior : MonoBehaviour
             //Debug.LogError("Updating star");
             updateStar(star);
         }
+        Debug.LogError("Stars in stuff: " + ownedStars.Count);
+        if(knownGraph == null)
+        {
+            Debug.LogError("knownGraph");
+        }
+        if (candidateStars == null)
+        {
+            Debug.LogError("knownGraph");
+        }
 
         candidateStars.AddRange(knownGraph.getStarNeighbors(star).Except(ownedStars).Except(candidateStars));
         
@@ -475,7 +494,7 @@ public class EnemyBotBehavior : MonoBehaviour
 
         //garrisonHeap.RemoveNode(star);
         //garrisonHeap.Insert(star, s.GarrisonCount);
-
+        Debug.LogError(star.GetComponent<StarScript>().Name);
         garrisonHeap.ChangeValueOfObject(star, s.GarrisonCount);
 
         //econCostHeap.deleteKey(econCostHeap.findKey(star));

@@ -282,6 +282,15 @@ public class MapGeneration : MonoBehaviour
         graphFullSpeed = new Pathfinder.Graph(starList, 10, 69);
     }
 
+    public Pathfinder.Graph GetGraphFullSpeed()
+    {
+        if(graphFullSpeed == null)
+        {
+            Debug.LogError("Graph is being called too early");
+        }
+        return graphFullSpeed;
+    }
+
     private List<Tuple<int, int>> slingshotPeriodCalculator(int planetCount)
     {
         /*        foreach (GameObject star in dictionary.Keys)
