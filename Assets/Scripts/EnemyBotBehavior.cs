@@ -472,10 +472,10 @@ public class EnemyBotBehavior : MonoBehaviour
         }
         else
         {
-            //Debug.LogError("Updating star");
+            Debug.LogError("Updating star");
             updateStar(star);
         }
-        Debug.LogError("Stars in stuff: " + ownedStars.Count);
+        //Debug.LogError("Stars in stuff: " + ownedStars.Count);
         if(knownGraph == null)
         {
             Debug.LogError("knownGraph");
