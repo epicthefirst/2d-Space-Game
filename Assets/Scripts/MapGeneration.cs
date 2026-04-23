@@ -82,7 +82,7 @@ public class MapGeneration : MonoBehaviour
     Vector2 vectorAdjust;
     private GameObject starSpawn;
     public GameObject star;
-    //0 = unowned, 1 = player owned, 2 = enemy owned
+
     private Dictionary<GameObject, int> dictionary = new Dictionary<GameObject, int> { };
     [SerializeField] GameObject canvasObject;
     private int starSeperation = 100;
@@ -99,7 +99,8 @@ public class MapGeneration : MonoBehaviour
     private GameInformation.PlayerClass botClass;
 
     private EnemyBotBehavior bot1 = new EnemyBotBehavior();
-    public PlayerScript playerScript;
+    private List<(EnemyBotBehavior, GameInformation.PlayerClass, List<GameObject>)> initList = new List<(EnemyBotBehavior, GameInformation.PlayerClass, List<GameObject>)> { };
+public PlayerScript playerScript;
     public PlayerScript unownedScript;
 
 
@@ -265,7 +266,10 @@ public class MapGeneration : MonoBehaviour
         computeGraphs();
 
 
-
+        foreach ((EnemyBotBehavior botScript, GameInformation.PlayerClass botClass, List<GameObject> startingStars) bot in initList)
+        {
+            bot.botScript.init(bot.botClass, bot.startingStars, random, gameInformation, this, pathfinder);
+        }
 
 
         
@@ -443,8 +447,9 @@ public class MapGeneration : MonoBehaviour
             starScript.IndustryCount = 5;
             starScript.ScienceCount = 2;
             starScript.isAwake = true;
-            //Need to send list, then on wake calculate candidates
-            bot1.init(botClass, new List<GameObject>() { starSpawn }, random, gameInformation, this, pathfinder);
+            //Need to send list, then on wake calculate candidates, also make sure to add new bot scripts for the future
+            initList.Add((bot1, botClass, new List<GameObject>() { starSpawn }));
+            //bot1.init(botClass, new List<GameObject>() { starSpawn }, random, gameInformation, this, pathfinder);
             dictionary.Add(starSpawn, 2);
         }
         else
