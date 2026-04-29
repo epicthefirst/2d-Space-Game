@@ -172,5 +172,17 @@ public class GameInformation : MonoBehaviour
             }
         }
 
+        public void SimpleUpdateStarOfOwner(GameObject star, int garrisonCount)
+        {
+            if (!isBot)
+            {
+                ///////////////////////////////
+            }
+            else
+            {
+                botScript.updateGarrisonHeap(star, garrisonCount);
+            }
+        }
+
     }
 }

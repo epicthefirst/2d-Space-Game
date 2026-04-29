@@ -488,6 +488,23 @@ public class EnemyBotBehavior : MonoBehaviour
         candidateStars.AddRange(knownGraph.getStarNeighbors(star).Except(ownedStars).Except(candidateStars));
         
     }
+    public void updateGarrisonHeap(GameObject star, int newCount)
+    {
+        garrisonHeap.ChangeValueOfObject(star, newCount);
+    }
+    public void updateEconHeap(GameObject star, int newCost)
+    {
+        econCostHeap.ChangeValueOfObject(star, newCost);
+    }
+    public void updateIndustryHeap(GameObject star, int newCost)
+    {
+        industryCostHeap.ChangeValueOfObject(star, newCost);
+    }
+    public void updateScienceHeap(GameObject star, int newCost)
+    {
+        scienceCostHeap.ChangeValueOfObject(star, newCost);
+    }
+
     public void updateStar(GameObject star)
     {
         StarScript s = star.GetComponent<StarScript>();
@@ -510,7 +527,8 @@ public class EnemyBotBehavior : MonoBehaviour
         industryCostHeap.ChangeValueOfObject(star, s.GetIndustryPrice());
         scienceCostHeap.ChangeValueOfObject(star, s.GetSciencePrice());
 
-        candidateStars.RemoveAll(x => x == star);
+        candidateStars.Remove(star);
+        //candidateStars.RemoveAll(x => x == star);
 
     }
     public void removeStar(GameObject star)
