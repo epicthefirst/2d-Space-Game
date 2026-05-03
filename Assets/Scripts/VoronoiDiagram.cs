@@ -8,7 +8,6 @@ public class VoronoiDiagram : MonoBehaviour
 {
     private int counter = 0;
     public Dictionary<int, Material[]> materialDictionary;
-    public GameInformation gameInformation;
     
     public void Init(Dictionary<GameObject, int> dictionary)
     {
@@ -27,7 +26,7 @@ public class VoronoiDiagram : MonoBehaviour
         }
 
         //Change me later if doing offset changes
-        Vector2 tempVector = new Vector2(100, 100) * gameInformation.numberOfCircles;
+        Vector2 tempVector = new Vector2(100, 100) * GameInformation.numberOfCircles;
         
         VoronatorSharp.Voronator v = new VoronatorSharp.Voronator(pointList, -tempVector, tempVector);
         

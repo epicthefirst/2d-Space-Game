@@ -15,7 +15,6 @@ public class EnemyBotBehavior : MonoBehaviour
     public UIManager uIManager;
     public MapGeneration mapGenerationScript;
     public Pathfinder pathfinderScript;
-    public GameInformation gameInformation;
     public int carrierNameIncrement;
 
     private List<GameObject> carrierList = new List<GameObject>();
@@ -38,18 +37,16 @@ public class EnemyBotBehavior : MonoBehaviour
     private Pathfinder.MinObjBinaryHeap industryCostHeap = new Pathfinder.MinObjBinaryHeap(1024); //Change later
     private Pathfinder.MinObjBinaryHeap scienceCostHeap = new Pathfinder.MinObjBinaryHeap(1024); //Change later
 
-    public void init(GameInformation.PlayerClass bot, List<GameObject> startingStars, System.Random random, GameInformation gameInformation, MapGeneration mapGenerationScript, Pathfinder pathfinder)
+    public void init(GameInformation.PlayerClass bot, List<GameObject> startingStars, System.Random random, MapGeneration mapGenerationScript, Pathfinder pathfinder)
     {
         //Change me later, controls bot's vision
         //knownGraph = mapGenerationScript.graphFullSpeed;
 
         
-
-        this.gameInformation = gameInformation;
         this.random = random;
         this.bot = bot;
 
-        money = gameInformation.playerMoney;
+        money = GameInformation.playerMoney;
         this.mapGenerationScript = mapGenerationScript;
         knownGraph = mapGenerationScript.GetGraphFullSpeed();
         this.pathfinderScript = pathfinder;
@@ -82,7 +79,7 @@ public class EnemyBotBehavior : MonoBehaviour
             checkToExpand();
         }
         
-        //if (money > gameInformation.carrierCost)
+        //if (money > GameInformation.carrierCost)
         //{
         //    checkToExpand();
         //}
@@ -183,7 +180,16 @@ public class EnemyBotBehavior : MonoBehaviour
                 
             }
         }
-        List<GameObject> tempList = candidateStars.GetRange(0, target);
+        List<GameObject> tempList = new List<GameObject>();
+        if (candidateStars.Count < target)
+        {
+            tempList.AddRange(knownGraph.starList.Except(ownedStars));
+        }
+        else
+        {
+            tempList = candidateStars.GetRange(0, target);
+        }
+        
 
         foreach(GameObject star in tempList)
         {
@@ -218,13 +224,13 @@ public class EnemyBotBehavior : MonoBehaviour
                 candidateStars.RemoveAll(x => x == star);
             }
             //Fix this part later
-            else if (money >= gameInformation.carrierCost && garrisonHeap.Root().value > 0 && carrierList.Count <= 2 * Mathf.CeilToInt(Mathf.Sqrt(ownedStars.Count) + 3))
+            else if (money >= GameInformation.carrierCost && garrisonHeap.Root().value > 0 && carrierList.Count <= 2 * Mathf.CeilToInt(Mathf.Sqrt(ownedStars.Count) + 3))
             {
-                money -= gameInformation.carrierCost;
+                money -= GameInformation.carrierCost;
                 GameObject poppedStar = garrisonHeap.Root().node;
                 StarScript poppedStarScript = poppedStar.GetComponent<StarScript>();
 
-                GameObject c = GameObject.Instantiate(gameInformation.shipPrefab, poppedStar.transform.position, Quaternion.identity) as GameObject;
+                GameObject c = GameObject.Instantiate(GameInformation.shipPrefab, poppedStar.transform.position, Quaternion.identity) as GameObject;
                 c.transform.parent = poppedStar.transform;
                 ShipController shipController = c.GetComponent<ShipController>();
 

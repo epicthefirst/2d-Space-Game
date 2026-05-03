@@ -17,7 +17,6 @@ public class PlayerScript : MonoBehaviour
     private List<GameObject> playerCarrierList = new List<GameObject>();
     private List<GameObject> playerStarList = new List<GameObject>();
     public GameInformation.PlayerClass playerClass;
-    public GameInformation gameInformation;
 
     public int playerMoney = 500;
 
@@ -66,7 +65,7 @@ public class PlayerScript : MonoBehaviour
         Debug.Log("New econCount" + totalPlayerEconCount);
         Debug.Log("New industryCount" + totalPlayerIndustryCount);
         Debug.Log("New scienceCount" + totalPlayerScienceCount);
-        playerMoney += totalPlayerEconCount * gameInformation.cycleLength;
+        playerMoney += totalPlayerEconCount * GameInformation.cycleLength;
         return totalPlayerEconCount;
     }
     public int NewTick(int tickCount)

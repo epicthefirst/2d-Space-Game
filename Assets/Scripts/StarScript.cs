@@ -58,7 +58,6 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
     public StarData star;
     private int tick;
     private int cycle;
-    [SerializeField] GameInformation gameInformation;
 
     public LineRenderer orbitMaker;
     public GameObject insidePolygon;

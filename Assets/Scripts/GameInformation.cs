@@ -3,33 +3,39 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
-public class GameInformation : MonoBehaviour
+public static class GameInformation
 {
-    public int playerCount;
-    public List<PlayerClass> playerList = new List<PlayerClass>();
+    public static int playerCount;
+    public static List<PlayerClass> playerList = new List<PlayerClass>();
 
-    public int tickCounter = 0;
-    public int playerMoney = 500;
-    public int cycleLength = 12; // Change this in the future
-    public int carrierCost = 25; //This too
+    public static int tickCounter = 0;
+    public static int playerMoney = 500;
+    public static int cycleLength = 12; // Change this in the future
+    public static int carrierCost = 25; //This too
 
-    public int qualityMultiplier = 4;
-    public int numberOfStars;
-    public int numberOfCircles = 5;
-    public double offset = 20d;
-    public int minRandOffset = 1;
-    public int maxRandOffset = 5;
+    public static int qualityMultiplier = 4;
+    public static int numberOfStars;
+    public static int numberOfCircles = 5;
+    public static double offset = 60d;
+    public static int minRandOffset = 10;
+    public static int maxRandOffset = 15;
 
 
 
-    public GameObject shipPrefab;
+    public static GameObject shipPrefab;
 
-    public int GetQualityMultiplier()
+    public static void init(int PlayerMoney, int CycleLength, int NumberOfCircles)
+    {
+        playerMoney = PlayerMoney;
+        cycleLength = CycleLength;
+        numberOfCircles = NumberOfCircles;
+    }
+    public static int GetQualityMultiplier()
     {
         return qualityMultiplier;
     }
 
-    public void AddPlayer(PlayerClass player)
+    public static void AddPlayer(PlayerClass player)
     {
         if (playerList.Contains(player))
         {
@@ -41,11 +47,11 @@ public class GameInformation : MonoBehaviour
             playerList.Add(player);
         }
     }
-    public PlayerClass GetPlayerByID(int playerNumberID)
+    public static PlayerClass GetPlayerByID(int playerNumberID)
     {
         return playerList[playerNumberID];
     }
-    public PlayerClass GetPlayerByName(string name)
+    public static PlayerClass GetPlayerByName(string name)
     {
         foreach (PlayerClass player in playerList)
         {
@@ -56,7 +62,7 @@ public class GameInformation : MonoBehaviour
         return null;
     }
 
-    public void WakeUpPlayers()
+    public static void WakeUpPlayers()
     {
         foreach(PlayerClass player in playerList)
         {
@@ -155,7 +161,7 @@ public class GameInformation : MonoBehaviour
             }
             else
             {
-                Debug.LogError("Adding star");
+                //Debug.LogError("Adding star");
                 botScript.addStar(star);
             }
         }

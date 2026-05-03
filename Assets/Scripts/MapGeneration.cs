@@ -95,7 +95,7 @@ public class MapGeneration : MonoBehaviour
     public GameObject storage;
 
     GameObject[] planetArray = new GameObject[3];
-    [SerializeField] GameInformation gameInformation;
+    //[SerializeField] GameInformation GameInformation;
     private GameInformation.PlayerClass botClass;
 
     private EnemyBotBehavior bot1 = new EnemyBotBehavior();
@@ -113,26 +113,25 @@ public PlayerScript playerScript;
         colourScript = OwnerColourScript.Instance;
 
         playerScript.playerClass = new GameInformation.PlayerClass("Player", false, playerScript, null, colourScript.GetPalette(1)[0].color, colourScript.GetPalette(1)[1].color, colourScript.GetPalette(1)[0], colourScript.GetPalette(1)[1]);
-        playerScript.gameInformation = gameInformation;
-        gameInformation.AddPlayer(playerScript.playerClass);
+        GameInformation.AddPlayer(playerScript.playerClass);
         
 
 
         //Bots
         botClass = new GameInformation.PlayerClass("Zerg", true, null, bot1, colourScript.GetPalette(2)[0].color, colourScript.GetPalette(2)[1].color, colourScript.GetPalette(2)[0], colourScript.GetPalette(2)[1]);
-        //botClass.gameInformation = gameInformation;
+        //botClass.GameInformation = GameInformation;
 
-        gameInformation.AddPlayer(botClass);
+        GameInformation.AddPlayer(botClass);
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        int qualityMultiplier = gameInformation.GetQualityMultiplier();
-        int numberOfCircles = gameInformation.numberOfCircles;
-        double offset = gameInformation.offset;
-        int minRandOffset = gameInformation.minRandOffset;
-        int maxRandOffset = gameInformation.maxRandOffset;
+        int qualityMultiplier = GameInformation.GetQualityMultiplier();
+        int numberOfCircles = GameInformation.numberOfCircles;
+        double offset = GameInformation.offset;
+        int minRandOffset = GameInformation.minRandOffset;
+        int maxRandOffset = GameInformation.maxRandOffset;
 
 
         DefinePlayers();
@@ -231,8 +230,8 @@ public PlayerScript playerScript;
         //    Instantiate(GenerateCircle(bs.position, 10), bs.position, Quaternion.identity);
         //}
 
-        //gameInformation.numberOfStars = starList.Count;
-        //gameInformation.WakeUpPlayers();
+        //GameInformation.numberOfStars = starList.Count;
+        //GameInformation.WakeUpPlayers();
         VoronoiDiagram voronoiDiagram = this.GetComponent<VoronoiDiagram>();
         voronoiDiagram.Init(dictionary);
 
@@ -268,7 +267,7 @@ public PlayerScript playerScript;
 
         foreach ((EnemyBotBehavior botScript, GameInformation.PlayerClass botClass, List<GameObject> startingStars) bot in initList)
         {
-            bot.botScript.init(bot.botClass, bot.startingStars, random, gameInformation, this, pathfinder);
+            bot.botScript.init(bot.botClass, bot.startingStars, random, this, pathfinder);
         }
 
 
@@ -356,7 +355,7 @@ public PlayerScript playerScript;
             Debug.Log("All good");
         }
         Debug.Log(planetArray.Length);
-        capitalScript.Initialize(-1, "Capital", capitalList, slingshotPeriodCalculator(capitalList.Count), range, playerScript.playerClass, canvasObject, 100, planetArray, gameInformation.GetQualityMultiplier(), slingshotWindowDurations);
+        capitalScript.Initialize(-1, "Capital", capitalList, slingshotPeriodCalculator(capitalList.Count), range, playerScript.playerClass, canvasObject, 100, planetArray, GameInformation.GetQualityMultiplier(), slingshotWindowDurations);
         capitalScript.EconCount = 9;
         capitalScript.IndustryCount = 5;
         capitalScript.ScienceCount = 2;
@@ -442,19 +441,19 @@ public PlayerScript playerScript;
 
         if (enemyCapital.Contains(totalStarCount))
         {
-            starScript.Initialize(totalStarCount, starNameMethod(totalStarCount), capitalList, slingshotPeriodCalculator(capitalList.Count), range, botClass, canvasObject, 100, planetArray, gameInformation.GetQualityMultiplier(), slingshotWindowDurations);
+            starScript.Initialize(totalStarCount, starNameMethod(totalStarCount), capitalList, slingshotPeriodCalculator(capitalList.Count), range, botClass, canvasObject, 100, planetArray, GameInformation.GetQualityMultiplier(), slingshotWindowDurations);
             starScript.EconCount = 9;
             starScript.IndustryCount = 5;
             starScript.ScienceCount = 2;
             starScript.isAwake = true;
             //Need to send list, then on wake calculate candidates, also make sure to add new bot scripts for the future
             initList.Add((bot1, botClass, new List<GameObject>() { starSpawn }));
-            //bot1.init(botClass, new List<GameObject>() { starSpawn }, random, gameInformation, this, pathfinder);
+            //bot1.init(botClass, new List<GameObject>() { starSpawn }, random, GameInformation, this, pathfinder);
             dictionary.Add(starSpawn, 2);
         }
         else
         {
-            starScript.Initialize(totalStarCount, starNameMethod(totalStarCount), planetList, slingshotPeriodCalculator(planetAmount), range, null, canvasObject, 0, planetArray, gameInformation.GetQualityMultiplier(), slingshotWindowDurations);
+            starScript.Initialize(totalStarCount, starNameMethod(totalStarCount), planetList, slingshotPeriodCalculator(planetAmount), range, null, canvasObject, 0, planetArray, GameInformation.GetQualityMultiplier(), slingshotWindowDurations);
             dictionary.Add(starSpawn, 0);
         }
         //Debug.Log(k + "/" + i);

@@ -770,7 +770,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
         if (Input.GetKey(KeyCode.P))
         {
             randomCounter++;
-            if (randomCounter % 4 == 0)
+            if (randomCounter % 1 == 0)
             {
                 OnTickButtonPress();
             }
