@@ -16,6 +16,8 @@ public class MainMenuScript : MonoBehaviour
     [SerializeField] Button startButton;
     [SerializeField] TMP_InputField cycleLengthInput;
 
+    [SerializeField] GameObject shipPrefab;
+
 
     // Start is called before the first frame update
     void Start()
@@ -92,7 +94,8 @@ public class MainMenuScript : MonoBehaviour
             Debug.LogError("Tried parsing, and failed");
         }
 
-        GameInformation.init(500, cycleLength, numberOfCircles);
+        Debug.LogWarning("Loading Scene");
+        GameInformation.init(500, cycleLength, numberOfCircles, shipPrefab);
         SceneManager.LoadScene("MainScene");
     }
     // Update is called once per frame

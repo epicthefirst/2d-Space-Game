@@ -24,11 +24,12 @@ public static class GameInformation
 
     public static GameObject shipPrefab;
 
-    public static void init(int PlayerMoney, int CycleLength, int NumberOfCircles)
+    public static void init(int PlayerMoney, int CycleLength, int NumberOfCircles, GameObject ShipPrefab)
     {
         playerMoney = PlayerMoney;
         cycleLength = CycleLength;
         numberOfCircles = NumberOfCircles;
+        shipPrefab = ShipPrefab;
     }
     public static int GetQualityMultiplier()
     {
