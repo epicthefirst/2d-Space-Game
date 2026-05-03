@@ -169,6 +169,10 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
 
     void Start()
     {
+        if(GameInformation.gameMode == "Simulation")
+        {
+            return;
+        }
         setDictionaries();
         //shipInputButton.onClick.AddListener(WhenInputConfirmed);
         nextTickButton.onClick.AddListener(OnTickButtonPress);

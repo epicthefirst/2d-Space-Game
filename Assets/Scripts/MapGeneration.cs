@@ -98,9 +98,10 @@ public class MapGeneration : MonoBehaviour
     //[SerializeField] GameInformation GameInformation;
     private GameInformation.PlayerClass botClass;
 
+    private int numberOfBots;
     private EnemyBotBehavior bot1 = new EnemyBotBehavior();
     private List<(EnemyBotBehavior, GameInformation.PlayerClass, List<GameObject>)> initList = new List<(EnemyBotBehavior, GameInformation.PlayerClass, List<GameObject>)> { };
-public PlayerScript playerScript;
+    public PlayerScript playerScript;
     public PlayerScript unownedScript;
 
 
@@ -108,7 +109,7 @@ public PlayerScript playerScript;
 
     public OwnerColourScript colourScript;
 
-    public void DefinePlayers()
+    public void DefinePlayer()
     {
         colourScript = OwnerColourScript.Instance;
 
@@ -117,24 +118,122 @@ public PlayerScript playerScript;
         
 
 
-        //Bots
-        botClass = new GameInformation.PlayerClass("Zerg", true, null, bot1, colourScript.GetPalette(2)[0].color, colourScript.GetPalette(2)[1].color, colourScript.GetPalette(2)[0], colourScript.GetPalette(2)[1]);
-        //botClass.GameInformation = GameInformation;
+        ////Bots
+        //botClass = new GameInformation.PlayerClass("Zerg", true, null, bot1, colourScript.GetPalette(2)[0].color, colourScript.GetPalette(2)[1].color, colourScript.GetPalette(2)[0], colourScript.GetPalette(2)[1]);
+        ////botClass.GameInformation = GameInformation;
 
-        GameInformation.AddPlayer(botClass);
+        //GameInformation.AddPlayer(botClass);
+    }
+
+    public void DefineSimulation()
+    {
+        colourScript = OwnerColourScript.Instance;
+
+
+        Material defaultMaterial = new Material(Shader.Find("Sprites/Default"));
+
+        GameObject terrestrial = new GameObject("Terrestrial_Planet");
+        MeshRenderer terrestrialMR = terrestrial.AddComponent<MeshRenderer>();
+        terrestrialMR.material = defaultMaterial;
+        terrestrialMR.material.color = Color.gray;
+        MeshFilter terrestrialMF = terrestrial.AddComponent<MeshFilter>();
+        terrestrialMF.mesh = polyMesh(0.4f, qualityMultiplier * 6);
+        planetArray[0] = terrestrial;
+        terrestrial.transform.parent = storage.transform;
+        terrestrial.SetActive(false);
+
+        GameObject gas = new GameObject("Gas_giant_Planet");
+        MeshRenderer gasMR = gas.AddComponent<MeshRenderer>();
+        gasMR.material = defaultMaterial;
+        gasMR.material.color = Color.red;
+        MeshFilter gasMF = gas.AddComponent<MeshFilter>();
+        gasMF.mesh = polyMesh(0.6f, qualityMultiplier * 8);
+        planetArray[1] = gas;
+        gas.transform.parent = storage.transform;
+        gas.SetActive(false);
+
+        GameObject habitable = new GameObject("Habitable_Planet");
+        MeshRenderer habitableMR = habitable.AddComponent<MeshRenderer>();
+        habitableMR.material = defaultMaterial;
+        habitableMR.material.color = Color.green;
+        MeshFilter habitableMF = habitable.AddComponent<MeshFilter>();
+        habitableMF.mesh = polyMesh(0.4f, qualityMultiplier * 8);
+        planetArray[2] = habitable;
+        habitable.transform.parent = storage.transform;
+        habitable.SetActive(false);
+
+
+
+        arrayOfRings = new RingData[numberOfCircles - 1][];
+
+
+        random = new System.Random(seed);
+        starNames = starNames.OrderBy(x => random.Next()).ToArray();
+        //capitalStar();
+        for (int i = 0; i < numberOfCircles; i++)
+        {
+
+            fillDistanceFromCenter(offset * i, i - 1);
+        }
+        foreach (RingData[] ringDataRing in arrayOfRings)
+        {
+            //First star check
+            tempArray[0] = ringDataRing[ringDataRing.Length - 1];
+            tempArray[1] = ringDataRing[0];
+            tempArray[2] = ringDataRing[1];
+            DistanceCheck(tempArray);
+            //Star 2 to ^2 check
+            for (int j = 1; j < ringDataRing.Length - 2; j++)
+            {
+                tempArray = ringDataRing.Skip(j).Take(3).ToArray();
+                DistanceCheck(tempArray);
+            }
+            //Last star check
+            tempArray[0] = ringDataRing[ringDataRing.Length - 2];
+            tempArray[1] = ringDataRing[ringDataRing.Length - 1];
+            tempArray[2] = ringDataRing[0];
+            DistanceCheck(tempArray);
+        }
+        Debug.Log(badStars.Count); //Redo all this shit
+        if (badStars.Count % 2 == 0)
+        {
+            for (int i = 0; i < badStars.Count; i += 2)
+            {   //i <=> i + 1
+                float moveX = badStars[i].position.x - badStars[i + 1].position.x;
+                float moveY = badStars[i].position.y - badStars[i + 1].position.y;
+                Vector2 vector = new Vector2(moveX, moveY);
+                float distance = MathF.Sqrt(badStars[i].distance);
+                badStars[i].star.transform.position += ((Vector3)vector / distance) * 5;
+                badStars[i + 1].star.transform.position -= ((Vector3)vector / distance) * 5;
+            }
+        }
+        VoronoiDiagram voronoiDiagram = this.GetComponent<VoronoiDiagram>();
+        voronoiDiagram.Init(dictionary);
+
+        computeGraphs();
+
+
+        SpawnEnemy();
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        int qualityMultiplier = GameInformation.GetQualityMultiplier();
-        int numberOfCircles = GameInformation.numberOfCircles;
-        double offset = GameInformation.offset;
-        int minRandOffset = GameInformation.minRandOffset;
-        int maxRandOffset = GameInformation.maxRandOffset;
+        qualityMultiplier = GameInformation.GetQualityMultiplier();
+        numberOfCircles = GameInformation.numberOfCircles;
+        offset = GameInformation.offset;
+        minRandOffset = GameInformation.minRandOffset;
+        maxRandOffset = GameInformation.maxRandOffset;
+        numberOfBots = GameInformation.NumberOfBots;
+
+        if(GameInformation.gameMode == "Simulation")
+        {
+            DefineSimulation();
+            return;
+        }
 
 
-        DefinePlayers();
+        DefinePlayer();
 
         Material defaultMaterial = new Material(Shader.Find("Sprites/Default"));
 
@@ -265,10 +364,13 @@ public PlayerScript playerScript;
         computeGraphs();
 
 
-        foreach ((EnemyBotBehavior botScript, GameInformation.PlayerClass botClass, List<GameObject> startingStars) bot in initList)
-        {
-            bot.botScript.init(bot.botClass, bot.startingStars, random, this, pathfinder);
-        }
+        SpawnEnemy();
+
+
+        //foreach ((EnemyBotBehavior botScript, GameInformation.PlayerClass botClass, List<GameObject> startingStars) bot in initList)
+        //{
+        //    bot.botScript.init(bot.botClass, bot.startingStars, random, this, pathfinder);
+        //}
 
 
         
@@ -278,6 +380,28 @@ public PlayerScript playerScript;
 
 
     }
+    private void SpawnEnemy()
+    {
+        for(int i = 1; i < numberOfBots + 1; i++)
+        {
+            Debug.LogWarning("Created bot");
+            //Bot
+            GameInformation.PlayerClass newBotClass = new GameInformation.PlayerClass("Bot " + i, true, null, new EnemyBotBehavior(), colourScript.GetPalette(i)[0].color, colourScript.GetPalette(i)[1].color, colourScript.GetPalette(i)[0], colourScript.GetPalette(i)[1]);
+            //botClass.GameInformation = GameInformation;
+
+            GameInformation.AddPlayer(newBotClass);
+
+            int position = random.Next(30, starList.Count / 2); //Tune me later
+
+
+            StarScript ss = starList.ElementAt(position).GetComponent<StarScript>();
+            ss.Initialize(ss.selfId, "Bot " + i + "Homeworld", capitalList, slingshotPeriodCalculator(capitalList.Count), range, newBotClass, canvasObject, 100, planetArray, GameInformation.GetQualityMultiplier(), slingshotWindowDurations);
+            ss.PolygonRefresh();
+            newBotClass.botScript.init(newBotClass, new List<GameObject> { ss.gameObject }, random, this, pathfinder);
+        }
+        
+    }
+
 
 
     private void computeGraphs()
@@ -439,8 +563,9 @@ public PlayerScript playerScript;
 
 
 
-        if (enemyCapital.Contains(totalStarCount))
+/*        if (enemyCapital.Contains(totalStarCount))
         {
+
             starScript.Initialize(totalStarCount, starNameMethod(totalStarCount), capitalList, slingshotPeriodCalculator(capitalList.Count), range, botClass, canvasObject, 100, planetArray, GameInformation.GetQualityMultiplier(), slingshotWindowDurations);
             starScript.EconCount = 9;
             starScript.IndustryCount = 5;
@@ -455,7 +580,10 @@ public PlayerScript playerScript;
         {
             starScript.Initialize(totalStarCount, starNameMethod(totalStarCount), planetList, slingshotPeriodCalculator(planetAmount), range, null, canvasObject, 0, planetArray, GameInformation.GetQualityMultiplier(), slingshotWindowDurations);
             dictionary.Add(starSpawn, 0);
-        }
+        }*/
+
+        starScript.Initialize(totalStarCount, starNameMethod(totalStarCount), planetList, slingshotPeriodCalculator(planetAmount), range, null, canvasObject, 0, planetArray, GameInformation.GetQualityMultiplier(), slingshotWindowDurations);
+        dictionary.Add(starSpawn, 0);
         //Debug.Log(k + "/" + i);
         arrayOfRings[k][i] = new RingData(starSpawn, pos, k, i);
         starList.Add(starSpawn);

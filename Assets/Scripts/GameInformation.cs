@@ -20,17 +20,28 @@ public static class GameInformation
     public static int minRandOffset = 10;
     public static int maxRandOffset = 15;
 
+    public static string gameMode = "Normal";
+    public static int NumberOfBots;
+
 
 
     public static GameObject shipPrefab;
 
-    public static void init(int PlayerMoney, int CycleLength, int NumberOfCircles, GameObject ShipPrefab)
+    public static void init(int PlayerMoney, int CycleLength, int NumberOfCircles, GameObject ShipPrefab, string GameMode, int DesiredNumberOfBots)
     {
+        Debug.LogWarning("Initialising GameInformation.");
+        Debug.LogWarning("Player money: " + PlayerMoney);
+        Debug.LogWarning("Cycle length: " + CycleLength);
+        Debug.LogWarning("Number of circles: " + NumberOfCircles);
+        Debug.LogWarning("Gamemode: " + GameMode);
         playerMoney = PlayerMoney;
         cycleLength = CycleLength;
         numberOfCircles = NumberOfCircles;
         shipPrefab = ShipPrefab;
+        gameMode = GameMode;
+        NumberOfBots = DesiredNumberOfBots;
     }
+
     public static int GetQualityMultiplier()
     {
         return qualityMultiplier;
@@ -89,7 +100,6 @@ public static class GameInformation
         public Color secondaryColour;
         public Material primaryMaterial;
         public Material secondaryMaterial;
-
 
 
 

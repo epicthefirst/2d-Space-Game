@@ -81,22 +81,30 @@ public class MainMenuScript : MonoBehaviour
                 numberOfCircles = 16;
                 break;
         }
-        switch (gameModeDropdown.value)
-        {
-            case 0:
-                //Tiny
-                numberOfCircles = 4;
-                break;
-        }
         int cycleLength = 12;
         if (!int.TryParse(cycleLengthInput.text, out cycleLength))
         {
             Debug.LogError("Tried parsing, and failed");
         }
+        switch (gameModeDropdown.value)
+        {
+            case 0:
+                //Normal
 
-        Debug.LogWarning("Loading Scene");
-        GameInformation.init(500, cycleLength, numberOfCircles, shipPrefab);
-        SceneManager.LoadScene("MainScene");
+
+                Debug.LogWarning("Loading Normal Game");
+                GameInformation.init(500, cycleLength, numberOfCircles, shipPrefab, "Normal", 1);
+                SceneManager.LoadScene("MainScene");
+                break;
+            case 1:
+                //Simulation
+
+                Debug.LogWarning("Loading Simulation");
+                GameInformation.init(500, cycleLength, numberOfCircles, shipPrefab, "Simulation", 2);
+                SceneManager.LoadScene("MainScene");
+                break;
+        }
+
     }
     // Update is called once per frame
     void Update()

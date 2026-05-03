@@ -112,8 +112,9 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
         {
             materials = new Material[] { owner.primaryMaterial, owner.secondaryMaterial };
         }
-        
+        //Refresh();
     }
+
 
 
     private void WakeUp()
@@ -383,7 +384,7 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
             }
         }
     }
-    void PolygonRefresh()
+    public void PolygonRefresh()
     {
         if (owner == null)
         {
