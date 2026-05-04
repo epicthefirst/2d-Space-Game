@@ -175,7 +175,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
         }
         setDictionaries();
         //shipInputButton.onClick.AddListener(WhenInputConfirmed);
-        nextTickButton.onClick.AddListener(OnTickButtonPress);
+        //nextTickButton.onClick.AddListener(OnTickButtonPress);
         createCarrierButton.onClick.AddListener(OnCreateCarrierPress);
 
         //Buy buttons
@@ -286,7 +286,15 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
         }
 
         seedText.text = "Seed: " + mapGeneration.seed;
-        moneyText.text = "Credits: " + player.playerScript.playerMoney;
+        if(GameInformation.gameMode == "Simulation")
+        {
+            moneyText.text = "";
+        }
+        else
+        {
+            moneyText.text = "Credits: " + player.playerScript.playerMoney;
+        }
+        
         tickText.text = "Tick: " + tickCounter;
         
         
@@ -441,7 +449,11 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
         CycleEventManager.NewTick();
         tickCounter = CycleEventManager.CurrentTick;
 
-        player.playerScript.NewTick(tickCounter);
+        if(GameInformation.gameMode != "Simulation")
+        {
+            player.playerScript.NewTick(tickCounter);
+        }
+        
 
         RefreshUI();
         ClearUI();

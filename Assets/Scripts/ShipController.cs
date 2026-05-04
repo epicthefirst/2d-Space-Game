@@ -432,6 +432,10 @@ public class ShipController : MonoBehaviour
 
     public void DestroyCarrier()
     {
+        if(isDead == true)
+        {
+            Debug.LogError("Multiple calls");
+        }
         owner.RemoveCarrierFromOwner(gameObject);
         StopListening();
         isDead = true;
