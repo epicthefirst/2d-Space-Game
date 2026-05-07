@@ -87,6 +87,12 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
 
     public Vector3[] array = new Vector3[10];
 
+    //Battle
+    public bool isGoingToFight = false;
+
+    List<String> participatingFactions = new();
+    Dictionary<GameInformation.PlayerClass, List<ShipController>> invadingShips = new();
+
 
     public void Initialize(int Id, string Name, List<int> planetList, List<Tuple<int,int>> PlanetTimings, int Range, GameInformation.PlayerClass owner, GameObject canvas, int GarrisonCount, GameObject[] planetArray, int qualityMultiplier, Dictionary<int, int> slingshotWindowDurations)
     {
@@ -224,10 +230,14 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
         updatePlanets();
     }
 
+    public void Fight(object sender, FightTickEvent e)
+    {
 
+    }
 
     public void ShipInbound(int shipShipCount, GameInformation.PlayerClass shipOwner, GameObject carrier)
     {
+        
         WakeUp();
         if (shipOwner == owner)
         {
@@ -235,56 +245,67 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
             AttachCarrier(carrier);
             Refresh();
         }
-        else if (owner == null)
-        {
-            owner = shipOwner;
-            //canvas.GetComponent<UIManager>().playerStars.Add(gameObject);
-            //Come back to this
-            //owner.playerScript.AddStar(gameObject);
-            AttachCarrier(carrier);
-            owner.AddStarToOwner(gameObject);
-            Refresh();
-        }
         else
         {
-            if (shipShipCount > GarrisonCount + CarrierShipTally)
-            {
-                GarrisonCount = 0;
-                foreach (GameObject c in CarrierList)
-                {
-                    c.GetComponent<ShipController>().DestroyCarrier();
-                }
-                //WORK ON THIS LATER
-                owner = shipOwner;
-                carrier.GetComponent<ShipController>().ShipCount -= GarrisonCount;
-                GarrisonCount = 0;
-                EconCount = 0;
-                IndustryCount = 0;
-                ScienceCount = 0;
-                AttachCarrier(carrier);
-                //canvas.GetComponent<UIManager>().playerStars.Add(gameObject);
+            isGoingToFight = true;
+            CycleEventManager.FightTick -= Fight;
+            CycleEventManager.FightTick += Fight;
+            if (participatingFactions.Contains(shipOwner.name)){
 
-                owner.AddStarToOwner(gameObject);
-                // Do some stuff here
-                Refresh();
-            }
-            else
-            {
-                if(GarrisonCount > shipShipCount)
-                {
-                    GarrisonCount -= shipShipCount;
-                }
-                else
-                {
-                    GarrisonCount = 0;
-                    //WORK ON ME, NEED ALGORITHM TO DECIDE SHIP DEATH
-                }
-                
-                //Debug.LogError("Destroying carrier");
-                carrier.GetComponent<ShipController>().DestroyCarrier();
-                Refresh();
             }
         }
+        //else if (owner == null)
+        //{
+
+
+        //    owner = shipOwner;
+        //    //canvas.GetComponent<UIManager>().playerStars.Add(gameObject);
+        //    //Come back to this
+        //    //owner.playerScript.AddStar(gameObject);
+        //    AttachCarrier(carrier);
+        //    owner.AddStarToOwner(gameObject);
+        //    Refresh();
+        //}
+        //else
+        //{
+        //    if (shipShipCount > GarrisonCount + CarrierShipTally)
+        //    {
+        //        GarrisonCount = 0;
+        //        foreach (GameObject c in CarrierList)
+        //        {
+        //            c.GetComponent<ShipController>().DestroyCarrier();
+        //        }
+        //        //WORK ON THIS LATER
+        //        owner = shipOwner;
+        //        carrier.GetComponent<ShipController>().ShipCount -= GarrisonCount;
+        //        GarrisonCount = 0;
+        //        EconCount = 0;
+        //        IndustryCount = 0;
+        //        ScienceCount = 0;
+        //        AttachCarrier(carrier);
+        //        //canvas.GetComponent<UIManager>().playerStars.Add(gameObject);
+
+        //        owner.AddStarToOwner(gameObject);
+        //        // Do some stuff here
+        //        Refresh();
+        //    }
+        //    else
+        //    {
+        //        if(GarrisonCount > shipShipCount)
+        //        {
+        //            GarrisonCount -= shipShipCount;
+        //        }
+        //        else
+        //        {
+        //            GarrisonCount = 0;
+        //            //WORK ON ME, NEED ALGORITHM TO DECIDE SHIP DEATH
+        //        }
+                
+        //        //Debug.LogError("Destroying carrier");
+        //        carrier.GetComponent<ShipController>().DestroyCarrier();
+        //        Refresh();
+        //    }
+        //}
       
         
 

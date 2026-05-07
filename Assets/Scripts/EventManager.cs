@@ -18,14 +18,19 @@ public class NewCycleEvent : EventArgs
     public int CurrentCycle { get; set; }
     public int TicksPerCycle { get; set; }
 }
+public class FightTickEvent : EventArgs
+{
+
+}
 
 public static class CycleEventManager
 {
     public static event EventHandler<NewTickEvent> OnTick;
+    public static event EventHandler<FightTickEvent> FightTick;
     public static event EventHandler<PreTickEvent> OnPreTick;
     public static event EventHandler<NewCycleEvent> OnCycle;
 
-    private const int TICKS_PER_CYCLE = 12;
+    private static int TICKS_PER_CYCLE = GameInformation.cycleLength;
 
     private static int _tickCounter;
     private static int _cycleCounter;
@@ -49,6 +54,9 @@ public static class CycleEventManager
             CurrentCycle = _cycleCounter,
             TicksPerCycle = TICKS_PER_CYCLE
         });
+
+        StartFightTick();
+
     }
     private static void PreTick()
     {
@@ -59,6 +67,10 @@ public static class CycleEventManager
             CurrentCycle = _cycleCounter,
             TicksPerCycle = TICKS_PER_CYCLE
         });
+    }
+    private static void StartFightTick()
+    {
+        FightTick?.Invoke(null, new FightTickEvent { });
     }
     public static void NewCycle()
     {
