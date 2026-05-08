@@ -232,7 +232,154 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
 
     public void Fight(object sender, FightTickEvent e)
     {
+        if(owner == null && invadingShips.Keys.Count == 1) //When most of this function is useless
+        {
+            foreach (GameInformation.PlayerClass key in invadingShips.Keys)
+            {
+                owner = key;
+                foreach (ShipController carrier in invadingShips[key])
+                {
+                    AttachCarrier(carrier.gameObject);
+                }
+            }
+            EndFight();
+            Refresh();
+            return;
+        }
 
+
+
+
+
+
+        //Sorta have implementation for multiple factions
+        int tally = 0;
+        int tempTally = 0;
+        int bestTally = 0;
+        GameInformation.PlayerClass best = null;
+        foreach (GameInformation.PlayerClass key in invadingShips.Keys)
+        {
+            foreach(ShipController carrier in invadingShips[key])
+            {
+                tempTally += carrier.ShipCount;
+            }
+
+            tally += tempTally;
+
+            //Determine largest army
+            if(tempTally > bestTally)
+            {
+                best = key;
+            }
+        }
+        if (tally > GarrisonCount + CarrierShipTally) //Defenders lost
+        {
+            GarrisonCount = 0;
+            foreach (GameObject c in CarrierList)
+            {
+                c.GetComponent<ShipController>().DestroyCarrier();
+            }
+            GameInformation.PlayerClass oldOwner = owner;
+            owner = best;
+
+            ShipDeathAlgorithm(tally);
+
+//
+
+            GarrisonCount = 0;
+            EconCount = 0;
+            IndustryCount = 0;
+            ScienceCount = 0;
+            
+            //canvas.GetComponent<UIManager>().playerStars.Add(gameObject);
+
+            owner.AddStarToOwner(gameObject);
+            if(oldOwner != null)
+            {
+                oldOwner.RemoveStarFromOwner(gameObject);
+            }
+
+        }
+        else //Defenders won
+        {
+            if (GarrisonCount >= tally)
+            {
+                GarrisonCount -= tally;
+
+                foreach (GameInformation.PlayerClass key in invadingShips.Keys)
+                {
+                    foreach (ShipController carrier in invadingShips[key])
+                    {
+                        carrier.DestroyCarrier();
+                    }
+                }
+            }
+            else //If GarrisonCount < Tally < (GarrisonCount + CarrierShipTally)
+            {
+                
+                int friendlyShipsToKill = tally - GarrisonCount;
+                GarrisonCount = 0;
+
+                foreach (GameInformation.PlayerClass key in invadingShips.Keys)
+                {
+                    foreach (ShipController carrier in invadingShips[key])
+                    {
+                        carrier.DestroyCarrier(); //Destroy all invading ships
+                    }
+                }
+
+                float ratio = friendlyShipsToKill / CarrierShipTally;
+                int trueKillTally = 0;
+                foreach (GameObject carrier in CarrierList)
+                {
+                    ShipController sc = carrier.GetComponent<ShipController>();
+                    //Overestimates loses, mayyybe switch calculation to something more robust later
+                    int loss = Mathf.CeilToInt(sc.ShipCount * ratio);
+                    sc.ShipCount -= loss;
+                    if (loss == sc.ShipCount)
+                    {
+                        sc.DestroyCarrier(); //Change if we want carriers to survive a winning battle
+                    }
+                    trueKillTally += loss;
+                }
+            }
+
+        }
+
+        EndFight();
+        Refresh();
+    }
+    
+    private void EndFight()
+    {
+        isGoingToFight = false;
+        invadingShips = new();
+        CycleEventManager.FightTick -= Fight;
+    }
+
+    public int ShipDeathAlgorithm(int offensiveTally)
+    {
+        float ratio = (GarrisonCount + CarrierShipTally) / offensiveTally;
+        int trueKillTally = 0;
+        foreach (GameInformation.PlayerClass key in invadingShips.Keys)
+        {
+            foreach (ShipController carrier in invadingShips[key])
+            {
+                //Overestimates loses, mayyybe switch calculation to something more robust later
+                int loss = Mathf.CeilToInt(carrier.ShipCount * ratio);
+                carrier.ShipCount -= loss;
+                if (loss == carrier.ShipCount)
+                {
+                    carrier.DestroyCarrier(); //Change if we want carriers to survive a winning battle
+                }
+                else
+                {
+                    AttachCarrier(carrier.gameObject);
+                }
+                trueKillTally += loss;
+            }
+        }
+        return trueKillTally;
     }
 
     public void ShipInbound(int shipShipCount, GameInformation.PlayerClass shipOwner, GameObject carrier)
@@ -250,8 +397,13 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
             isGoingToFight = true;
             CycleEventManager.FightTick -= Fight;
             CycleEventManager.FightTick += Fight;
-            if (participatingFactions.Contains(shipOwner.name)){
-
+            if (invadingShips.ContainsKey(shipOwner))
+            {
+                invadingShips[shipOwner].Add(carrier.GetComponent<ShipController>());
+            }
+            else
+            {
+                invadingShips.Add(shipOwner, new List<ShipController>() { carrier.GetComponent<ShipController>() });
             }
         }
         //else if (owner == null)

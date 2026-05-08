@@ -176,6 +176,18 @@ public static class GameInformation
                 botScript.addStar(star);
             }
         }
+        public void RemoveStarFromOwner(GameObject star)
+        {
+            if (!isBot)
+            {
+                playerScript.RemoveStar(star);
+            }
+            else
+            {
+                //Debug.LogError("Adding star");
+                botScript.removeStar(star);
+            }
+        }
 
         public void UpdateStarOfOwner(GameObject star)
         {
