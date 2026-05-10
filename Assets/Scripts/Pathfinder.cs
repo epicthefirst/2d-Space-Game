@@ -675,7 +675,7 @@ public class Pathfinder : MonoBehaviour
     }
     public class MaxObjBinaryHeap
     {
-        (GameObject obj, int value)[] array;
+        public (GameObject obj, int value)[] array;
         private int size = 0;
         public MaxObjBinaryHeap(int maxSize)
         {
@@ -770,7 +770,11 @@ public class Pathfinder : MonoBehaviour
             int key = findKey(obj);
             if (key == -1)
             {
-                Debug.LogError("Tried changing a carrier that doesn't exist");
+                Debug.LogError("Tried changing something that doesn't exist" + CycleEventManager.CurrentTick);
+                if(obj == null)
+                {
+                    Debug.LogError("Becuase obj is null");
+                }
                 return;
             }
             if (array[key].value == newValue)
@@ -815,6 +819,15 @@ public class Pathfinder : MonoBehaviour
             for (int i = 0; i < size; i++) // only search active portion
             {
                 if (array[i].obj == obj) return i;
+            }
+            for (int i = 0; i < array.Length; i++) //like, really really check everything
+            {
+                if (array[i].obj == obj)
+                {
+                    Debug.LogError("Size is not set correctly, was found at " + i + ", size was " + size);
+                    return i;
+                }
+                
             }
             return -1;
         }

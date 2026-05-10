@@ -64,6 +64,8 @@ public class EnemyBotBehavior : MonoBehaviour
             addStar(star);
         }
         //checkStars();
+
+        WakeUp();
     }
 
     public void WakeUp()
@@ -230,7 +232,7 @@ public class EnemyBotBehavior : MonoBehaviour
                 GameObject poppedStar = garrisonHeap.Root().node;
                 StarScript poppedStarScript = poppedStar.GetComponent<StarScript>();
 
-                GameObject c = GameObject.Instantiate(GameInformation.shipPrefab, poppedStar.transform.position, Quaternion.identity) as GameObject;
+                GameObject c = GameObject.Instantiate(GameInformation.shipPrefab, poppedStar.transform.position, Quaternion.identity);
                 c.transform.parent = poppedStar.transform;
                 ShipController shipController = c.GetComponent<ShipController>();
 
@@ -248,6 +250,8 @@ public class EnemyBotBehavior : MonoBehaviour
                 shipController.StartJourney();
 
                 garrisonHeap.ChangeValueOfRoot(poppedStarScript.GarrisonCount);
+                Debug.Log("Created and sent a new carrier from " + poppedStarScript.Name);
+                //poppedStarScript.Refresh();
 
                 candidateStars.RemoveAll(x => x == star);
             }
@@ -385,12 +389,15 @@ public class EnemyBotBehavior : MonoBehaviour
         //carrierSizeHeap.Insert(carrier, carrierScript.ShipCount);
 
         int sizeIndex = carrierSizeHeap.findKey(carrier);
-        if (sizeIndex < 0)
+        //if (sizeIndex < 0)
+        //{
+        //    Debug.LogWarning("updateCarrier: carrier not in carrierSizeHeap");
+        //    return;
+        //}
+        if(carrierSizeHeap.findKey(carrier) == -1)
         {
-            Debug.LogWarning("updateCarrier: carrier not in carrierSizeHeap");
-            return;
+            Debug.LogError("I'M THE PROBLEM!");
         }
-
         carrierSizeHeap.ChangeValueOfObject(carrier, carrierScript.ShipCount);
 
 
@@ -478,7 +485,7 @@ public class EnemyBotBehavior : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Updating star");
+            //Debug.LogError("Updating star");
             updateStar(star);
         }
         //Debug.LogError("Stars in stuff: " + ownedStars.Count);
@@ -496,6 +503,19 @@ public class EnemyBotBehavior : MonoBehaviour
     }
     public void updateGarrisonHeap(GameObject star, int newCount)
     {
+        if (garrisonHeap.findKey(star) == -1)
+        {
+            Debug.LogError("I'M THE PROBLEM!");
+            Debug.LogError(star.GetComponent<StarScript>().Name);
+            Debug.LogError(ownedStars.Find(x => x == star).GetComponent<StarScript>().Name);
+            Debug.LogError("garrisonHeap size: " + garrisonHeap.Size() + " vs. ownedStarsCount: " + ownedStars.Count);
+            Debug.LogError(garrisonHeap.array.Distinct().Count() - 1);
+            //what the fuck is going on here
+            if(ownedStars.Find(x => x == star) == null)
+            {
+                Debug.LogError("Star ain't in here twin");
+            }
+        }
         garrisonHeap.ChangeValueOfObject(star, newCount);
     }
     public void updateEconHeap(GameObject star, int newCost)
@@ -517,7 +537,11 @@ public class EnemyBotBehavior : MonoBehaviour
 
         //garrisonHeap.RemoveNode(star);
         //garrisonHeap.Insert(star, s.GarrisonCount);
-        Debug.LogError(star.GetComponent<StarScript>().Name);
+        //Debug.LogError(star.GetComponent<StarScript>().Name);
+        if (garrisonHeap.findKey(star) == -1)
+        {
+            Debug.LogError("I'M THE PROBLEM!");
+        }
         garrisonHeap.ChangeValueOfObject(star, s.GarrisonCount);
 
         //econCostHeap.deleteKey(econCostHeap.findKey(star));

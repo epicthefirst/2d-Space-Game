@@ -18,16 +18,28 @@ public class NewCycleEvent : EventArgs
     public int CurrentCycle { get; set; }
     public int TicksPerCycle { get; set; }
 }
+public class CarrierMoveTick : EventArgs
+{
+
+}
 public class FightTickEvent : EventArgs
+{
+
+}
+public class UpdateTick : EventArgs
 {
 
 }
 
 public static class CycleEventManager
 {
-    public static event EventHandler<NewTickEvent> OnTick;
-    public static event EventHandler<FightTickEvent> FightTick;
+    //Order of events
     public static event EventHandler<PreTickEvent> OnPreTick;
+    public static event EventHandler<NewTickEvent> OnTick;
+    public static event EventHandler<CarrierMoveTick> CarrierMoveTick;
+    public static event EventHandler<FightTickEvent> FightTick;
+    public static event EventHandler<UpdateTick> UpdateTick;
+
     public static event EventHandler<NewCycleEvent> OnCycle;
 
     private static int TICKS_PER_CYCLE = GameInformation.cycleLength;
@@ -37,6 +49,18 @@ public static class CycleEventManager
 
     public static int CurrentTick => _tickCounter;
     public static int CurrentCycle => _cycleCounter;
+
+    private static void PreTick()
+    {
+
+        OnPreTick?.Invoke(null, new PreTickEvent
+        {
+            CurrentTick = _tickCounter,
+            CurrentCycle = _cycleCounter,
+            TicksPerCycle = TICKS_PER_CYCLE
+        });
+    }
+
 
     public static void NewTick()
     {
@@ -48,6 +72,7 @@ public static class CycleEventManager
             NewCycle();
         }
 
+        
         OnTick?.Invoke(null, new NewTickEvent
         {
             CurrentTick = _tickCounter,
@@ -55,22 +80,27 @@ public static class CycleEventManager
             TicksPerCycle = TICKS_PER_CYCLE
         });
 
+        MoveTick();
+
         StartFightTick();
 
+        UpdateUI();
     }
-    private static void PreTick()
+
+
+    private static void MoveTick()
     {
 
-        OnPreTick?.Invoke(null, new PreTickEvent
-        {
-            CurrentTick = _tickCounter,
-            CurrentCycle = _cycleCounter,
-            TicksPerCycle = TICKS_PER_CYCLE
-        });
+        CarrierMoveTick?.Invoke(null, new CarrierMoveTick { });
     }
     private static void StartFightTick()
     {
         FightTick?.Invoke(null, new FightTickEvent { });
+    }
+
+    private static void UpdateUI()
+    {
+        UpdateTick?.Invoke(null, new UpdateTick { });
     }
     public static void NewCycle()
     {

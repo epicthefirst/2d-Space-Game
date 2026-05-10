@@ -141,8 +141,8 @@ public class ShipController : MonoBehaviour
             //Debug.Log(totalTimeLeft); //Fix me
             if (!isDead)
             {
-                CycleEventManager.OnTick -= NewTick;
-                CycleEventManager.OnTick += NewTick;
+                CycleEventManager.CarrierMoveTick -= NewTick;
+                CycleEventManager.CarrierMoveTick += NewTick;
             }
 
 
@@ -164,21 +164,21 @@ public class ShipController : MonoBehaviour
             Debug.LogError("Bad");
         }
         totalWaitTimeLeft = length;
-        CycleEventManager.OnTick -= WaitTick;
-        CycleEventManager.OnTick += WaitTick;
+        CycleEventManager.CarrierMoveTick -= WaitTick;
+        CycleEventManager.CarrierMoveTick += WaitTick;
     }
     public void ResetWaiting()
     {
-        CycleEventManager.OnTick -= WaitTick;
+        CycleEventManager.CarrierMoveTick -= WaitTick;
         totalTimeLeft = 0;
         idle = true;
     }
     public void StopListening()
     {
-        CycleEventManager.OnTick -= WaitTick;
-        CycleEventManager.OnTick -= NewTick;
+        CycleEventManager.CarrierMoveTick -= WaitTick;
+        CycleEventManager.CarrierMoveTick -= NewTick;
     }
-    public void WaitTick(object sender, NewTickEvent e)
+    public void WaitTick(object sender, CarrierMoveTick e)
     {
         idle = false;
         startStar = starWaypoints[0];
@@ -189,7 +189,7 @@ public class ShipController : MonoBehaviour
         {
 
 
-            CycleEventManager.OnTick -= WaitTick;
+            CycleEventManager.CarrierMoveTick -= WaitTick;
 
             if (starWaypoints.Count > 0)
             {
@@ -227,7 +227,7 @@ public class ShipController : MonoBehaviour
         CopyList.AddRange(starWaypoints);
         return CopyList;
     }
-    private void NewTick(object sender, NewTickEvent e) {
+    private void NewTick(object sender, CarrierMoveTick e) {
         if (isDead)
         {
             Debug.LogError("This is very very bad");
@@ -239,6 +239,14 @@ public class ShipController : MonoBehaviour
             gameObject.transform.parent = null;
             gameObject.GetComponent<Renderer>().enabled = true;
 
+            if(dockedStar == null)
+            {
+                Debug.LogError("Docked star is null");
+            }
+            if (gameObject == null)
+            {
+                Debug.LogError("gameobject is null");
+            }
             dockedStar.GetComponent<StarScript>().DetachCarrier(gameObject);
             isLeavingNextTick = false;
         }
@@ -266,7 +274,7 @@ public class ShipController : MonoBehaviour
             gameObject.transform.position = endStar.transform.position;
             updateLine();
 
-            CycleEventManager.OnTick -= NewTick;
+            CycleEventManager.CarrierMoveTick -= NewTick;
             
             if (wantToSlingshot)
             {
@@ -395,7 +403,7 @@ public class ShipController : MonoBehaviour
             endStar = starWaypoints[0];
 
             StartJourney();
-            Debug.Log("StartedJourney");
+            //Debug.Log("StartedJourney");
         }
         else
         {

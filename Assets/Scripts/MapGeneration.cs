@@ -391,7 +391,7 @@ public class MapGeneration : MonoBehaviour
 
             GameInformation.AddPlayer(newBotClass);
 
-            int position = random.Next(30, starList.Count / 2); //Tune me later
+            int position = random.Next(starList.Count / 8, starList.Count / 2); //Tune me later
 
 
             StarScript ss = starList.ElementAt(position).GetComponent<StarScript>();

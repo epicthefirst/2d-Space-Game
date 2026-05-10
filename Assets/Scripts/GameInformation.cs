@@ -40,6 +40,8 @@ public static class GameInformation
         shipPrefab = ShipPrefab;
         gameMode = GameMode;
         NumberOfBots = DesiredNumberOfBots;
+
+        
     }
 
     public static int GetQualityMultiplier()

@@ -128,6 +128,9 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
         if (!isAwake){
             CycleEventManager.OnTick -= thisNewTick;
             CycleEventManager.OnTick += thisNewTick;
+
+            //CycleEventManager.OnPreTick -= preTick;
+            //CycleEventManager.OnPreTick += preTick;
         }
         isAwake = true;
     }
@@ -216,15 +219,35 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
         starNameDisplay.fontSize = 12;
         Refresh();
     }
+    //private void preTick(object sender, PreTickEvent e)
+    //{
+    //    if (IndustryCount != 0)
+    //    {
+    //        GarrisonCount += IndustryCount;
+
+    //        //Debug.LogError(gameObject);
+
+    //        owner.SimpleUpdateStarOfOwner(gameObject, GarrisonCount);
+    //        //owner.UpdateStarOfOwner(gameObject);
+    //        Refresh();
+    //    }
+    //}
     private void thisNewTick(object sender, NewTickEvent e)
     {
+        //Beware of race conditions
         if (IndustryCount != 0)
         {
             GarrisonCount += IndustryCount;
-            Refresh();
+
             //Debug.LogError(gameObject);
+            if (tick >= 130)
+            {
+                Debug.LogError(owner.name);
+            }
+
             owner.SimpleUpdateStarOfOwner(gameObject, GarrisonCount);
             //owner.UpdateStarOfOwner(gameObject);
+            Refresh();
         }
         tick = e.CurrentTick;
         updatePlanets();
@@ -242,6 +265,7 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
                     AttachCarrier(carrier.gameObject);
                 }
             }
+            owner.AddStarToOwner(gameObject);
             EndFight();
             Refresh();
             return;
@@ -279,7 +303,11 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
             {
                 c.GetComponent<ShipController>().DestroyCarrier();
             }
-            GameInformation.PlayerClass oldOwner = owner;
+
+            if (owner != null)
+            {
+                owner.RemoveStarFromOwner(gameObject);
+            }
             owner = best;
 
             ShipDeathAlgorithm(tally);
@@ -294,10 +322,7 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
             //canvas.GetComponent<UIManager>().playerStars.Add(gameObject);
 
             owner.AddStarToOwner(gameObject);
-            if(oldOwner != null)
-            {
-                oldOwner.RemoveStarFromOwner(gameObject);
-            }
+
 
         }
         else //Defenders won
@@ -330,15 +355,16 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
 
                 float ratio = friendlyShipsToKill / CarrierShipTally;
                 int trueKillTally = 0;
-                foreach (GameObject carrier in CarrierList)
+                for(int i = CarrierList.Count - 1; i >= 0; i--) //Go backwards cuz that's tuff (Changing list while iterating through it)
                 {
-                    ShipController sc = carrier.GetComponent<ShipController>();
+                    ShipController sc = CarrierList[i].GetComponent<ShipController>();
                     //Overestimates loses, mayyybe switch calculation to something more robust later
                     int loss = Mathf.CeilToInt(sc.ShipCount * ratio);
                     sc.ShipCount -= loss;
                     if (loss == sc.ShipCount)
                     {
                         sc.DestroyCarrier(); //Change if we want carriers to survive a winning battle
+                        CarrierList.RemoveAt(i);
                     }
                     trueKillTally += loss;
                 }
@@ -355,6 +381,7 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
         isGoingToFight = false;
         invadingShips = new();
         CycleEventManager.FightTick -= Fight;
+        owner.UpdateStarOfOwner(gameObject);
     }
 
     public int ShipDeathAlgorithm(int offensiveTally)
