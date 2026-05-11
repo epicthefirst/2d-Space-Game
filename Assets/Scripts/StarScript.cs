@@ -303,9 +303,13 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
         if (tally > GarrisonCount + CarrierShipTally) //Defenders lost
         {
             GarrisonCount = 0;
-            foreach (GameObject c in CarrierList)
+
+            for (int i = CarrierList.Count - 1; i >= 0; i--) //Go backwards cuz that's tuff (Changing list while iterating through it)
             {
-                c.GetComponent<ShipController>().DestroyCarrier();
+
+                CarrierList[i].GetComponent<ShipController>().DestroyCarrier();
+                CarrierList.RemoveAt(i);
+
             }
 
             if (owner != null)
@@ -551,6 +555,10 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
         CarrierShipTally = 0;
         foreach (GameObject carrier in CarrierList) 
         {
+            if (carrier == null)
+            {
+                Debug.LogError("carrier is null");
+            }
             CarrierShipTally += carrier.GetComponent<ShipController>().ShipCount;
         }
         shipCountDisplay = GarrisonCount + CarrierShipTally;

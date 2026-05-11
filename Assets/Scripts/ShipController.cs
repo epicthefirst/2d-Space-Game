@@ -247,6 +247,10 @@ public class ShipController : MonoBehaviour
             {
                 Debug.LogError("gameobject is null");
             }
+            if (dockedStar.GetComponent<StarScript>() == null)
+            {
+                Debug.LogError("gameobject is null");
+            }
             dockedStar.GetComponent<StarScript>().DetachCarrier(gameObject);
             isLeavingNextTick = false;
         }
