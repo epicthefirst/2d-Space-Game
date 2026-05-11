@@ -239,6 +239,7 @@ public class EnemyBotBehavior : MonoBehaviour
                 poppedStarScript.AttachCarrier(c);
                 shipController.dockedStar = poppedStar;
                 shipController.Init(carrierNameGenerator(), poppedStar, poppedStarScript.GarrisonCount, bot);
+                
 
                 Debug.Log(knownGraph.starList.Count);
                 //shipController.SetNewWaypoints(pathfinderScript.calculate(knownGraph, knownGraph.findStarIndex(poppedStar), knownGraph.findStarIndex(star)));
@@ -246,10 +247,11 @@ public class EnemyBotBehavior : MonoBehaviour
                 {
                     Debug.LogError("Booo");
                 }
+
                 shipController.SetNewWaypoints(pathfinderScript.calculate(knownGraph, knownGraph.findStarIndex(star), knownGraph.findStarIndex(poppedStar)));
                 shipController.StartJourney();
 
-                garrisonHeap.ChangeValueOfRoot(poppedStarScript.GarrisonCount);
+                
                 Debug.Log("Created and sent a new carrier from " + poppedStarScript.Name);
                 //poppedStarScript.Refresh();
 
@@ -515,6 +517,7 @@ public class EnemyBotBehavior : MonoBehaviour
             {
                 Debug.LogError("Star ain't in here twin");
             }
+            Debug.LogError(ownedStars.Find(x => x == star));
         }
         garrisonHeap.ChangeValueOfObject(star, newCount);
     }

@@ -661,6 +661,7 @@ public class Pathfinder : MonoBehaviour
             {
                 SwapAt(key, parent);
                 key = parent;
+                parent = (key - 1) / 2;
             }
         }
         public void increaseKey(int key, int newValue)
@@ -833,6 +834,10 @@ public class Pathfinder : MonoBehaviour
         }
         public void deleteKey(int key)
         {
+            //if(array[key].obj.GetComponent<StarScript>().Name == "Alsephina")
+            //{
+            //    Debug.LogError("Breakpoint");
+            //}
             increaseKey(key, int.MaxValue);
             //Debug.LogError(size);
             ExtractRoot();
@@ -852,6 +857,7 @@ public class Pathfinder : MonoBehaviour
             {
                 SwapAt(key, parent);
                 key = parent;
+                parent = (key - 1) / 2;
             }
         }
         public int Size()

@@ -240,10 +240,10 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
             GarrisonCount += IndustryCount;
 
             //Debug.LogError(gameObject);
-            if (tick >= 130)
-            {
-                Debug.LogError(owner.name);
-            }
+            //if (tick >= 130)
+            //{
+            //    Debug.LogError(owner.name);
+            //}
 
             owner.SimpleUpdateStarOfOwner(gameObject, GarrisonCount);
             //owner.UpdateStarOfOwner(gameObject);
@@ -260,6 +260,10 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
             foreach (GameInformation.PlayerClass key in invadingShips.Keys)
             {
                 owner = key;
+                if(key == null)
+                {
+                    Debug.LogError("BADDDDD");
+                }
                 foreach (ShipController carrier in invadingShips[key])
                 {
                     AttachCarrier(carrier.gameObject);
@@ -417,7 +421,7 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
         {
 
             AttachCarrier(carrier);
-            Refresh();
+            //Refresh();
         }
         else
         {
@@ -512,6 +516,7 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
     public void ReduceShipCount(int shipCountReduction)
     {
         GarrisonCount -= shipCountReduction;
+        owner.SimpleUpdateStarOfOwner(gameObject, GarrisonCount);
         PolygonRefresh();
         Refresh();
     }
