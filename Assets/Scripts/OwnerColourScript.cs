@@ -11,7 +11,12 @@ public sealed class OwnerColourScript : MonoBehaviour
     private Material playerMaterial;
     private Material enemyMaterial;
     private Material unownedMaterial;
+
     public Dictionary<int, Material[]> materialDictionary = new Dictionary<int, Material[]>();
+
+    public Material[] MainColourArray;
+    public Material[] BorderColourArray;
+
     public Material[] playerArray;
     public Material[] unownedArray;
     public Material[] enemyArray;
@@ -80,6 +85,38 @@ public sealed class OwnerColourScript : MonoBehaviour
         materialDictionary.Add(0, unownedArray);
         materialDictionary.Add(1, playerArray);
         materialDictionary.Add(2, enemyArray);
+    }
+
+    public void CreateColourArrays()
+    {
+        //16 colours
+        MainColourArray = new Material[16];
+        Material baseMaterial = new Material(Shader.Find("Standard"));
+        baseMaterial.renderQueue = baseMaterial.renderQueue + 50;
+
+        Material temp = new Material(baseMaterial);
+        Material tempBorder = new Material(baseMaterial);
+
+        //0
+        //Blue: #0000ff
+        temp = new Material(baseMaterial);
+        temp.color = new Color(r, g, b);
+        MainColourArray[0] = temp;
+        tempBorder = new Material(temp);
+        tempBorder.color = new Color(tempBorder.color.r / 2, tempBorder.color.g / 2, tempBorder.color.b / 2);
+        BorderColourArray[0] = tempBorder;
+
+        //1
+        //Red: #ff0000
+        temp = new Material(baseMaterial);
+        temp.color = new Color(r, g, b);
+        MainColourArray[0] = temp;
+        tempBorder = new Material(temp);
+        tempBorder.color = new Color(tempBorder.color.r / 2, tempBorder.color.g / 2, tempBorder.color.b / 2);
+        BorderColourArray[0] = tempBorder;
+
+
+
     }
     public Dictionary<int, Material[]> GetMaterialDictionary()
     {

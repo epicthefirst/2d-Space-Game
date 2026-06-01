@@ -18,6 +18,8 @@ public class MainMenuScript : MonoBehaviour
 
     [SerializeField] GameObject shipPrefab;
 
+    private int seedInput = 42;
+
 
     // Start is called before the first frame update
     void Start()
@@ -26,27 +28,27 @@ public class MainMenuScript : MonoBehaviour
         quitButton.gameObject.SetActive(true);
         playPanel.gameObject.SetActive(false);
 
-        cycleLengthInput.onValidateInput += delegate (string input, int charIndex, char addedChar) { return PosIntValidate(addedChar); };
+        //cycleLengthInput.onValidateInput += delegate (string input, int charIndex, char addedChar) { return PosIntValidate(addedChar); };
     }
-    public char PosIntValidate(char charToValidate)
-    {
+    //public char PosIntValidate(char charToValidate)
+    //{
 
-        if (charToValidate != '1'
-        && charToValidate != '2'
-        && charToValidate != '3'
-        && charToValidate != '4'
-        && charToValidate != '5'
-        && charToValidate != '6'
-        && charToValidate != '7'
-        && charToValidate != '8'
-        && charToValidate != '9'
-        && charToValidate != '0')
-        {
-            //return a null character
-            return '\0';
-        }
-        return charToValidate;
-    }
+    //    if (charToValidate != '1'
+    //    && charToValidate != '2'
+    //    && charToValidate != '3'
+    //    && charToValidate != '4'
+    //    && charToValidate != '5'
+    //    && charToValidate != '6'
+    //    && charToValidate != '7'
+    //    && charToValidate != '8'
+    //    && charToValidate != '9'
+    //    && charToValidate != '0')
+    //    {
+    //        //return a null character
+    //        return '\0';
+    //    }
+    //    return charToValidate;
+    //}
 
     public void PlayButtonPressed()
     {
@@ -57,11 +59,11 @@ public class MainMenuScript : MonoBehaviour
 
     public void StartButtonPressed()
     {
-        if (seedNumberInput.text == null)
+        if (!int.TryParse(seedNumberInput.text, out seedInput))
         {
-            int seed = Random.Range(int.MinValue, int.MaxValue);
+            seedInput = Random.Range(int.MinValue, int.MaxValue);
         }
-        int numberOfCircles = 0;
+            int numberOfCircles = 0;
         switch (mapSizeDropdown.value)
         {
             case 0:
@@ -93,14 +95,14 @@ public class MainMenuScript : MonoBehaviour
 
 
                 Debug.LogWarning("Loading Normal Game");
-                GameInformation.init(500, cycleLength, numberOfCircles, shipPrefab, "Normal", 1);
+                GameInformation.init(500, cycleLength, numberOfCircles, shipPrefab, "Normal", 1, seedInput);
                 SceneManager.LoadScene("MainScene");
                 break;
             case 1:
                 //Simulation
 
                 Debug.LogWarning("Loading Simulation");
-                GameInformation.init(500, cycleLength, numberOfCircles, shipPrefab, "Simulation", 2);
+                GameInformation.init(500, cycleLength, numberOfCircles, shipPrefab, "Simulation", 2, seedInput);
                 SceneManager.LoadScene("MainScene");
                 break;
         }

@@ -8,6 +8,8 @@ public static class GameInformation
     public static int playerCount;
     public static List<PlayerClass> playerList = new List<PlayerClass>();
 
+    public static int seed;
+
     public static int tickCounter = 0;
     public static int playerMoney = 500;
     public static int cycleLength = 12; // Change this in the future
@@ -27,7 +29,7 @@ public static class GameInformation
 
     public static GameObject shipPrefab;
 
-    public static void init(int PlayerMoney, int CycleLength, int NumberOfCircles, GameObject ShipPrefab, string GameMode, int DesiredNumberOfBots)
+    public static void init(int PlayerMoney, int CycleLength, int NumberOfCircles, GameObject ShipPrefab, string GameMode, int DesiredNumberOfBots, int seedInput)
     {
         Debug.LogWarning("Initialising GameInformation.");
         Debug.LogWarning("Player money: " + PlayerMoney);
@@ -40,6 +42,7 @@ public static class GameInformation
         shipPrefab = ShipPrefab;
         gameMode = GameMode;
         NumberOfBots = DesiredNumberOfBots;
+        seed = seedInput;
 
         
     }

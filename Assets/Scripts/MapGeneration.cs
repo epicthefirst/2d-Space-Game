@@ -19,7 +19,7 @@ public class MapGeneration : MonoBehaviour
     public int minRandOffset;
     public int maxRandOffset;
     [SerializeField] Pathfinder pathfinder;
-    public int seed = -2;
+    public int seed = GameInformation.seed;
     private int range = 75;
     private int[] enemyCapital = { 42 };
     private List<int> capitalList = new List<int> { 0, 0, 2, 1, 1, 1 };
@@ -225,6 +225,7 @@ public class MapGeneration : MonoBehaviour
         minRandOffset = GameInformation.minRandOffset;
         maxRandOffset = GameInformation.maxRandOffset;
         numberOfBots = GameInformation.NumberOfBots;
+        seed = GameInformation.seed;
 
         if(GameInformation.gameMode == "Simulation")
         {

@@ -185,7 +185,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
 
         player = mapGeneration.playerScript.playerClass;
 
-        seedText.text = "Seed: "+mapGeneration.seed;
+        seedText.text = "Seed: "+GameInformation.seed;
         moneyText.text = "Credits: " + player.playerScript.playerMoney;
         tickText.text = "Tick: "+ tickCounter;
         ClearUI();
@@ -285,7 +285,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
             postitionText.text = "Position: " + new Vector2(currentStar.transform.position.x, currentStar.transform.position.y);
         }
 
-        seedText.text = "Seed: " + mapGeneration.seed;
+        seedText.text = "Seed: " + GameInformation.seed;
         if(GameInformation.gameMode == "Simulation")
         {
             moneyText.text = "";
