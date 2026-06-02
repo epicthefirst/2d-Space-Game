@@ -100,7 +100,7 @@ public sealed class OwnerColourScript : MonoBehaviour
         //0
         //Blue: #0000ff
         temp = new Material(baseMaterial);
-        temp.color = new Color(r, g, b);
+        temp.color = new Color(0, 0, 255);
         MainColourArray[0] = temp;
         tempBorder = new Material(temp);
         tempBorder.color = new Color(tempBorder.color.r / 2, tempBorder.color.g / 2, tempBorder.color.b / 2);
@@ -109,11 +109,65 @@ public sealed class OwnerColourScript : MonoBehaviour
         //1
         //Red: #ff0000
         temp = new Material(baseMaterial);
-        temp.color = new Color(r, g, b);
-        MainColourArray[0] = temp;
+        temp.color = new Color(255, 0, 0);
+        MainColourArray[1] = temp;
         tempBorder = new Material(temp);
         tempBorder.color = new Color(tempBorder.color.r / 2, tempBorder.color.g / 2, tempBorder.color.b / 2);
-        BorderColourArray[0] = tempBorder;
+        BorderColourArray[1] = tempBorder;
+
+        //2
+        //Green: #00ff00
+        temp = new Material(baseMaterial);
+        temp.color = new Color(0, 255, 0);
+        MainColourArray[2] = temp;
+        tempBorder = new Material(temp);
+        tempBorder.color = new Color(tempBorder.color.r / 2, tempBorder.color.g / 2, tempBorder.color.b / 2);
+        BorderColourArray[2] = tempBorder;
+
+        //3
+        //Purple: #ff00ff
+        temp = new Material(baseMaterial);
+        temp.color = new Color(255, 0, 255);
+        MainColourArray[3] = temp;
+        tempBorder = new Material(temp);
+        tempBorder.color = new Color(tempBorder.color.r / 2, tempBorder.color.g / 2, tempBorder.color.b / 2);
+        BorderColourArray[3] = tempBorder;
+
+        //4
+        //Yellow: #ffff00
+        temp = new Material(baseMaterial);
+        temp.color = new Color(255, 255, 0);
+        MainColourArray[4] = temp;
+        tempBorder = new Material(temp);
+        tempBorder.color = new Color(tempBorder.color.r / 2, tempBorder.color.g / 2, tempBorder.color.b / 2);
+        BorderColourArray[4] = tempBorder;
+
+        //5
+        //Cyan: #00ffff
+        temp = new Material(baseMaterial);
+        temp.color = new Color(255, 255, 0);
+        MainColourArray[5] = temp;
+        tempBorder = new Material(temp);
+        tempBorder.color = new Color(tempBorder.color.r / 2, tempBorder.color.g / 2, tempBorder.color.b / 2);
+        BorderColourArray[5] = tempBorder;
+
+        //6
+        //Orange: #ff8000
+        temp = new Material(baseMaterial);
+        temp.color = new Color(255, 255, 0);
+        MainColourArray[6] = temp;
+        tempBorder = new Material(temp);
+        tempBorder.color = new Color(tempBorder.color.r / 2, tempBorder.color.g / 2, tempBorder.color.b / 2);
+        BorderColourArray[6] = tempBorder;
+
+        //7
+        //Black: #000000
+        temp = new Material(baseMaterial);
+        temp.color = new Color(0, 0, 0);
+        MainColourArray[7] = temp;
+        tempBorder = new Material(temp);
+        tempBorder.color = new Color(tempBorder.color.r / 2, tempBorder.color.g / 2, tempBorder.color.b / 2);
+        BorderColourArray[7] = tempBorder;
 
 
 
