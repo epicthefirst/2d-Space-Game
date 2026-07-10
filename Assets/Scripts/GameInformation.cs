@@ -5,6 +5,9 @@ using UnityEngine;
 
 public static class GameInformation
 {
+
+    public static bool demoMode = true;
+
     public static int playerCount;
     public static List<PlayerClass> playerList = new List<PlayerClass>();
 

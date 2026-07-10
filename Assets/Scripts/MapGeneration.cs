@@ -13,6 +13,11 @@ using static UnityEditor.PlayerSettings;
 
 public class MapGeneration : MonoBehaviour
 {  //Stuff to mess with (yay!)
+
+    //Testing
+    
+
+    //Normal stuff
     public int qualityMultiplier;
     public int numberOfCircles;
     public double offset;
@@ -214,11 +219,14 @@ public class MapGeneration : MonoBehaviour
 
 
         SpawnEnemy();
+
+        capital.SetActive(false);
     }
 
     // Start is called before the first frame update
     void Start()
     {
+
         qualityMultiplier = GameInformation.GetQualityMultiplier();
         numberOfCircles = GameInformation.numberOfCircles;
         offset = GameInformation.offset;

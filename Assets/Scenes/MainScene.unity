@@ -3958,6 +3958,8 @@ MonoBehaviour:
   playerBorder: {fileID: 2100000, guid: 0624d65d095e5ea43bbf6bceffba9e49, type: 2}
   enemyBorder: {fileID: 2100000, guid: 5c4a9bd448002fb49aafbb989bb7b674, type: 2}
   unownedBorder: {fileID: 2100000, guid: 73df55b0e75ff7f4ca986dae3109f43b, type: 2}
+  MainColourArray: []
+  BorderColourArray: []
   playerArray: []
   unownedArray: []
   enemyArray: []

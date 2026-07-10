@@ -169,7 +169,13 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
 
     void Start()
     {
-        if(GameInformation.gameMode == "Simulation")
+        QualitySettings.vSyncCount = 1;
+        Application.targetFrameRate = 60;
+
+
+
+
+        if (GameInformation.gameMode == "Simulation")
         {
             return;
         }
@@ -193,6 +199,9 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
         
 
         CycleEventManager.OnCycle += NewCycle;
+
+
+        RefreshUI();
         
     }
 
@@ -303,8 +312,14 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
         industryPriceText.text = "Industry: " + industryPrice + "$";
         sciencePriceText.text = "Science: " + sciencePrice + "$";
         /*carrierButtons();*/
-/*        currentCarrier = null;*/
-        
+        /*        currentCarrier = null;*/
+
+        //Demo
+        if (GameInformation.demoMode)
+        {
+            Destroy(tickText);
+            Destroy(nextTickButton.gameObject);
+        }
         return;
     }
     
@@ -714,6 +729,13 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
         currentCarrier = null;
     
         Destroy(circleObject);
+
+        //Demo
+        if (GameInformation.demoMode)
+        {
+            Destroy(tickText);
+            Destroy(nextTickButton.gameObject);
+        }
     }
 
     public void switchPanels(int panelNumber)
@@ -786,7 +808,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
         if (Input.GetKey(KeyCode.P))
         {
             randomCounter++;
-            if (randomCounter % 1 == 0)
+            if (randomCounter % 4 == 0)
             {
                 OnTickButtonPress();
             }

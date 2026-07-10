@@ -140,6 +140,7 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
     private void Start()
     {
 
+
         uIManager = canvas.GetComponent<UIManager>();
 
         CycleEventManager.OnTick -= thisNewTick;
@@ -217,6 +218,17 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
         starNameDisplay.text = Name;
         starNameDisplay.enableWordWrapping = false;
         starNameDisplay.fontSize = 12;
+
+        //Demo
+        if (GameInformation.demoMode)
+        {
+            Destroy(shipText);
+            Destroy(econText);
+            Destroy(industryText);
+            Destroy(scienceText);
+            Destroy(starNameDisplay);
+        }
+
         Refresh();
     }
     //private void preTick(object sender, PreTickEvent e)
@@ -552,6 +564,7 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
 
     public void Refresh()
     {
+
         CarrierShipTally = 0;
         foreach (GameObject carrier in CarrierList) 
         {
@@ -562,6 +575,9 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
             CarrierShipTally += carrier.GetComponent<ShipController>().ShipCount;
         }
         shipCountDisplay = GarrisonCount + CarrierShipTally;
+
+
+
         if (shipText != null)
         {
             shipText.text = shipCountDisplay.ToString() + (CarrierCount == 0 ? null : "/" + CarrierCount)+ (maneuverCarrierList.Count == 0 ? null : "!" + maneuverCarrierList.Count);
@@ -580,6 +596,7 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
         {
             materials = new Material[] { owner.primaryMaterial, owner.secondaryMaterial };
         }
+
     }
     public void ReCountPlanets()
     {
