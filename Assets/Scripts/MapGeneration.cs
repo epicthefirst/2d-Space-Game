@@ -199,7 +199,6 @@ public class MapGeneration : MonoBehaviour
             tempArray[2] = ringDataRing[0];
             DistanceCheck(tempArray);
         }
-        Debug.Log(badStars.Count); //Redo all this shit
         if (badStars.Count % 2 == 0)
         {
             for (int i = 0; i < badStars.Count; i += 2)
