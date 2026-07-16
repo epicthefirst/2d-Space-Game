@@ -248,7 +248,7 @@ public class UIManager : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHand
                 }
             }
 
-            panel.color = CStarScript.materials[1].color;
+            panel.color = CStarScript.MainMaterial.color;
             panel.gameObject.SetActive(true);
             panel2.gameObject.SetActive(true);
 

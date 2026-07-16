@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using System;
 
 public sealed class OwnerColourScript : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public sealed class OwnerColourScript : MonoBehaviour
 
     public Material[] MainColourArray;
     public Material[] InsideColourArray;
+    private bool[] isPaletteTaken;
 
     public Material[] playerArray;
     public Material[] unownedArray;
@@ -23,6 +25,8 @@ public sealed class OwnerColourScript : MonoBehaviour
     private bool hasRan = false;
 
     private static OwnerColourScript instance;
+
+    
 
 
     public static OwnerColourScript Instance
@@ -40,7 +44,7 @@ public sealed class OwnerColourScript : MonoBehaviour
             return instance;
         }
     }
-    private void Awake()
+    public void Awake()
     {
         if (instance == null)
         {
@@ -103,95 +107,37 @@ public sealed class OwnerColourScript : MonoBehaviour
         //16 colours
         MainColourArray = new Material[16];
         InsideColourArray = new Material[16];
-        Material baseMaterial = new Material(Shader.Find("Standard")); //Work on me here
-        baseMaterial.renderQueue = baseMaterial.renderQueue + 50;
+        Material baseMaterial = new Material(Shader.Find("Sprites/Default"));
+        baseMaterial.renderQueue = baseMaterial.renderQueue - 100;
 
         Material temp = new Material(baseMaterial);
         Material tempBorder = new Material(baseMaterial);
 
-        //0
-        //Unowned
-        temp = new Material(baseMaterial);
-        temp.color = new Color(64, 64, 64);
-        MainColourArray[1] = temp;
-        tempBorder = new Material(temp);
-        tempBorder.color = new Color(tempBorder.color.r / 2, tempBorder.color.g / 2, tempBorder.color.b / 2);
-        InsideColourArray[1] = tempBorder;
+        Color[] colours = new Color[] 
+        { 
+            new Color32(64, 64, 64, 255), //0: Unowned
+            new Color32(0, 0, 255, 255), //1: Blue #0000ff
+            new Color32(255, 0, 0, 255), //2: Red #ff0000
+            new Color32(0, 255, 0, 255), //3: Green #00ff00
+            new Color32(255, 0, 255, 255), //4: Purple #ff00ff
+            new Color32(255, 255, 0, 255), //5: Yellow #ffff00
 
-        //1
-        //Blue: #0000ff
-        temp = new Material(baseMaterial);
-        temp.color = new Color(0, 0, 255);
-        MainColourArray[1] = temp;
-        tempBorder = new Material(temp);
-        tempBorder.color = new Color(tempBorder.color.r / 2, tempBorder.color.g / 2, tempBorder.color.b / 2);
-        InsideColourArray[1] = tempBorder;
+        };
 
-        //2
-        //Red: #ff0000
-        temp = new Material(baseMaterial);
-        temp.color = new Color(255, 0, 0);
-        MainColourArray[2] = temp;
-        tempBorder = new Material(temp);
-        tempBorder.color = new Color(tempBorder.color.r / 2, tempBorder.color.g / 2, tempBorder.color.b / 2);
-        InsideColourArray[2] = tempBorder;
+        isPaletteTaken = new bool[colours.Length];
+        isPaletteTaken[0] = true; //Unowned colour shouldn't be a player colour
 
-        //3
-        //Green: #00ff00
-        temp = new Material(baseMaterial);
-        temp.color = new Color(0, 255, 0);
-        MainColourArray[3] = temp;
-        tempBorder = new Material(temp);
-        tempBorder.color = new Color(tempBorder.color.r / 2, tempBorder.color.g / 2, tempBorder.color.b / 2);
-        InsideColourArray[3] = tempBorder;
-
-        //4
-        //Purple: #ff00ff
-        temp = new Material(baseMaterial);
-        temp.color = new Color(255, 0, 255);
-        MainColourArray[4] = temp;
-        tempBorder = new Material(temp);
-        tempBorder.color = new Color(tempBorder.color.r / 2, tempBorder.color.g / 2, tempBorder.color.b / 2);
-        InsideColourArray[4] = tempBorder;
-
-        //5
-        //Yellow: #ffff00
-        temp = new Material(baseMaterial);
-        temp.color = new Color(255, 255, 0);
-        MainColourArray[5] = temp;
-        tempBorder = new Material(temp);
-        tempBorder.color = new Color(tempBorder.color.r / 2, tempBorder.color.g / 2, tempBorder.color.b / 2);
-        InsideColourArray[5] = tempBorder;
-
-        //6
-        //Cyan: #00ffff
-        temp = new Material(baseMaterial);
-        temp.color = new Color(255, 255, 0);
-        MainColourArray[6] = temp;
-        tempBorder = new Material(temp);
-        tempBorder.color = new Color(tempBorder.color.r / 2, tempBorder.color.g / 2, tempBorder.color.b / 2);
-        InsideColourArray[6] = tempBorder;
-
-        //7
-        //Orange: #ff8000
-        temp = new Material(baseMaterial);
-        temp.color = new Color(255, 255, 0);
-        MainColourArray[7] = temp;
-        tempBorder = new Material(temp);
-        tempBorder.color = new Color(tempBorder.color.r / 2, tempBorder.color.g / 2, tempBorder.color.b / 2);
-        InsideColourArray[7] = tempBorder;
-
-        ////7
-        ////Black: #000000
-        //temp = new Material(baseMaterial);
-        //temp.color = new Color(0, 0, 0);
-        //MainColourArray[7] = temp;
-        //tempBorder = new Material(temp);
-        //tempBorder.color = new Color(tempBorder.color.r / 2, tempBorder.color.g / 2, tempBorder.color.b / 2);
-        //BorderColourArray[7] = tempBorder;
-
-
-
+        for(int i = 0; i < colours.Length; i++)
+        {
+            temp = new Material(baseMaterial);
+            temp.color = colours[i];
+            MainColourArray[i] = temp;
+            tempBorder = new Material(temp);
+            tempBorder.renderQueue = baseMaterial.renderQueue + 1;
+            tempBorder.color = new Color(temp.color.r / 2, temp.color.g / 2, temp.color.b / 2);
+            InsideColourArray[i] = tempBorder;
+               
+        }
     }
 
     public Material[] GetMainMaterialArray()
@@ -204,11 +150,28 @@ public sealed class OwnerColourScript : MonoBehaviour
     }
     public Material GetMainMaterial(int index)
     {
+        //Debug.LogError("I have been called");
         return MainColourArray[index];
     }
     public Material GetSecondaryMaterial(int index)
     {
+        //Debug.LogError("I have been called");
         return InsideColourArray[index];
+    }
+
+    public int GetNextFreePalette()
+    {
+        int i = Array.FindIndex(isPaletteTaken, e => !e);
+        isPaletteTaken[i] = true;
+        return i;
+    }
+    public void TakePalette(int index)
+    {
+        if (isPaletteTaken[index])
+        {
+            Debug.LogError("Tried to claim a palette that's already taken");
+        }
+        isPaletteTaken[index] = true;
     }
     //public Dictionary<int, Material[]> GetMaterialDictionary()
     //{

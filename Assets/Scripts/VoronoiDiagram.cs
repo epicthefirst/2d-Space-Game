@@ -11,6 +11,7 @@ public class VoronoiDiagram : MonoBehaviour
     
     public void Init(Dictionary<GameObject, int> dictionary)
     {
+        OwnerColourScript.Instance.Awake();
         //materialDictionary = OwnerColourScript.Instance.GetMaterialDictionary();
         List<GameObject> starList = new List<GameObject>();
         List<Vector2> pointList = new List<Vector2>();
@@ -106,7 +107,15 @@ public class VoronoiDiagram : MonoBehaviour
         //        break;
 
         //}
-        meshRenderer.material = OwnerColourScript.Instance.GetMainMaterial(0);
+
+        if (isBorder)
+        {
+            meshRenderer.material = OwnerColourScript.Instance.GetMainMaterial(0);
+        }
+        else
+        {
+            meshRenderer.material = OwnerColourScript.Instance.GetSecondaryMaterial(0);
+        }
 
         return polygonObject;
     }

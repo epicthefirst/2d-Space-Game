@@ -64,7 +64,8 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
     public GameObject borderPolygon;
     private GameObject starSpawn;
     //private Dictionary<int, Material[]> materialDictionary;
-    public Material[] materials;
+    public Material MainMaterial;
+    public Material SecondaryMaterial;
     public List<GameObject> CarrierList = new List<GameObject>();
     public List<GameObject> maneuverCarrierList = new List<GameObject>();
 
@@ -112,11 +113,13 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
 
         if (owner == null)
         {
-            materials = new Material[] { OwnerColourScript.Instance.GetMainMaterial(0), OwnerColourScript.Instance.GetSecondaryMaterial(0) };
+            MainMaterial = OwnerColourScript.Instance.GetMainMaterial(0);
+            SecondaryMaterial = OwnerColourScript.Instance.GetSecondaryMaterial(0);
         }
         else
         {
-            materials = new Material[] { owner.primaryMaterial, owner.secondaryMaterial };
+            MainMaterial = owner.primaryMaterial;
+            SecondaryMaterial = owner.secondaryMaterial;
         }
         //Refresh();
     }
@@ -590,11 +593,13 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
         }
         if (owner == null)
         {
-            materials = new Material[] { OwnerColourScript.Instance.GetMainMaterial(0), OwnerColourScript.Instance.GetSecondaryMaterial(0) };
+            MainMaterial = OwnerColourScript.Instance.GetMainMaterial(0);
+            SecondaryMaterial = OwnerColourScript.Instance.GetSecondaryMaterial(0);
         }
         else
         {
-            materials = new Material[] { owner.primaryMaterial, owner.secondaryMaterial };
+            MainMaterial = owner.primaryMaterial;
+            SecondaryMaterial = owner.secondaryMaterial;
         }
 
     }
@@ -627,13 +632,14 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
     {
         if (owner == null)
         {
-            insidePolygon.GetComponent<MeshRenderer>().material = OwnerColourScript.Instance.GetMainMaterial(0);
-            borderPolygon.GetComponent<MeshRenderer>().material = OwnerColourScript.Instance.GetSecondaryMaterial(0);
+            insidePolygon.GetComponent<MeshRenderer>().material = OwnerColourScript.Instance.GetSecondaryMaterial(0);
+            borderPolygon.GetComponent<MeshRenderer>().material = OwnerColourScript.Instance.GetMainMaterial(0);
         }
         else
         {
-            insidePolygon.GetComponent<MeshRenderer>().material = owner.primaryMaterial;
-            borderPolygon.GetComponent<MeshRenderer>().material = owner.secondaryMaterial;
+            Debug.LogError("Owner is not null");
+            insidePolygon.GetComponent<MeshRenderer>().material = owner.secondaryMaterial;
+            borderPolygon.GetComponent<MeshRenderer>().material = owner.primaryMaterial;
         }
     }
     public void SendPolygon(GameObject insidePolygon, GameObject borderPolygon)

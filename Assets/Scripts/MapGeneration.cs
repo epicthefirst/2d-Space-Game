@@ -120,7 +120,7 @@ public class MapGeneration : MonoBehaviour
 
         playerScript.playerClass = new GameInformation.PlayerClass("Player", false, playerScript, null, colourScript.GetMainMaterial(1).color, colourScript.GetSecondaryMaterial(1).color, colourScript.GetMainMaterial(1), colourScript.GetSecondaryMaterial(1));
         GameInformation.AddPlayer(playerScript.playerClass);
-        
+        OwnerColourScript.Instance.TakePalette(1);
 
 
         ////Bots
@@ -390,11 +390,12 @@ public class MapGeneration : MonoBehaviour
     }
     private void SpawnEnemy()
     {
-        for(int i = 1; i < numberOfBots + 1; i++)
+        for(int i = 0; i < numberOfBots; i++)
         {
             Debug.LogWarning("Created bot");
+            int colourIndex = OwnerColourScript.Instance.GetNextFreePalette();
             //Bot
-            GameInformation.PlayerClass newBotClass = new GameInformation.PlayerClass("Bot " + i, true, null, new EnemyBotBehavior(), colourScript.GetMainMaterial(i).color, colourScript.GetSecondaryMaterial(i).color, colourScript.GetMainMaterial(i), colourScript.GetSecondaryMaterial(i));
+            GameInformation.PlayerClass newBotClass = new GameInformation.PlayerClass("Bot " + i, true, null, new EnemyBotBehavior(), colourScript.GetMainMaterial(colourIndex).color, colourScript.GetSecondaryMaterial(colourIndex).color, colourScript.GetMainMaterial(colourIndex), colourScript.GetSecondaryMaterial(colourIndex));
             //botClass.GameInformation = GameInformation;
 
             GameInformation.AddPlayer(newBotClass);

@@ -102,7 +102,7 @@ public class MainMenuScript : MonoBehaviour
                 //Simulation
 
                 Debug.LogWarning("Loading Simulation");
-                GameInformation.init(500, cycleLength, numberOfCircles, shipPrefab, "Simulation", 2, seedInput);
+                GameInformation.init(500, cycleLength, numberOfCircles, shipPrefab, "Simulation", 4, seedInput);
                 SceneManager.LoadScene("MainScene");
                 break;
         }
