@@ -63,7 +63,7 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
     public GameObject insidePolygon;
     public GameObject borderPolygon;
     private GameObject starSpawn;
-    private Dictionary<int, Material[]> materialDictionary;
+    //private Dictionary<int, Material[]> materialDictionary;
     public Material[] materials;
     public List<GameObject> CarrierList = new List<GameObject>();
     public List<GameObject> maneuverCarrierList = new List<GameObject>();
@@ -112,7 +112,7 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
 
         if (owner == null)
         {
-            materials = OwnerColourScript.Instance.GetPalette(0);
+            materials = new Material[] { OwnerColourScript.Instance.GetMainMaterial(0), OwnerColourScript.Instance.GetSecondaryMaterial(0) };
         }
         else
         {
@@ -590,7 +590,7 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
         }
         if (owner == null)
         {
-            materials = OwnerColourScript.Instance.GetPalette(0);
+            materials = new Material[] { OwnerColourScript.Instance.GetMainMaterial(0), OwnerColourScript.Instance.GetSecondaryMaterial(0) };
         }
         else
         {
@@ -627,8 +627,8 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
     {
         if (owner == null)
         {
-            insidePolygon.GetComponent<MeshRenderer>().material = materialDictionary[0][0];
-            borderPolygon.GetComponent<MeshRenderer>().material = materialDictionary[0][1];
+            insidePolygon.GetComponent<MeshRenderer>().material = OwnerColourScript.Instance.GetMainMaterial(0);
+            borderPolygon.GetComponent<MeshRenderer>().material = OwnerColourScript.Instance.GetSecondaryMaterial(0);
         }
         else
         {
@@ -636,11 +636,11 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
             borderPolygon.GetComponent<MeshRenderer>().material = owner.secondaryMaterial;
         }
     }
-    public void SendPolygon(GameObject insidePolygon, GameObject borderPolygon, Dictionary<int, Material[]> materialDictionary)
+    public void SendPolygon(GameObject insidePolygon, GameObject borderPolygon)
     {
         this.insidePolygon = insidePolygon;
         this.borderPolygon = borderPolygon;
-        this.materialDictionary = materialDictionary;
+        //this.materialDictionary = materialDictionary;
         PolygonRefresh();
     }
 

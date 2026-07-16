@@ -118,7 +118,7 @@ public class MapGeneration : MonoBehaviour
     {
         colourScript = OwnerColourScript.Instance;
 
-        playerScript.playerClass = new GameInformation.PlayerClass("Player", false, playerScript, null, colourScript.GetPalette(1)[0].color, colourScript.GetPalette(1)[1].color, colourScript.GetPalette(1)[0], colourScript.GetPalette(1)[1]);
+        playerScript.playerClass = new GameInformation.PlayerClass("Player", false, playerScript, null, colourScript.GetMainMaterial(1).color, colourScript.GetSecondaryMaterial(1).color, colourScript.GetMainMaterial(1), colourScript.GetSecondaryMaterial(1));
         GameInformation.AddPlayer(playerScript.playerClass);
         
 
@@ -394,7 +394,7 @@ public class MapGeneration : MonoBehaviour
         {
             Debug.LogWarning("Created bot");
             //Bot
-            GameInformation.PlayerClass newBotClass = new GameInformation.PlayerClass("Bot " + i, true, null, new EnemyBotBehavior(), colourScript.GetPalette(i)[0].color, colourScript.GetPalette(i)[1].color, colourScript.GetPalette(i)[0], colourScript.GetPalette(i)[1]);
+            GameInformation.PlayerClass newBotClass = new GameInformation.PlayerClass("Bot " + i, true, null, new EnemyBotBehavior(), colourScript.GetMainMaterial(i).color, colourScript.GetSecondaryMaterial(i).color, colourScript.GetMainMaterial(i), colourScript.GetSecondaryMaterial(i));
             //botClass.GameInformation = GameInformation;
 
             GameInformation.AddPlayer(newBotClass);

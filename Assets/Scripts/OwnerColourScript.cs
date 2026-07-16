@@ -15,7 +15,7 @@ public sealed class OwnerColourScript : MonoBehaviour
     public Dictionary<int, Material[]> materialDictionary = new Dictionary<int, Material[]>();
 
     public Material[] MainColourArray;
-    public Material[] BorderColourArray;
+    public Material[] InsideColourArray;
 
     public Material[] playerArray;
     public Material[] unownedArray;
@@ -59,6 +59,33 @@ public sealed class OwnerColourScript : MonoBehaviour
         }
     }
 
+    //private void Init()
+    //{
+    //    Debug.LogError("Has ran");
+    //    hasRan = true;
+    //    if (playerBorder == null)
+    //    {
+    //        Debug.LogError("Bad");
+    //    }
+    //    playerMaterial = new Material(playerBorder);
+    //    playerMaterial.color = new Color(playerBorder.color.r / 2, playerBorder.color.g / 2, playerBorder.color.b / 2);
+    //    playerMaterial.renderQueue = playerBorder.renderQueue + 50;
+    //    enemyMaterial = new Material(enemyBorder); ;
+    //    enemyMaterial.color = new Color(enemyBorder.color.r / 2, enemyBorder.color.g / 2, enemyBorder.color.b / 2);
+    //    enemyMaterial.renderQueue = enemyBorder.renderQueue + 50;
+    //    unownedMaterial = new Material(unownedBorder); ;
+    //    unownedMaterial.color = new Color(unownedBorder.color.r / 2, unownedBorder.color.g / 2, unownedBorder.color.b / 2);
+    //    unownedMaterial.renderQueue = unownedBorder.renderQueue + 50;
+    //    // VVV DO NOT SWAP BORDER WITH MATERIAL, IT JUST BREAKS VVV
+    //    playerArray = new Material[] { playerMaterial, playerBorder };
+    //    //Material[] playerArray = { playerBorder, playerMaterial };
+    //    unownedArray = new Material[] { unownedMaterial, unownedBorder };
+    //    enemyArray = new Material[] { enemyMaterial, enemyBorder };
+    //    //0 = unowned, 1 = player owned, 2 = enemy owned
+    //    materialDictionary.Add(0, unownedArray);
+    //    materialDictionary.Add(1, playerArray);
+    //    materialDictionary.Add(2, enemyArray);
+    //}
     private void Init()
     {
         Debug.LogError("Has ran");
@@ -67,121 +94,132 @@ public sealed class OwnerColourScript : MonoBehaviour
         {
             Debug.LogError("Bad");
         }
-        playerMaterial = new Material(playerBorder);
-        playerMaterial.color = new Color(playerBorder.color.r / 2, playerBorder.color.g / 2, playerBorder.color.b / 2);
-        playerMaterial.renderQueue = playerBorder.renderQueue + 50;
-        enemyMaterial = new Material(enemyBorder); ;
-        enemyMaterial.color = new Color(enemyBorder.color.r / 2, enemyBorder.color.g / 2, enemyBorder.color.b / 2);
-        enemyMaterial.renderQueue = enemyBorder.renderQueue + 50;
-        unownedMaterial = new Material(unownedBorder); ;
-        unownedMaterial.color = new Color(unownedBorder.color.r / 2, unownedBorder.color.g / 2, unownedBorder.color.b / 2);
-        unownedMaterial.renderQueue = unownedBorder.renderQueue + 50;
-        // VVV DO NOT SWAP BORDER WITH MATERIAL, IT JUST BREAKS VVV
-        playerArray = new Material[] { playerMaterial, playerBorder };
-        //Material[] playerArray = { playerBorder, playerMaterial };
-        unownedArray = new Material[] { unownedMaterial, unownedBorder };
-        enemyArray = new Material[] { enemyMaterial, enemyBorder };
-        //0 = unowned, 1 = player owned, 2 = enemy owned
-        materialDictionary.Add(0, unownedArray);
-        materialDictionary.Add(1, playerArray);
-        materialDictionary.Add(2, enemyArray);
+
+        CreateColourArrays();
     }
 
     public void CreateColourArrays()
     {
         //16 colours
         MainColourArray = new Material[16];
-        Material baseMaterial = new Material(Shader.Find("Standard"));
+        InsideColourArray = new Material[16];
+        Material baseMaterial = new Material(Shader.Find("Standard")); //Work on me here
         baseMaterial.renderQueue = baseMaterial.renderQueue + 50;
 
         Material temp = new Material(baseMaterial);
         Material tempBorder = new Material(baseMaterial);
 
         //0
-        //Blue: #0000ff
+        //Unowned
         temp = new Material(baseMaterial);
-        temp.color = new Color(0, 0, 255);
-        MainColourArray[0] = temp;
-        tempBorder = new Material(temp);
-        tempBorder.color = new Color(tempBorder.color.r / 2, tempBorder.color.g / 2, tempBorder.color.b / 2);
-        BorderColourArray[0] = tempBorder;
-
-        //1
-        //Red: #ff0000
-        temp = new Material(baseMaterial);
-        temp.color = new Color(255, 0, 0);
+        temp.color = new Color(64, 64, 64);
         MainColourArray[1] = temp;
         tempBorder = new Material(temp);
         tempBorder.color = new Color(tempBorder.color.r / 2, tempBorder.color.g / 2, tempBorder.color.b / 2);
-        BorderColourArray[1] = tempBorder;
+        InsideColourArray[1] = tempBorder;
+
+        //1
+        //Blue: #0000ff
+        temp = new Material(baseMaterial);
+        temp.color = new Color(0, 0, 255);
+        MainColourArray[1] = temp;
+        tempBorder = new Material(temp);
+        tempBorder.color = new Color(tempBorder.color.r / 2, tempBorder.color.g / 2, tempBorder.color.b / 2);
+        InsideColourArray[1] = tempBorder;
 
         //2
-        //Green: #00ff00
+        //Red: #ff0000
         temp = new Material(baseMaterial);
-        temp.color = new Color(0, 255, 0);
+        temp.color = new Color(255, 0, 0);
         MainColourArray[2] = temp;
         tempBorder = new Material(temp);
         tempBorder.color = new Color(tempBorder.color.r / 2, tempBorder.color.g / 2, tempBorder.color.b / 2);
-        BorderColourArray[2] = tempBorder;
+        InsideColourArray[2] = tempBorder;
 
         //3
-        //Purple: #ff00ff
+        //Green: #00ff00
         temp = new Material(baseMaterial);
-        temp.color = new Color(255, 0, 255);
+        temp.color = new Color(0, 255, 0);
         MainColourArray[3] = temp;
         tempBorder = new Material(temp);
         tempBorder.color = new Color(tempBorder.color.r / 2, tempBorder.color.g / 2, tempBorder.color.b / 2);
-        BorderColourArray[3] = tempBorder;
+        InsideColourArray[3] = tempBorder;
 
         //4
-        //Yellow: #ffff00
+        //Purple: #ff00ff
         temp = new Material(baseMaterial);
-        temp.color = new Color(255, 255, 0);
+        temp.color = new Color(255, 0, 255);
         MainColourArray[4] = temp;
         tempBorder = new Material(temp);
         tempBorder.color = new Color(tempBorder.color.r / 2, tempBorder.color.g / 2, tempBorder.color.b / 2);
-        BorderColourArray[4] = tempBorder;
+        InsideColourArray[4] = tempBorder;
 
         //5
-        //Cyan: #00ffff
+        //Yellow: #ffff00
         temp = new Material(baseMaterial);
         temp.color = new Color(255, 255, 0);
         MainColourArray[5] = temp;
         tempBorder = new Material(temp);
         tempBorder.color = new Color(tempBorder.color.r / 2, tempBorder.color.g / 2, tempBorder.color.b / 2);
-        BorderColourArray[5] = tempBorder;
+        InsideColourArray[5] = tempBorder;
 
         //6
-        //Orange: #ff8000
+        //Cyan: #00ffff
         temp = new Material(baseMaterial);
         temp.color = new Color(255, 255, 0);
         MainColourArray[6] = temp;
         tempBorder = new Material(temp);
         tempBorder.color = new Color(tempBorder.color.r / 2, tempBorder.color.g / 2, tempBorder.color.b / 2);
-        BorderColourArray[6] = tempBorder;
+        InsideColourArray[6] = tempBorder;
 
         //7
-        //Black: #000000
+        //Orange: #ff8000
         temp = new Material(baseMaterial);
-        temp.color = new Color(0, 0, 0);
+        temp.color = new Color(255, 255, 0);
         MainColourArray[7] = temp;
         tempBorder = new Material(temp);
         tempBorder.color = new Color(tempBorder.color.r / 2, tempBorder.color.g / 2, tempBorder.color.b / 2);
-        BorderColourArray[7] = tempBorder;
+        InsideColourArray[7] = tempBorder;
+
+        ////7
+        ////Black: #000000
+        //temp = new Material(baseMaterial);
+        //temp.color = new Color(0, 0, 0);
+        //MainColourArray[7] = temp;
+        //tempBorder = new Material(temp);
+        //tempBorder.color = new Color(tempBorder.color.r / 2, tempBorder.color.g / 2, tempBorder.color.b / 2);
+        //BorderColourArray[7] = tempBorder;
 
 
 
     }
-    public Dictionary<int, Material[]> GetMaterialDictionary()
+
+    public Material[] GetMainMaterialArray()
     {
-        return materialDictionary;
+        return MainColourArray;
     }
-    public Color GetMainColour(int owner)
+    public Material[] GetSecondaryMaterialArray()
     {
-        return materialDictionary[owner][1].color;
+        return InsideColourArray;
     }
-    public Material[] GetPalette(int owner)
+    public Material GetMainMaterial(int index)
     {
-        return materialDictionary[owner];
+        return MainColourArray[index];
     }
+    public Material GetSecondaryMaterial(int index)
+    {
+        return InsideColourArray[index];
+    }
+    //public Dictionary<int, Material[]> GetMaterialDictionary()
+    //{
+    //    return materialDictionary;
+    //}
+    //public Color GetMainColour(int owner)
+    //{
+    //    return materialDictionary[owner][1].color;
+    //}
+    //public Material[] GetPalette(int owner)
+    //{
+    //    return materialDictionary[owner];
+    //}
 }

@@ -7,11 +7,11 @@ using UnityEngine.UIElements;
 public class VoronoiDiagram : MonoBehaviour
 {
     private int counter = 0;
-    public Dictionary<int, Material[]> materialDictionary;
+    //public Dictionary<int, Material[]> materialDictionary;
     
     public void Init(Dictionary<GameObject, int> dictionary)
     {
-        materialDictionary = OwnerColourScript.Instance.GetMaterialDictionary();
+        //materialDictionary = OwnerColourScript.Instance.GetMaterialDictionary();
         List<GameObject> starList = new List<GameObject>();
         List<Vector2> pointList = new List<Vector2>();
 
@@ -52,12 +52,12 @@ public class VoronoiDiagram : MonoBehaviour
             //{
             //    Debug.Log(dictionary);
             //}
-            starList[i].GetComponent<StarScript>().SendPolygon(insidePolygon, borderPolygon, materialDictionary);
+            starList[i].GetComponent<StarScript>().SendPolygon(insidePolygon, borderPolygon);
         }
     }
     GameObject CreatePolygonMesh(List<Vector2> polygonVertices, GameObject parentStar, int borderOwner, bool isBorder, string name)
     {
-        Material currentMaterial = null;
+        //Material currentMaterial = null;
         // Create the mesh
         Mesh mesh = new Mesh();
         List<Vector3> meshVertices = new List<Vector3>();
@@ -90,23 +90,23 @@ public class VoronoiDiagram : MonoBehaviour
 
         MeshRenderer meshRenderer = polygonObject.AddComponent<MeshRenderer>();
 
-        switch (borderOwner)
-        {
-            case 0:
-                currentMaterial = materialDictionary[0][1];
-                if (isBorder) currentMaterial = materialDictionary[0][0];
-                break;
-            case 1:
-                currentMaterial = materialDictionary[1][1];
-                if (isBorder) currentMaterial = materialDictionary[1][0];
-                break;
-            case 2:
-                currentMaterial = materialDictionary[2][1];
-                if (isBorder) currentMaterial = materialDictionary[2][0];
-                break;
+        //switch (borderOwner)
+        //{
+        //    case 0:
+        //        currentMaterial = materialDictionary[0][1];
+        //        if (isBorder) currentMaterial = materialDictionary[0][0];
+        //        break;
+        //    case 1:
+        //        currentMaterial = materialDictionary[1][1];
+        //        if (isBorder) currentMaterial = materialDictionary[1][0];
+        //        break;
+        //    case 2:
+        //        currentMaterial = materialDictionary[2][1];
+        //        if (isBorder) currentMaterial = materialDictionary[2][0];
+        //        break;
 
-        }
-        meshRenderer.material = currentMaterial;
+        //}
+        meshRenderer.material = OwnerColourScript.Instance.GetMainMaterial(0);
 
         return polygonObject;
     }
