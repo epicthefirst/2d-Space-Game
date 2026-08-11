@@ -4,10 +4,10 @@ MonoImporter:
   externalObjects: {}
   serializedVersion: 2
   defaultReferences:
-  - lineDrawer: {instanceID: 0}
   - dockedStar: {instanceID: 0}
   - linePath: {instanceID: 0}
   - dottedLineMaterial: {fileID: 2100000, guid: fd33dbb6b497b7f46890665a8f02c17b, type: 2}
+  - fullLineMaterial: {fileID: 2100000, guid: d9898606f59d83544bd0487e4a47944e, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

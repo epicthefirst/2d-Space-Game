@@ -52,6 +52,7 @@ public class ShipController : MonoBehaviour
 
     public GameObject linePath;
     public Material dottedLineMaterial;
+    public Material fullLineMaterial;
 
     //RoutePlanner
 
@@ -338,13 +339,11 @@ public class ShipController : MonoBehaviour
     {
         GameObject dottedPath = new GameObject("dottedPath");
         LineRenderer lineMaker = dottedPath.AddComponent<LineRenderer>();
-        lineMaker.material = dottedLineMaterial;
+        lineMaker.material = fullLineMaterial;
         lineMaker.material.mainTextureScale = new Vector2(1.0f, 1.0f);
-        lineMaker.startWidth = 1;
-        lineMaker.endWidth = 1;
+        lineMaker.startWidth = 0.75f;
+        lineMaker.endWidth = 0.25f;
 
-        lineMaker.textureMode = LineTextureMode.Tile;
-        lineMaker.material.mainTexture.wrapMode = TextureWrapMode.Repeat;
         lineMaker.numCornerVertices = 1;
 
         lineMaker.positionCount = pointList.Count;
@@ -355,6 +354,8 @@ public class ShipController : MonoBehaviour
         }
         Debug.Log("Made path");
         return dottedPath;
+
+        
     }
     //void LeavingTick()
     //{
@@ -444,6 +445,7 @@ public class ShipController : MonoBehaviour
 
     public void DestroyCarrier()
     {
+        Destroy(linePath);
         if(isDead == true)
         {
             Debug.LogError("Multiple calls");

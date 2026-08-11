@@ -3959,7 +3959,7 @@ MonoBehaviour:
   enemyBorder: {fileID: 2100000, guid: 5c4a9bd448002fb49aafbb989bb7b674, type: 2}
   unownedBorder: {fileID: 2100000, guid: 73df55b0e75ff7f4ca986dae3109f43b, type: 2}
   MainColourArray: []
-  BorderColourArray: []
+  InsideColourArray: []
   playerArray: []
   unownedArray: []
   enemyArray: []
@@ -3989,6 +3989,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dottedLineMaterial: {fileID: 2100000, guid: fd33dbb6b497b7f46890665a8f02c17b, type: 2}
+  fullLineMaterial: {fileID: 2100000, guid: d9898606f59d83544bd0487e4a47944e, type: 2}
   transparentDottedLineMaterial: {fileID: 2100000, guid: 602f1618016f1dc4685203524e9df2d2, type: 2}
   uIManager: {fileID: 1387152735}
 --- !u!1 &713276554

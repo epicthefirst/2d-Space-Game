@@ -76,6 +76,7 @@ public class EnemyBotBehavior : MonoBehaviour
     public void preTick(object sender, PreTickEvent e)
     {
         stupidCounter++;
+        
         if (targetStars.Count < Mathf.CeilToInt(Mathf.Sqrt(ownedStars.Count)) && stupidCounter % 1 == 0)
         {
             checkToExpand();
@@ -564,15 +565,29 @@ public class EnemyBotBehavior : MonoBehaviour
         //candidateStars.RemoveAll(x => x == star);
 
     }
+    public void killBot()
+    {
+        CycleEventManager.OnPreTick -= preTick;
+        CycleEventManager.OnTick -= newTick;
+        CycleEventManager.OnCycle -= newCycle;
+        Debug.Log(bot.name + " has been destroyed!");
+    }
     public void removeStar(GameObject star)
     {
         ownedStars.Remove(star);
         candidateStars.Add(star);
 
+        if (ownedStars.Count == 0)
+        {
+            killBot();
+        }
+
         garrisonHeap.deleteKey(garrisonHeap.findKey(star));
         econCostHeap.deleteKey(econCostHeap.findKey(star));
         industryCostHeap.deleteKey(industryCostHeap.findKey(star));
         scienceCostHeap.deleteKey(scienceCostHeap.findKey(star));
+
+        
     }
 
 }

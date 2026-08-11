@@ -7,6 +7,7 @@ using UnityEngine.Experimental.GlobalIllumination;
 public class DrawLine : MonoBehaviour
 {
     public Material dottedLineMaterial;
+    public Material fullLineMaterial;
     public Material transparentDottedLineMaterial;
     public Dictionary<ShipController, GameObject> linePathDictionary = new Dictionary<ShipController, GameObject>();
     public UIManager uIManager;
@@ -17,18 +18,19 @@ public class DrawLine : MonoBehaviour
     }
     public GameObject makeTempPathObject()
     {
-        GameObject dottedPath = new GameObject("tempDottedPath");
-        LineRenderer lineMaker = dottedPath.AddComponent<LineRenderer>();
+        //GameObject dottedPath = new GameObject("tempDottedPath");
+        GameObject fullPath = new GameObject("tempFullPath");
+        LineRenderer lineMaker = fullPath.AddComponent<LineRenderer>();
 
-        lineMaker.material = dottedLineMaterial;
+        lineMaker.material = fullLineMaterial;
         lineMaker.material.color -= new Color(0, 0, 0, 0.5f);
 
         lineMaker.material.mainTextureScale = new Vector2(1.0f, 1.0f);
-        lineMaker.startWidth = 1;
-        lineMaker.endWidth = 1;
+        lineMaker.startWidth = 0.5f;
+        lineMaker.endWidth = 0.75f;
 
-        lineMaker.textureMode = LineTextureMode.Tile;
-        lineMaker.material.mainTexture.wrapMode = TextureWrapMode.Repeat;
+        //lineMaker.textureMode = LineTextureMode.Tile;
+        //lineMaker.material.mainTexture.wrapMode = TextureWrapMode.Repeat;
         lineMaker.numCornerVertices = 1;
 
         //lineMaker.positionCount = pointList.Count;
@@ -38,29 +40,28 @@ public class DrawLine : MonoBehaviour
         //    lineMaker.SetPosition(i, pointList[i]);
         //}
         //Debug.Log("Made path");
-        return dottedPath;
+        return fullPath;
     }
     public GameObject drawLinePath(List<Vector2> pointList)
     {
-        GameObject dottedPath = new GameObject("dottedPath");
-        LineRenderer lineMaker = dottedPath.AddComponent<LineRenderer>();
-        lineMaker.material = dottedLineMaterial;
-        lineMaker.material.mainTextureScale = new Vector2(1.0f, 1.0f);
-        lineMaker.startWidth = 1;
-        lineMaker.endWidth = 1;
+        GameObject fullPath = new GameObject("tempFullPath");
+        LineRenderer lineMaker = fullPath.AddComponent<LineRenderer>();
 
-        lineMaker.textureMode = LineTextureMode.Tile;
-        lineMaker.material.mainTexture.wrapMode = TextureWrapMode.Repeat;
+        lineMaker.material = fullLineMaterial;
+
+        lineMaker.material.mainTextureScale = new Vector2(1.0f, 1.0f);
+        lineMaker.startWidth = 0.5f;
+        lineMaker.endWidth = 0.75f;
         lineMaker.numCornerVertices = 1;
-        
+
         lineMaker.positionCount = pointList.Count;
 
         for (int i = 0; i < pointList.Count; i++)
         {
             lineMaker.SetPosition(i, pointList[i]);
         }
-        Debug.Log("Made path");
-        return dottedPath;
+
+        return fullPath;
     }
     public void addCarrierPath(ShipController linkedController)
     {
@@ -71,7 +72,7 @@ public class DrawLine : MonoBehaviour
         {
             pointList.Add(linkedController.starWaypoints[i].transform.position);
         }
-        linePathDictionary.Add(linkedController, drawLinePath(pointList));
+        //linePathDictionary.Add(linkedController, drawLinePath(pointList));
         Debug.LogWarning("Made addCarrierPath");
     }
     public void removeCarrierPath(ShipController controller)
@@ -128,7 +129,7 @@ public class DrawLine : MonoBehaviour
             }
             else
             {
-                addCarrierPath(controller);
+                //addCarrierPath(controller);
             }
             
         }
@@ -157,6 +158,7 @@ public class DrawLine : MonoBehaviour
         //lineRenderer.material.mainTextureScale = new Vector2(1f / width, 1.0f);
 
         lineMaker.positionCount = 2;
+
 
         lineMaker.SetPosition(0, startPoint);
         lineMaker.SetPosition(1, endPoint);

@@ -637,7 +637,7 @@ public class StarScript : MonoBehaviour, IPointerClickHandler
         }
         else
         {
-            Debug.LogError("Owner is not null");
+            //Debug.LogError("Owner is not null");
             insidePolygon.GetComponent<MeshRenderer>().material = owner.secondaryMaterial;
             borderPolygon.GetComponent<MeshRenderer>().material = owner.primaryMaterial;
         }
